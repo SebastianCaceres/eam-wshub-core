@@ -61,6 +61,12 @@ public class ElementInfo {
 	@GridField(name = "pld_onlookup")
 	private String onLookup;
 
+	@GridField(name = "pld_onvalidate")
+	private String onValidate;
+
+	@GridField(name = "pld_ddfieldname")
+	private String ddFieldName;
+
 	public String getElementId() {
 		return elementId;
 	}
@@ -245,6 +251,21 @@ public class ElementInfo {
 		this.onLookup = onLookup;
 	}
 
+	public String getOnValidate() {
+		return onValidate;
+	}
+
+	public void setOnValidate(String onValidate) {
+		this.onValidate = onValidate;
+	}
+
+	public String getDdFieldName() {
+		return ddFieldName;
+	}
+
+	public void setDdFieldName(String ddFieldName) {
+		this.ddFieldName = ddFieldName;
+	}
 
 	@Override
 	public String toString() {

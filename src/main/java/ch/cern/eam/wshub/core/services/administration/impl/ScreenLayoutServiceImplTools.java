@@ -25,6 +25,8 @@ public class ScreenLayoutServiceImplTools {
         e.setCharacterCase(def.get("pld_case"));
         e.setFieldType(def.get("pld_fieldtype"));
         e.setOnLookup(def.get("pld_onlookup"));
+        e.setOnValidate(def.get("pld_onvalidate"));
+        e.setDdFieldName(def.get("pld_ddfieldname"));
 
         // --- plo_* always from LAYOUT override ---
         if (lay != null) {
