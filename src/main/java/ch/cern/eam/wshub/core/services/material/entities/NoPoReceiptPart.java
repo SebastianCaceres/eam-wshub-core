@@ -47,7 +47,7 @@ public class NoPoReceiptPart implements Serializable {
     private String bin;
 
     @GridField(name = "lotcode")
-    @InforField(xpath = "LOTID/LOTCODE")
+    @InforField(xpath = "Lot/LOTID/LOTCODE")
     private String lot;
 
     @GridField(name = "manufacturerlot")
@@ -73,6 +73,7 @@ public class NoPoReceiptPart implements Serializable {
     @InforField(xpath = "PARTCONDITIONTEMPLATECONDITIONCODE")
     private String condition;
 
+    @InforField(xpath = "StandardUserDefinedFields")
     private UserDefinedFields userDefinedFields;
 
 
