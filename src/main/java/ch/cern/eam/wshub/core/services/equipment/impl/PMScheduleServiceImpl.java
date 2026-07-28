@@ -24,6 +24,8 @@ import net.datastream.schemas.mp_results.mp7006_001.MP7006_DeletePMScheduleEquip
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isNotEmpty;
 
+import ch.cern.eam.wshub.core.repositories.EquipmentPMScheduleRepository;
+
 import javax.persistence.EntityManager;
 import javax.xml.ws.Holder;
 
@@ -32,11 +34,17 @@ public class PMScheduleServiceImpl implements PMScheduleService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private EquipmentPMScheduleRepository equipmentPMScheduleRepository;
 
 	public PMScheduleServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public PMScheduleServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentPMScheduleRepository equipmentPMScheduleRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.equipmentPMScheduleRepository = equipmentPMScheduleRepository;
 	}
 
 
@@ -210,18 +218,26 @@ public class PMScheduleServiceImpl implements PMScheduleService {
 		// Fetch PM Schedule Sequence Number and Revision
 		//
 		if (pmSchedule.getSequenceNumber() == null || pmSchedule.getRevision() == null) {
-			tools.demandDatabaseConnection();
-			EntityManager em = tools.getEntityManager();
-			try {
-				EquipmentPMSchedule pmScheduleTemp = em.createNamedQuery(EquipmentPMSchedule.FIND_PM_SCHEDULE, EquipmentPMSchedule.class).setParameter("equipmentCode", pmSchedule.getEquipmentCode()).setParameter("pmCode", pmSchedule.getPmCode()).getSingleResult();
+			if (equipmentPMScheduleRepository != null) {
+				EquipmentPMSchedule pmScheduleTemp = equipmentPMScheduleRepository.findByEquipmentCodeAndPmCode(pmSchedule.getEquipmentCode(), pmSchedule.getPmCode())
+						.orElseThrow(() -> tools.generateFault("Couldn't fetch PM Schedule record for this equipment"));
 				pmSchedule.setSequenceNumber(pmScheduleTemp.getSequenceNumber());
 				pmSchedule.setRevision(pmScheduleTemp.getRevision());
-				// Just in case pmCode was not supplied
 				pmSchedule.setPmCode(pmScheduleTemp.getPmCode());
-			} catch (Exception e) {
-				throw tools.generateFault("Couldn't fetch PM Schedule record for this equipment (" + e.getMessage() + ")");
-			} finally {
-				em.close();
+			} else {
+				tools.demandDatabaseConnection();
+				EntityManager em = tools.getEntityManager();
+				try {
+					EquipmentPMSchedule pmScheduleTemp = em.createNamedQuery(EquipmentPMSchedule.FIND_PM_SCHEDULE, EquipmentPMSchedule.class).setParameter("equipmentCode", pmSchedule.getEquipmentCode()).setParameter("pmCode", pmSchedule.getPmCode()).getSingleResult();
+					pmSchedule.setSequenceNumber(pmScheduleTemp.getSequenceNumber());
+					pmSchedule.setRevision(pmScheduleTemp.getRevision());
+					// Just in case pmCode was not supplied
+					pmSchedule.setPmCode(pmScheduleTemp.getPmCode());
+				} catch (Exception e) {
+					throw tools.generateFault("Couldn't fetch PM Schedule record for this equipment (" + e.getMessage() + ")");
+				} finally {
+					em.close();
+				}
 			}
 		}
 		//

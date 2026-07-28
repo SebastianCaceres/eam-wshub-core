@@ -18,18 +18,26 @@ import net.datastream.schemas.mp_results.mp7037_001.MP7037_GetEmployee_001_Resul
 import net.datastream.schemas.mp_results.mp7038_001.MP7038_AddEmployee_001_Result;
 import net.datastream.schemas.mp_results.mp7039_001.MP7039_SyncEmployee_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.EmployeeRepository;
 import java.util.List;
+import java.util.Optional;
 
 public class EmployeeServiceImpl implements EmployeeService {
 
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private EmployeeRepository employeeRepository;
 
 	public EmployeeServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public EmployeeServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EmployeeRepository employeeRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.employeeRepository = employeeRepository;
 	}
 
 	public BatchResponse<String> createEmployeeBatch(InforContext context, List<Employee> workOrderParam) {
@@ -41,6 +49,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	public Employee readEmployee(InforContext context, String employeeCode) throws InforException {
+		if (employeeRepository != null) {
+			Optional<Employee> employeeOpt = employeeRepository.findById(employeeCode);
+			if (employeeOpt.isPresent()) {
+				return employeeOpt.get();
+			}
+		}
 
 		MP7037_GetEmployee_001 request = new MP7037_GetEmployee_001();
 		request.setEMPLOYEEID(new Employee_Type());

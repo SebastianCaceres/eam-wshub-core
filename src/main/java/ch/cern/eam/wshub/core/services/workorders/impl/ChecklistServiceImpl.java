@@ -3,6 +3,7 @@ package ch.cern.eam.wshub.core.services.workorders.impl;
 import ch.cern.eam.wshub.core.annotations.BooleanType;
 import ch.cern.eam.wshub.core.client.InforClient;
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.FindingRepository;
 import ch.cern.eam.wshub.core.services.entities.Pair;
 import ch.cern.eam.wshub.core.services.entities.Signature;
 import ch.cern.eam.wshub.core.services.grids.GridsService;
@@ -61,14 +62,25 @@ public class ChecklistServiceImpl implements ChecklistService {
 	private final InforWebServicesPT inforws;
 	private final GridsService gridsService;
 	private final TaskPlanService taskPlanService;
+	private FindingRepository findingRepository;
 
 	public ChecklistServiceImpl(
 			ApplicationData applicationData,
 			Tools tools,
 			InforWebServicesPT inforWebServicesToolkitClient
 	) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public ChecklistServiceImpl(
+			ApplicationData applicationData,
+			Tools tools,
+			InforWebServicesPT inforWebServicesToolkitClient,
+			FindingRepository findingRepository
+	) {
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.findingRepository = findingRepository;
 		this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 		this.taskPlanService = new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 	}
@@ -898,6 +910,12 @@ public class ChecklistServiceImpl implements ChecklistService {
 
 	private String loadFinding(InforContext context, String findingCode) {
 		try {
+			if (findingRepository != null) {
+				Finding finding = findingRepository.findById(findingCode).orElse(null);
+				if (finding != null) {
+					return finding.getDesc();
+				}
+			}
 			GridRequest gridRequest = new GridRequest("ISFIND", GridRequest.GRIDTYPE.LIST);
 			gridRequest.addFilter("findingcode", findingCode, "=");
 			return extractSingleResult(gridsService.executeQuery(context, gridRequest), "findingdesc");

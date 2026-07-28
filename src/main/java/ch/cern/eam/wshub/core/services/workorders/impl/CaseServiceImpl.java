@@ -19,6 +19,8 @@ import net.datastream.schemas.mp_results.mp3640_001.MP3640_AddCaseManagement_001
 import net.datastream.schemas.mp_results.mp3641_001.MP3641_SyncCaseManagement_001_Result;
 import net.datastream.schemas.mp_results.mp3643_001.MP3643_GetCaseManagement_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.InforCaseRepository;
+import java.util.Optional;
 
 import javax.xml.ws.Holder;
 
@@ -29,14 +31,27 @@ public class CaseServiceImpl implements CaseService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private InforCaseRepository inforCaseRepository;
 
 	public CaseServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public CaseServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, InforCaseRepository inforCaseRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.inforCaseRepository = inforCaseRepository;
 	}
 
 	public InforCase readCase(InforContext context, String caseID) throws InforException {
+		if (inforCaseRepository != null) {
+			Optional<InforCase> inforCaseOpt = inforCaseRepository.findById(caseID);
+			if (inforCaseOpt.isPresent()) {
+				return inforCaseOpt.get();
+			}
+		}
+
 		//
 		// Fetch WO
 		//

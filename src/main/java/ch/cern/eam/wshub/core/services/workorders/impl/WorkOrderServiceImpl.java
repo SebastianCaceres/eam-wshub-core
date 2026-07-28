@@ -20,6 +20,7 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.GridTools;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
+import ch.cern.eam.wshub.core.repositories.WorkOrderRepository;
 import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
 import net.datastream.schemas.mp_fields.*;
 import net.datastream.schemas.mp_functions.mp0023_001.MP0023_AddWorkOrder_001;
@@ -52,11 +53,17 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	private StandardWorkOrderService standardWorkOrderService;
 	private GridsService gridsService;
 	private UserDefinedListService userDefinedListService;
+	private WorkOrderRepository workOrderRepository;
 
 	public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, WorkOrderRepository workOrderRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.workOrderRepository = workOrderRepository;
 		this.comments = new CommentServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 		this.standardWorkOrderService = new StandardWorkOrderServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 		this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
@@ -87,6 +94,13 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	// WORK ORDER CRUD
 	//
 	public WorkOrder readWorkOrder(InforContext context, String number) throws InforException {
+		if (workOrderRepository != null) {
+			String woNumber = extractEntityCode(number);
+			WorkOrder workOrder = workOrderRepository.findById(woNumber).orElse(null);
+			if (workOrder != null) {
+				return workOrder;
+			}
+		}
 		// Get Infor Work Order
 		MP0024_GetWorkOrder_001_Result result = readWorkOrderInfor(context, extractEntityCode(number), extractOrganizationCode(number));
 		//

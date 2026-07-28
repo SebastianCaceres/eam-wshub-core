@@ -15,6 +15,8 @@ import net.datastream.schemas.mp_results.mp0323_001.MP0323_AddEquipmentCategory_
 import net.datastream.schemas.mp_results.mp0324_001.MP0324_GetEquipmentCategory_001_Result;
 import net.datastream.schemas.mp_results.mp0325_001.MP0325_SyncEquipmentCategory_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.CategoryRepository;
+import java.util.Optional;
 
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
@@ -22,14 +24,26 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Tools tools;
     private InforWebServicesPT inforws;
+    private CategoryRepository categoryRepository;
 
     public CategoryServiceImpl(Tools tools, InforWebServicesPT inforws) {
+        this(tools, inforws, null);
+    }
+
+    public CategoryServiceImpl(Tools tools, InforWebServicesPT inforws, CategoryRepository categoryRepository) {
         this.tools = tools;
         this.inforws = inforws;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public Category readCategory(InforContext context, String categoryCode) throws InforException {
+        if (categoryRepository != null) {
+            Optional<Category> categoryOpt = categoryRepository.findById(categoryCode);
+            if (categoryOpt.isPresent()) {
+                return categoryOpt.get();
+            }
+        }
         Category category = tools.getInforFieldTools().transformInforObject(new Category(), readInforCategory(context, categoryCode), context);
         return category;
     }

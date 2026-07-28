@@ -17,6 +17,8 @@ import net.datastream.schemas.mp_functions.mp6001_001.MP6001_AddDocument_001;
 import net.datastream.schemas.mp_results.mp0112_001.MP0112_AddDocumentAssociation_001_Result;
 import net.datastream.schemas.mp_results.mp6001_001.MP6001_AddDocument_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.InforDocumentRepository;
+import ch.cern.eam.wshub.core.repositories.InforDocEntityRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -26,11 +28,23 @@ public class DocumentsServiceImpl implements DocumentsService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private InforDocumentRepository inforDocumentRepository;
+	private InforDocEntityRepository inforDocEntityRepository;
 
 	public DocumentsServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null, null);
+	}
+
+	public DocumentsServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, InforDocumentRepository inforDocumentRepository) {
+		this(applicationData, tools, inforWebServicesToolkitClient, inforDocumentRepository, null);
+	}
+
+	public DocumentsServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, InforDocumentRepository inforDocumentRepository, InforDocEntityRepository inforDocEntityRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.inforDocumentRepository = inforDocumentRepository;
+		this.inforDocEntityRepository = inforDocEntityRepository;
 	}
 	
 	@Override
@@ -39,6 +53,13 @@ public class DocumentsServiceImpl implements DocumentsService {
 		if ((entity == null || entity.isEmpty())
 				|| (objectCode == null || objectCode.isEmpty())) {
 			throw tools.generateFault("Parameters not supplied correctly.");
+		}
+
+		if (inforDocumentRepository != null) {
+			List<InforDocument> docs = inforDocumentRepository.findByCodeAndEntity(objectCode, entity);
+			if (docs != null) {
+				return docs;
+			}
 		}
 
 		EntityManager em = tools.getEntityManager();

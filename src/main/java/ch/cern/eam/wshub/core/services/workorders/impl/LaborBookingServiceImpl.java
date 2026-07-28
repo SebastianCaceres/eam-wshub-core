@@ -1,6 +1,8 @@
 package ch.cern.eam.wshub.core.services.workorders.impl;
 
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.ActivityRepository;
+import ch.cern.eam.wshub.core.repositories.LaborBookingRepository;
 import ch.cern.eam.wshub.core.services.grids.GridsService;
 import ch.cern.eam.wshub.core.services.grids.entities.GridRequest;
 import ch.cern.eam.wshub.core.services.grids.impl.GridsServiceImpl;
@@ -41,17 +43,32 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 	private ChecklistService checklistService;
 	private GridsService gridsService;
 	private TaskPlanService taskPlanService;
+	private LaborBookingRepository laborBookingRepository;
+	private ActivityRepository activityRepository;
 
 	public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null, null);
+	}
+
+	public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, LaborBookingRepository laborBookingRepository, ActivityRepository activityRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.laborBookingRepository = laborBookingRepository;
+		this.activityRepository = activityRepository;
 		this.checklistService = new ChecklistServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 		this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 		this.taskPlanService = new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 	}
 
 	public List<LaborBooking> readLaborBookings(InforContext context, String workOrderNumber) throws InforException {
+		if (laborBookingRepository != null) {
+			List<LaborBooking> laborBookings = laborBookingRepository.findByWorkOrder(workOrderNumber);
+			if (laborBookings != null) {
+				return laborBookings;
+			}
+		}
+
 		GridRequest gridRequest = new GridRequest("WSJOBS_BOO");
 		gridRequest.setUserFunctionName("WSJOBS");
 		gridRequest.getParams().put("param.jobnum", workOrderNumber);
@@ -139,12 +156,17 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 
 	public Activity[] readActivities(InforContext context, String workOrderNumber, Boolean includeChecklists) throws InforException {
 		try {
-			GridRequest gridRequest = new GridRequest("WSJOBS_ACT");
-			gridRequest.setRowCount(1000);
-			gridRequest.setUserFunctionName("WSJOBS");
-			gridRequest.getParams().put("param.jobnum", workOrderNumber);
+			List<Activity> activities;
+			if (activityRepository != null) {
+				activities = activityRepository.findByWorkOrder(workOrderNumber);
+			} else {
+				GridRequest gridRequest = new GridRequest("WSJOBS_ACT");
+				gridRequest.setRowCount(1000);
+				gridRequest.setUserFunctionName("WSJOBS");
+				gridRequest.getParams().put("param.jobnum", workOrderNumber);
 
-			List<Activity> activities = tools.getGridTools().convertGridResultToObject(Activity.class, null, gridsService.executeQuery(context, gridRequest));
+				activities = tools.getGridTools().convertGridResultToObject(Activity.class, null, gridsService.executeQuery(context, gridRequest));
+			}
 
 			if (includeChecklists) {
 				// Read checklists for all activities in parallel

@@ -18,6 +18,8 @@ import net.datastream.schemas.mp_results.mp3655_001.MP3655_AddCaseManagementTask
 import net.datastream.schemas.mp_results.mp3656_001.MP3656_SyncCaseManagementTask_001_Result;
 import net.datastream.schemas.mp_results.mp3658_001.MP3658_GetCaseManagementTask_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.InforCaseTaskRepository;
+import java.util.Optional;
 import javax.xml.ws.Holder;
 
 
@@ -26,14 +28,27 @@ public class CaseTaskServiceImpl implements CaseTaskService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private InforCaseTaskRepository inforCaseTaskRepository;
 
 	public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, InforCaseTaskRepository inforCaseTaskRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.inforCaseTaskRepository = inforCaseTaskRepository;
 	}
 
 	public InforCaseTask readCaseTask(InforContext context, String caseTaskID) throws InforException {
+		if (inforCaseTaskRepository != null) {
+			Optional<InforCaseTask> inforCaseTaskOpt = inforCaseTaskRepository.findById(caseTaskID);
+			if (inforCaseTaskOpt.isPresent()) {
+				return inforCaseTaskOpt.get();
+			}
+		}
+
 		//
 		// Fetch Case Task
 		//

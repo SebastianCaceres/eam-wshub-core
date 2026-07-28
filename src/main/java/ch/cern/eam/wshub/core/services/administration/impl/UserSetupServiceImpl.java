@@ -27,9 +27,12 @@ import net.datastream.schemas.mp_results.mp0603_001.MP0603_SyncUserSetup_001_Res
 import net.datastream.schemas.mp_results.mp9532_001.MP9532_RunEmptyOp_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
+import ch.cern.eam.wshub.core.repositories.EAMUserRepository;
+
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -41,12 +44,18 @@ public class UserSetupServiceImpl implements UserSetupService {
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
 	private GridsService gridsService;
+	private EAMUserRepository eamUserRepository;
 
 	public UserSetupServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public UserSetupServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EAMUserRepository eamUserRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
 		this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+		this.eamUserRepository = eamUserRepository;
 	}
 
 	public String login(InforContext context, String userCode) throws InforException {
@@ -75,18 +84,28 @@ public class UserSetupServiceImpl implements UserSetupService {
 	}
 
 	public EAMUser readUserSetup(InforContext context, String userCode) throws InforException {
-		// The user to be readed
-		MP0601_GetUserSetup_001 getUserSetup = new MP0601_GetUserSetup_001();
-		getUserSetup.setUSERID(new USERID_Type());
-		getUserSetup.getUSERID().setUSERCODE(userCode);
+		EAMUser user = null;
+		if (eamUserRepository != null) {
+			Optional<EAMUser> optUser = eamUserRepository.findById(userCode);
+			if (optUser.isPresent()) {
+				user = optUser.get();
+			}
+		}
 
-		// Execute operation of reading
-		MP0601_GetUserSetup_001_Result getUserSetupResult = tools.performInforOperation(context, inforws::getUserSetupOp, getUserSetup);
+		if (user == null) {
+			// The user to be readed
+			MP0601_GetUserSetup_001 getUserSetup = new MP0601_GetUserSetup_001();
+			getUserSetup.setUSERID(new USERID_Type());
+			getUserSetup.getUSERID().setUSERCODE(userCode);
 
-		net.datastream.schemas.mp_entities.usersetup_001.UserSetup userInfor = getUserSetupResult.getResultData().getUserSetup();
+			// Execute operation of reading
+			MP0601_GetUserSetup_001_Result getUserSetupResult = tools.performInforOperation(context, inforws::getUserSetupOp, getUserSetup);
 
-		// Populate 'EAMUser' Object
-		EAMUser user = tools.getInforFieldTools().transformInforObject(new EAMUser(), userInfor, context);
+			net.datastream.schemas.mp_entities.usersetup_001.UserSetup userInfor = getUserSetupResult.getResultData().getUserSetup();
+
+			// Populate 'EAMUser' Object
+			user = tools.getInforFieldTools().transformInforObject(new EAMUser(), userInfor, context);
+		}
 
 		// Fetch corresponding employee code and description
 		GridRequest employeeGridRequest = new GridRequest("WSEMPS", GridRequest.GRIDTYPE.LIST);

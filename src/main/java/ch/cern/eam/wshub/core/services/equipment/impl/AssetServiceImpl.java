@@ -1,5 +1,6 @@
 package ch.cern.eam.wshub.core.services.equipment.impl;
 
+import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
 import ch.cern.eam.wshub.core.client.InforContext;
 import ch.cern.eam.wshub.core.services.equipment.AssetService;
 import ch.cern.eam.wshub.core.services.equipment.entities.Equipment;
@@ -35,11 +36,17 @@ public class AssetServiceImpl implements AssetService {
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
     private UserDefinedListService userDefinedListService;
+    private EquipmentRepository equipmentRepository;
 
     public AssetServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public AssetServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.equipmentRepository = equipmentRepository;
         this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
     }
 
@@ -54,6 +61,12 @@ public class AssetServiceImpl implements AssetService {
     }
 
     public Equipment readAsset(InforContext context, String assetCode, String organization) throws InforException {
+        if (equipmentRepository != null) {
+            Equipment equipment = equipmentRepository.findById(assetCode).orElse(null);
+            if (equipment != null) {
+                return equipment;
+            }
+        }
         AssetEquipment assetEquipment = readInforAsset(context, assetCode, organization);
         //
         Equipment asset = tools.getInforFieldTools().transformInforObject(new Equipment(), assetEquipment, context);

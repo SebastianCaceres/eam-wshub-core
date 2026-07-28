@@ -19,6 +19,8 @@ import net.datastream.schemas.mp_results.mp0345_001.MP0345_SyncWarrantyCoverage_
 import net.datastream.schemas.mp_results.mp3238_001.MP3238_GetWarrantyCoverage_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
+import ch.cern.eam.wshub.core.repositories.EquipmentWarrantyRepository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.xml.ws.Holder;
@@ -28,11 +30,17 @@ public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCo
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private EquipmentWarrantyRepository equipmentWarrantyRepository;
 
 	public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentWarrantyRepository equipmentWarrantyRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.equipmentWarrantyRepository = equipmentWarrantyRepository;
 	}
 
 
@@ -89,18 +97,26 @@ public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCo
 		MP3238_GetWarrantyCoverage_001_Result getwarrantycoveregeResult = new MP3238_GetWarrantyCoverage_001_Result();
 
 		if (equipmentWarrantyParam.getSequenceNumber() == null) {
-			tools.demandDatabaseConnection();
-			EntityManager em = tools.getEntityManager();
-			try {
-				TypedQuery<EquipmentWarranty> eqwarr = em.createNamedQuery(EquipmentWarranty.GETEQPWARRANTY, EquipmentWarranty.class);
-				eqwarr.setParameter("equipmentCode", equipmentWarrantyParam.getEquipmentCode().trim().toUpperCase());
-				eqwarr.setParameter("warrantyCode", equipmentWarrantyParam.getWarrantyCode());
-				equipmentWarrantyParam.setSequenceNumber(eqwarr.getSingleResult().getSequenceNumber());
+			if (equipmentWarrantyRepository != null) {
+				EquipmentWarranty eqwarr = equipmentWarrantyRepository.findByEquipmentCodeAndWarrantyCode(
+						equipmentWarrantyParam.getEquipmentCode() != null ? equipmentWarrantyParam.getEquipmentCode().trim().toUpperCase() : null,
+						equipmentWarrantyParam.getWarrantyCode()
+				).orElseThrow(() -> tools.generateFault("Couldn't fetch warranty record for this equipment"));
+				equipmentWarrantyParam.setSequenceNumber(eqwarr.getSequenceNumber());
+			} else {
+				tools.demandDatabaseConnection();
+				EntityManager em = tools.getEntityManager();
+				try {
+					TypedQuery<EquipmentWarranty> eqwarr = em.createNamedQuery(EquipmentWarranty.GETEQPWARRANTY, EquipmentWarranty.class);
+					eqwarr.setParameter("equipmentCode", equipmentWarrantyParam.getEquipmentCode().trim().toUpperCase());
+					eqwarr.setParameter("warrantyCode", equipmentWarrantyParam.getWarrantyCode());
+					equipmentWarrantyParam.setSequenceNumber(eqwarr.getSingleResult().getSequenceNumber());
 
-			} catch (Exception e) {
-				throw tools.generateFault("Couldn't fetch warranty record for this equipment (" + e.getMessage() + ")");
-			} finally {
-				em.close();
+				} catch (Exception e) {
+					throw tools.generateFault("Couldn't fetch warranty record for this equipment (" + e.getMessage() + ")");
+				} finally {
+					em.close();
+				}
 			}
 		}
 

@@ -1,6 +1,7 @@
 package ch.cern.eam.wshub.core.services.material.impl;
 
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.PartRepository;
 import ch.cern.eam.wshub.core.services.entities.BatchResponse;
 import ch.cern.eam.wshub.core.services.material.PartService;
 import ch.cern.eam.wshub.core.services.material.entities.Part;
@@ -37,11 +38,17 @@ public class PartServiceImpl implements PartService {
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
 	private UserDefinedListService userDefinedListService;
+	private PartRepository partRepository;
 
 	public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, PartRepository partRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.partRepository = partRepository;
 		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
 	}
 
@@ -87,6 +94,14 @@ public class PartServiceImpl implements PartService {
 	}
 
 	public Part readPart(InforContext context, String partCode) throws InforException {
+		if (partRepository != null) {
+			String code = extractEntityCode(partCode);
+			Part repoPart = partRepository.findById(code).orElse(null);
+			if (repoPart != null) {
+				return repoPart;
+			}
+		}
+
 		Part part = tools.getInforFieldTools().transformInforObject(new Part(), readPartInfor(context, extractEntityCode(partCode), extractOrganizationCode(partCode)), context);
 
 		// Fetched missing descriptions not returned by Infor web service

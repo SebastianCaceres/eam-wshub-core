@@ -1,5 +1,6 @@
 package ch.cern.eam.wshub.core.services.equipment.impl;
 
+import ch.cern.eam.wshub.core.repositories.FindingRepository;
 import ch.cern.eam.wshub.core.client.InforContext;
 import ch.cern.eam.wshub.core.services.equipment.NonConformityObservationService;
 import ch.cern.eam.wshub.core.services.equipment.NonconformityService;
@@ -26,12 +27,18 @@ public class NonConformityObservationServiceImpl implements NonConformityObserva
     private ApplicationData applicationData;
     private Tools tools;
     private InforWebServicesPT inforws;
-    private NonconformityService  nonconformityService;
+    private NonconformityService nonconformityService;
+    private FindingRepository findingRepository;
 
     public NonConformityObservationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public NonConformityObservationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, FindingRepository findingRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.findingRepository = findingRepository;
         this.nonconformityService = new NonconformityServiceImpl(applicationData, tools, inforws);
     }
 
