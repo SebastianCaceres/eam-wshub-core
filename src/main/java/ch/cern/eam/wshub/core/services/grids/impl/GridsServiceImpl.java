@@ -2,6 +2,10 @@ package ch.cern.eam.wshub.core.services.grids.impl;
 
 import ch.cern.eam.wshub.core.client.InforClient;
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.GridDataspyRepository;
+import ch.cern.eam.wshub.core.repositories.GridFieldRepository;
+import ch.cern.eam.wshub.core.repositories.GridMetadataRequestResultRepository;
+import ch.cern.eam.wshub.core.repositories.InstallParametersRepository;
 import ch.cern.eam.wshub.core.services.administration.impl.UserSetupServiceImpl;
 import ch.cern.eam.wshub.core.services.entities.BatchResponse;
 import ch.cern.eam.wshub.core.services.grids.GridsService;
@@ -26,6 +30,10 @@ public class GridsServiceImpl implements GridsService {
 	private final InforWebServicesPT inforws;
 	private final InforGrids inforGrids;
 	private final JPAGrids jpaGrids;
+	private GridDataspyRepository gridDataspyRepository;
+	private GridFieldRepository gridFieldRepository;
+	private GridMetadataRequestResultRepository gridMetadataRequestResultRepository;
+	private InstallParametersRepository installParametersRepository;
 
 	public GridsServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
 		this.tools = tools;
@@ -38,6 +46,17 @@ public class GridsServiceImpl implements GridsService {
 		} else {
 			jpaGrids = null;
 		}
+	}
+
+	public GridsServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
+							GridDataspyRepository gridDataspyRepository, GridFieldRepository gridFieldRepository,
+							GridMetadataRequestResultRepository gridMetadataRequestResultRepository,
+							InstallParametersRepository installParametersRepository) {
+		this(applicationData, tools, inforWebServicesToolkitClient);
+		this.gridDataspyRepository = gridDataspyRepository;
+		this.gridFieldRepository = gridFieldRepository;
+		this.gridMetadataRequestResultRepository = gridMetadataRequestResultRepository;
+		this.installParametersRepository = installParametersRepository;
 	}
 
 	@Override

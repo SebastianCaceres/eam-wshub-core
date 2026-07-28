@@ -177,6 +177,19 @@ public class InforClient implements Serializable {
         private EquipmentPMScheduleRepository equipmentPMScheduleRepository;
         private EquipmentWarrantyRepository equipmentWarrantyRepository;
         private EAMUserRepository eamUserRepository;
+        private DataspyCustomFieldRepository dataspyCustomFieldRepository;
+        private DataspyFieldRepository dataspyFieldRepository;
+        private EquipmentDepreciationRepository equipmentDepreciationRepository;
+        private GridDataspyRepository gridDataspyRepository;
+        private GridFieldRepository gridFieldRepository;
+        private GridMetadataRequestResultRepository gridMetadataRequestResultRepository;
+        private InstallParametersRepository installParametersRepository;
+        private PartAssociationRepository partAssociationRepository;
+        private PhysicalInventoryRepository physicalInventoryRepository;
+        private PhysicalInventoryRowRepository physicalInventoryRowRepository;
+        private RouteEquipmentRepository routeEquipmentRepository;
+        private Store2StoreTransferDTORepository store2StoreTransferDTORepository;
+        private StoreTransactionPartLineRepository storeTransactionPartLineRepository;
 
         private Boolean localizeResults = true;
         private Map<CacheKey, Cache<String, Object>> cacheMap = InforClient.cacheMap;
@@ -315,6 +328,71 @@ public class InforClient implements Serializable {
             return this;
         }
 
+        public Builder withDataspyCustomFieldRepository(DataspyCustomFieldRepository dataspyCustomFieldRepository) {
+            this.dataspyCustomFieldRepository = dataspyCustomFieldRepository;
+            return this;
+        }
+
+        public Builder withDataspyFieldRepository(DataspyFieldRepository dataspyFieldRepository) {
+            this.dataspyFieldRepository = dataspyFieldRepository;
+            return this;
+        }
+
+        public Builder withEquipmentDepreciationRepository(EquipmentDepreciationRepository equipmentDepreciationRepository) {
+            this.equipmentDepreciationRepository = equipmentDepreciationRepository;
+            return this;
+        }
+
+        public Builder withGridDataspyRepository(GridDataspyRepository gridDataspyRepository) {
+            this.gridDataspyRepository = gridDataspyRepository;
+            return this;
+        }
+
+        public Builder withGridFieldRepository(GridFieldRepository gridFieldRepository) {
+            this.gridFieldRepository = gridFieldRepository;
+            return this;
+        }
+
+        public Builder withGridMetadataRequestResultRepository(GridMetadataRequestResultRepository gridMetadataRequestResultRepository) {
+            this.gridMetadataRequestResultRepository = gridMetadataRequestResultRepository;
+            return this;
+        }
+
+        public Builder withInstallParametersRepository(InstallParametersRepository installParametersRepository) {
+            this.installParametersRepository = installParametersRepository;
+            return this;
+        }
+
+        public Builder withPartAssociationRepository(PartAssociationRepository partAssociationRepository) {
+            this.partAssociationRepository = partAssociationRepository;
+            return this;
+        }
+
+        public Builder withPhysicalInventoryRepository(PhysicalInventoryRepository physicalInventoryRepository) {
+            this.physicalInventoryRepository = physicalInventoryRepository;
+            return this;
+        }
+
+        public Builder withPhysicalInventoryRowRepository(PhysicalInventoryRowRepository physicalInventoryRowRepository) {
+            this.physicalInventoryRowRepository = physicalInventoryRowRepository;
+            return this;
+        }
+
+        public Builder withRouteEquipmentRepository(RouteEquipmentRepository routeEquipmentRepository) {
+            this.routeEquipmentRepository = routeEquipmentRepository;
+            return this;
+        }
+
+        public Builder withStore2StoreTransferDTORepository(Store2StoreTransferDTORepository store2StoreTransferDTORepository) {
+            this.store2StoreTransferDTORepository = store2StoreTransferDTORepository;
+            return this;
+        }
+
+        public Builder withStoreTransactionPartLineRepository(StoreTransactionPartLineRepository storeTransactionPartLineRepository) {
+            this.storeTransactionPartLineRepository = storeTransactionPartLineRepository;
+            return this;
+        }
+
         private <T> T proxy(Class<T> targetClass, T target, InforInterceptor inforInterceptor, Tools tools) {
             return (T) Proxy.newProxyInstance(targetClass.getClassLoader(), new Class[] { targetClass }, new InforInvocationHandler<>(target, inforInterceptor, tools));
         }
@@ -383,9 +461,9 @@ public class InforClient implements Serializable {
             inforClient.linearReferenceService = proxy(LinearReferenceService.class, new LinearReferenceServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.pmScheduleService = proxy(PMScheduleService.class, new PMScheduleServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentPMScheduleRepository), inforInterceptor, tools);
             inforClient.equipmentWarrantyCoverageService = proxy(EquipmentWarrantyCoverageService.class, new EquipmentWarrantyCoverageServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentWarrantyRepository), inforInterceptor, tools);
-            inforClient.equipmentOtherService = proxy(EquipmentOtherService.class, new EquipmentOtherServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.equipmentOtherService = proxy(EquipmentOtherService.class, new EquipmentOtherServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentDepreciationRepository), inforInterceptor, tools);
             inforClient.partService = proxy(PartService.class, new PartServiceImpl(applicationData, tools, inforWebServicesToolkitClient, partRepository), inforInterceptor, tools);
-            inforClient.partMiscService = proxy(PartMiscService.class, new PartMiscServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.partMiscService = proxy(PartMiscService.class, new PartMiscServiceImpl(applicationData, tools, inforWebServicesToolkitClient, partAssociationRepository), inforInterceptor, tools);
             inforClient.partStoreService = proxy(PartStoreService.class, new PartStoreServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.partManufacturerService = proxy(PartManufacturerService.class, new PartManufacturerServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.partBinStockService = proxy(PartBinStockService.class, new PartBinStockServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
@@ -394,18 +472,18 @@ public class InforClient implements Serializable {
             inforClient.partKitService = proxy(PartKitService.class, new PartKitServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.purchaseOrdersService = proxy(PurchaseOrdersService.class, new PurchaseOrdersImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userSetupService = proxy(UserSetupService.class, new UserSetupServiceImpl(applicationData, tools, inforWebServicesToolkitClient, eamUserRepository), inforInterceptor, tools);
-            inforClient.gridsService = proxy(GridsService.class, new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.gridsService = proxy(GridsService.class, new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient, gridDataspyRepository, gridFieldRepository, gridMetadataRequestResultRepository, installParametersRepository), inforInterceptor, tools);
             inforClient.documentsService = proxy(DocumentsService.class, new DocumentsServiceImpl(applicationData, tools, inforWebServicesToolkitClient, inforDocumentRepository, inforDocEntityRepository), inforInterceptor, tools);
             inforClient.pickTicketService = proxy(PickTicketService.class, new PickTicketServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.physicalInventoryService = proxy(PhysicalInventoryService.class, new PhysicalInventoryServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.physicalInventoryService = proxy(PhysicalInventoryService.class, new PhysicalInventoryServiceImpl(applicationData, tools, inforWebServicesToolkitClient, physicalInventoryRepository, physicalInventoryRowRepository), inforInterceptor, tools);
             inforClient.equipmentGenerationService = proxy(EquipmentGenerationService.class, new EquipmentGenerationServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
             inforClient.equipmentConfigurationService = proxy(EquipmentConfigurationService.class, new EquipmentConfigurationServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
-            inforClient.dataspyService = proxy(DataspyService.class, new DataspyServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
+            inforClient.dataspyService = proxy(DataspyService.class, new DataspyServiceImpl(applicationData, tools, inforWebServicesToolkitClient, dataspyCustomFieldRepository, dataspyFieldRepository),inforInterceptor, tools);
             inforClient.userGroupMenuService = proxy(UserGroupMenuService.class, new UserGroupMenuServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.screenLayoutService = proxy(ScreenLayoutService.class, new ScreenLayoutServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedTableServices = proxy(UserDefinedTableService.class, new UserDefinedTableServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedListService = proxy(UserDefinedListService.class, new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.routeService = proxy(RouteService.class, new RouteServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.routeService = proxy(RouteService.class, new RouteServiceImpl(applicationData, tools, inforWebServicesToolkitClient, routeEquipmentRepository), inforInterceptor, tools);
             inforClient.mecService = proxy(MECService.class, new MECServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.inforWebServicesToolkitClient = inforWebServicesToolkitClient;
             inforClient.safetyService = proxy(SafetyService.class, new SafetyServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
@@ -421,7 +499,9 @@ public class InforClient implements Serializable {
             inforClient.store2StoreTransferService = proxy(Store2StoreTransferService.class, new Store2StoreTransferServiceImpl(
                     applicationData,
                     tools,
-                    inforWebServicesToolkitClient), inforInterceptor, tools);
+                    inforWebServicesToolkitClient,
+                    store2StoreTransferDTORepository,
+                    storeTransactionPartLineRepository), inforInterceptor, tools);
             inforClient.caseManagementService = proxy(CaseManagementService.class, new CaseManagementServiceImpl(
                     applicationData,
                     tools,

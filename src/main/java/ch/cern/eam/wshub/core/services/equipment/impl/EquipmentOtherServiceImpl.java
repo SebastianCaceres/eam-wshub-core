@@ -1,6 +1,7 @@
 package ch.cern.eam.wshub.core.services.equipment.impl;
 
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.EquipmentDepreciationRepository;
 import ch.cern.eam.wshub.core.services.equipment.EquipmentOtherService;
 import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentCampaign;
 import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentDepreciation;
@@ -33,11 +34,14 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private EquipmentDepreciationRepository equipmentDepreciationRepository;
 
-	public EquipmentOtherServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+	public EquipmentOtherServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
+									 EquipmentDepreciationRepository equipmentDepreciationRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.equipmentDepreciationRepository = equipmentDepreciationRepository;
 	}
 
 	public String createEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {

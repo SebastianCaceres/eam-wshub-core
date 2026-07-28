@@ -1,6 +1,8 @@
 package ch.cern.eam.wshub.core.services.material.impl;
 
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.PhysicalInventoryRepository;
+import ch.cern.eam.wshub.core.repositories.PhysicalInventoryRowRepository;
 import ch.cern.eam.wshub.core.services.material.PhysicalInventoryService;
 import ch.cern.eam.wshub.core.services.material.entities.PhysicalInventory;
 import ch.cern.eam.wshub.core.services.material.entities.PhysicalInventoryRow;
@@ -28,14 +30,20 @@ public class PhysicalInventoryServiceImpl implements PhysicalInventoryService {
     private Tools tools;
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
+    private PhysicalInventoryRepository physicalInventoryRepository;
+    private PhysicalInventoryRowRepository physicalInventoryRowRepository;
 
     public PhysicalInventoryServiceImpl(
             ApplicationData applicationData,
             Tools tools,
-            InforWebServicesPT inforWebServicesToolkitClient) {
+            InforWebServicesPT inforWebServicesToolkitClient,
+            PhysicalInventoryRepository physicalInventoryRepository,
+            PhysicalInventoryRowRepository physicalInventoryRowRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.physicalInventoryRepository = physicalInventoryRepository;
+        this.physicalInventoryRowRepository = physicalInventoryRowRepository;
     }
 
     @Override

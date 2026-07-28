@@ -1,6 +1,8 @@
 package ch.cern.eam.wshub.core.services.administration.impl;
 
 import ch.cern.eam.wshub.core.client.InforContext;
+import ch.cern.eam.wshub.core.repositories.DataspyCustomFieldRepository;
+import ch.cern.eam.wshub.core.repositories.DataspyFieldRepository;
 import ch.cern.eam.wshub.core.services.administration.DataspyService;
 import ch.cern.eam.wshub.core.services.administration.entities.DataspyCopy;
 import ch.cern.eam.wshub.core.services.grids.GridsService;
@@ -28,11 +30,16 @@ public class DataspyServiceImpl implements DataspyService {
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
     private GridsService gridsService;
+    private DataspyCustomFieldRepository dataspyCustomFieldRepository;
+    private DataspyFieldRepository dataspyFieldRepository;
 
-    public DataspyServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+    public DataspyServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
+                              DataspyCustomFieldRepository dataspyCustomFieldRepository, DataspyFieldRepository dataspyFieldRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.dataspyCustomFieldRepository = dataspyCustomFieldRepository;
+        this.dataspyFieldRepository = dataspyFieldRepository;
         gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
     }
 

@@ -11,6 +11,8 @@ import net.datastream.schemas.mp_entities.store2storetransfer_001.PartLine;
 import net.datastream.schemas.mp_entities.store2storetransfer_001.Store2StoreTransfer;
 import net.datastream.schemas.mp_functions.mp1287_001.MP1287_Store2StoreTransfer_001;
 import net.datastream.schemas.mp_results.mp1287_001.MP1287_Store2StoreTransfer_001_Result;
+import ch.cern.eam.wshub.core.repositories.Store2StoreTransferDTORepository;
+import ch.cern.eam.wshub.core.repositories.StoreTransactionPartLineRepository;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
 import java.util.ArrayList;
@@ -21,11 +23,17 @@ public class Store2StoreTransferServiceImpl implements Store2StoreTransferServic
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private Store2StoreTransferDTORepository store2StoreTransferDTORepository;
+	private StoreTransactionPartLineRepository storeTransactionPartLineRepository;
 
-	public Store2StoreTransferServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+	public Store2StoreTransferServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
+										  Store2StoreTransferDTORepository store2StoreTransferDTORepository,
+										  StoreTransactionPartLineRepository storeTransactionPartLineRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.store2StoreTransferDTORepository = store2StoreTransferDTORepository;
+		this.storeTransactionPartLineRepository = storeTransactionPartLineRepository;
 	}
 
 	@Override

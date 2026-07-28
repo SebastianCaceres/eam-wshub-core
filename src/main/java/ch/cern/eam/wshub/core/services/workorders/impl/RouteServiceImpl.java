@@ -12,6 +12,7 @@ import net.datastream.schemas.mp_functions.mp7064_001.MP7064_GetWorkRoute_001;
 import net.datastream.schemas.mp_results.mp7063_001.MP7063_AddWorkRoute_001_Result;
 import net.datastream.schemas.mp_results.mp7064_001.MP7064_GetWorkRoute_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.RouteEquipmentRepository;
 import ch.cern.eam.wshub.core.services.workorders.RouteService;
 
 public class RouteServiceImpl implements RouteService {
@@ -19,11 +20,14 @@ public class RouteServiceImpl implements RouteService {
     private Tools tools;
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
+    private RouteEquipmentRepository routeEquipmentRepository;
 
-    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
+                            RouteEquipmentRepository routeEquipmentRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.routeEquipmentRepository = routeEquipmentRepository;
     }
 
     public Route readRoute(InforContext inforContext, String routeCode) throws InforException {
