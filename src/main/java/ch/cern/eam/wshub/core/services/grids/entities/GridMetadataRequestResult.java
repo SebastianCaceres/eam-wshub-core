@@ -1,15 +1,10 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import java.io.Serializable;
-
 @Entity
 @Table(name="R5GRID")
-public class GridMetadataRequestResult implements Serializable {
+public class GridMetadataRequestResult  {
 
-	private static final long serialVersionUID = 7166460915418241252L;
 	@Id
 	@Column(name="GRD_GRIDID")
 	private String gridCode;
@@ -31,18 +26,14 @@ public class GridMetadataRequestResult implements Serializable {
 	public void setDataSpyId(String dataSpyId) {
 		this.dataSpyId = dataSpyId;
 	}
-	
-	@XmlElementWrapper(name="gridDataspies") 
-    @XmlElement(name="gridDataspy")
+
 	public GridDataspy[] getGridDataspies() {
 		return gridDataspies;
 	}
 	public void setGridDataspies(GridDataspy[] gridDataspies) {
 		this.gridDataspies = gridDataspies;
 	}
-	
-	@XmlElementWrapper(name="gridFields") 
-    @XmlElement(name="gridField")
+
 	public GridField[] getGridFields() {
 		return gridFields;
 	}
@@ -55,6 +46,5 @@ public class GridMetadataRequestResult implements Serializable {
 	public void setGridName(String gridName) {
 		this.gridName = gridName;
 	}
-	
-	
+
 }

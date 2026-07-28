@@ -1,9 +1,8 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
-
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class EquipmentPMSchedulePK implements Serializable {
+public class EquipmentPMSchedulePK implements Serializable  {
 
 	private String sequenceNumber;
 	private String revision;
@@ -37,6 +36,5 @@ public class EquipmentPMSchedulePK implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

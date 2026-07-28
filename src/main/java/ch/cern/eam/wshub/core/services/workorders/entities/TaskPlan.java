@@ -1,94 +1,62 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BigIntegerAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class TaskPlan {
 
-	@InforField(xpath = "TASKLISTID/TASKCODE")
 	private String code;
 
-	@InforField(xpath = "TASKLISTID/DESCRIPTION")
 	private String description;
 
-	@InforField(xpath = "TASKLISTID/TASKREVISION")
 	private BigInteger taskRevision;
 
-	@InforField(xpath = "CHECKLISTPERFORMEDBYREQUIRED")
 	private Boolean performedByRequired;
 
-	@InforField(xpath = "CHECKLISTREVIEWEDBYREQUIRED")
 	private Boolean reviewedByRequired;
 
-	@InforField(xpath = "VIEWONLYRESPONSIBILITY/USERDEFINEDCODE")
 	private String viewOnlyResponsibility;
 
-	@InforField(xpath = "REVIEWRESPONSIBILITY/USERDEFINEDCODE")
 	private String reviewResponsibility;
 
-	@InforField(xpath = "PERFORMBYRESPONSIBILITY/USERDEFINEDCODE")
 	private String performByResponsibility;
 
-	@InforField(xpath = "PERFORMBY2RESPONSIBILITY/USERDEFINEDCODE")
 	private String performBy2Responsibility;
 
-	@InforField(xpath = "ACTIVECHECKLIST")
 	private Boolean activeChecklist;
-
-	@InforField(xpath = "TRADEID/TRADECODE")
 
 	private String tradeCode;
 
-	@InforField(xpath = "CLASSID/CLASSCODE")
 	private String classCode;
 
-	@InforField(xpath = "HOURSREQUESTED")
 	private BigDecimal estimatedHours;
 
-	@InforField(xpath = "PERSONS")
 	private BigInteger peopleRequired;
 
-	@InforField(xpath = "TASKPLANTYPE")
 	private String typeCode;
 
-	@InforField(xpath = "STATUS/STATUSCODE")
 	private String revisionStatus;
 
-	@InforField(xpath = "OUTOFSERVICE")
 	private Boolean outOfService;
 
-	@InforField(xpath = "EQUIPMENTTYPE")
 	private String equipmentType;
 
-	@InforField(xpath = "EQUIPMENTCLASSID/CLASSCODE")
 	private String equipmentClass;
 
-	@InforField(xpath = "MATERIALLISTID/MTLCODE")
 	private String materialList;
 
-	@InforField(xpath = "StandardUserDefinedFields")
 	private UserDefinedFields userDefinedFields;
 
-	@InforField(xpath = "WODESCRIPTION")
 	private String workOrderDescription;
 
-	@InforField(xpath = "WOTYPE/TYPECODE")
 	private String workOrderType;
 
-	@InforField(xpath = "WOCLASS/CLASSCODE")
 	private String workOrderClass;
 
-	@InforField(xpath = "WOSTATUS")
 	private String workOrderStatus;
 
-	@InforField(xpath = "WOPRIORITY/PRIORITYCODE")
 	private String workOrderPriority;
 
 	public String getCode() {
@@ -115,7 +83,6 @@ public class TaskPlan {
 		this.taskRevision = taskRevision;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getPerformedByRequired() {
 		return performedByRequired;
 	}
@@ -124,7 +91,6 @@ public class TaskPlan {
 		this.performedByRequired = performedByRequired;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getReviewedByRequired() {
 		return reviewedByRequired;
 	}
@@ -157,7 +123,6 @@ public class TaskPlan {
 		this.performBy2Responsibility = performBy2Responsibility;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getActiveChecklist() {
 		return activeChecklist;
 	}
@@ -182,7 +147,6 @@ public class TaskPlan {
 		this.classCode = classCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getEstimatedHours() {
 		return estimatedHours;
 	}
@@ -191,7 +155,6 @@ public class TaskPlan {
 		this.estimatedHours = estimatedHours;
 	}
 
-	@XmlJavaTypeAdapter(BigIntegerAdapter.class)
 	public BigInteger getPeopleRequired() {
 		return peopleRequired;
 	}
@@ -216,7 +179,6 @@ public class TaskPlan {
 		this.revisionStatus = revisionStatus;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getOutOfService() {
 		return outOfService;
 	}

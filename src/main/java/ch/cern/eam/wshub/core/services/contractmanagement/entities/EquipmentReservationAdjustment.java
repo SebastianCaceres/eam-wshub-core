@@ -1,75 +1,71 @@
 package ch.cern.eam.wshub.core.services.contractmanagement.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.annotations.GridField;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-public class EquipmentReservationAdjustment implements Serializable {
+public class EquipmentReservationAdjustment  {
     @GridField(name = "adjustmentid")
-    @InforField(xpath = "CUSTOMERRENTALADJUSTMENTID/CUSTOMERRENTALADJUSTMENTPK")
+    
     private String code;
     @GridField(name = "adjustmentorg")
-    @InforField(xpath = "ADJUSTMENTID/ORGANIZATIONID/ORGANIZATIONCODE")
+    
     private String orgCode;
     @GridField(name = "customerrentalcode")
-    @InforField(xpath = "CUSTOMERRENTALID/CUSTOMERRENTALCODE")
+    
     private String customerRentalCode;
     @GridField(name = "adjustmentcode")
-    @InforField(xpath = "ADJUSTMENTID/ADJUSTMENTCODE")
+    
     private String adjustmentCode;
     @GridField(name = "adjustmenttype")
-    @InforField(xpath = "ADJUSTMENTTYPE/TYPECODE")
+    
     private String typeCode;
     @GridField(name = "adjustmentsystemtype")
-    @InforField(xpath = "ADJUSTMENTRTYPE/TYPECODE")
+    
     private String typeRCode;
     @GridField(name = "adjustmentstatus")
-    @InforField(xpath = "ADJUSTMENTSTATUS/STATUSCODE")
+    
     private String statusCode;
     @GridField(name = "adjustmentsystemstatus")
-    @InforField(xpath = "ADJUSTMENTRSTATUS/STATUSCODE")
+    
     private String statusRCode;
     @GridField(name = "taxcode")
-    @InforField(xpath = "TAXID/TAXCODE")
+    
     private String taxCode;
     @GridField(name = "adjustmentdate")
-    @InforField(xpath = "ADJUSTMENTDATE")
+    
     private Date date;
     @GridField(name = "comments")
-    @InforField(xpath = "AJUSTMENTCOMMENTS")
+    
     private String comments;
     @GridField(name = "quantity")
-    @InforField(xpath = "ADJUSTMENTQUANTITY")
+    
     private BigDecimal quantity;
     @GridField(name = "rate")
-    @InforField(xpath = "RATE")
+    
     private BigDecimal rate;
     @GridField(name = "totalamount")
-    @InforField(xpath = "TOTALAMOUNT")
+    
     private BigDecimal totalAmount;
     @GridField(name = "taxamount")
-    @InforField(xpath = "TAXAMOUNT")
+    
     private BigDecimal taxAmount;
     @GridField(name = "invoicecode")
-    @InforField(xpath = "CUSTOMERCONTRACTINVOICEID/CUSTOMERCONTRACTINVOICECODE")
+    
     private String invoice;
     @GridField(name = "invoiceorg")
-    @InforField(xpath = "CUSTOMERCONTRACTINVOICEID/ORGANIZATIONID/ORGANIZATIONCODE")
+    
     private String invoiceOrgCode;
     @GridField(name = "createdworkorder")
-    @InforField(xpath = "WORKORDERID/JOBNUM")
+    
     private String createdWorkOrder;
     @GridField(name = "recordid")
-    @InforField(xpath = "recordid")
+    
     private BigInteger updateCount;
-    @InforField(xpath = "StandardUserDefinedFields")
+    
     private UserDefinedFields userDefinedFields;
 
     public String getCode() {
@@ -144,7 +140,6 @@ public class EquipmentReservationAdjustment implements Serializable {
         this.taxCode = taxCode;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getDate() {
         return date;
     }

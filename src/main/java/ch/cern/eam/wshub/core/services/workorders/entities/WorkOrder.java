@@ -1,11 +1,5 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BigIntegerAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import ch.cern.eam.wshub.core.services.userdefinedscreens.UserDefinedListHelpable;
@@ -14,213 +8,206 @@ import ch.cern.eam.wshub.core.services.userdefinedscreens.entities.xmlhashmap.Xm
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
 @Entity
 @Table(name = "R5EVENTS")
-public class WorkOrder implements Serializable, UserDefinedListHelpable {
+public class WorkOrder implements UserDefinedListHelpable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2035481937868647264L;
+	
 	@Column(name = "EVT_CODE")
 	@Id
-	@InforField(xpath = "WORKORDERID/JOBNUM")
+	
 	private String number;
 	@Column(name = "EVT_DESC")
-	@InforField(xpath = "WORKORDERID/DESCRIPTION")
+	
 	private String description;
 	@Column(name = "EVT_ORG")
-	@InforField(xpath = "WORKORDERID/ORGANIZATIONID/ORGANIZATIONCODE")
+	
 	private String organization;
 	@Transient
-	@InforField(xpath = "CLASSID/CLASSCODE", nullifyParentLevel = 1)
+	
 	private String classCode;
 	@Transient
-	@InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+	
 	private String classDesc;
 	@Transient
-	@InforField(xpath = "CLASSID/ORGANIZATIONID/ORGANIZATIONCODE")
+	
 	private String classOrganization;
 	@Transient
-	@InforField(xpath = "recordid")
+	
 	private BigInteger updateCount;
 	@Transient
 	private String eventType;
 	//
 	@Column(name = "EVT_STATUS")
-	@InforField(xpath = "STATUS/STATUSCODE")
+	
 	private String statusCode;
 	@Transient
-	@InforField(xpath = "STATUS/DESCRIPTION", readOnly = true)
+	
 	private String statusDesc;
 
 	@Transient
 	private String systemStatusCode;
 	//
 	@Transient
-	@InforField(xpath = "TYPE/TYPECODE")
+	
 	private String typeCode;
 	@Transient
-	@InforField(xpath = "TYPE/DESCRIPTION", readOnly = true)
+	
 	private String typeDesc;
 	//
 	@Column(name = "EVT_MRC")
-	@InforField(xpath = "DEPARTMENTID/DEPARTMENTCODE")
+	
 	private String departmentCode;
 	@Transient
-	@InforField(xpath = "DEPARTMENTID/DESCRIPTION", readOnly = true)
+	
 	private String departmentDesc;
 	@Transient
-	@InforField(xpath = "DEPARTMENTID/ORGANIZATIONID/ORGANIZATIONCODE")
+	
 	private String departmentOrganization;
 	//
 	@Column(name = "EVT_OBJECT")
-	@InforField(xpath = "EQUIPMENTID/EQUIPMENTCODE")
+	
 	private String equipmentCode;
 	@Transient
-	@InforField(xpath = "EQUIPMENTID/DESCRIPTION", readOnly = true)
+	
 	private String equipmentDesc;
 	@Column(name = "EVT_OBJECT_ORG")
-	@InforField(xpath = "EQUIPMENTID/ORGANIZATIONID/ORGANIZATIONCODE")
+	
 	private String equipmentOrganization;
 	//
 	@Transient
-	@InforField(xpath = "PROJECTID/PROJECTCODE")
+	
 	private String projectCode;
 	@Transient
-	@InforField(xpath = "PROJECTID/DESCRIPTION", readOnly = true)
+	
 	private String projectDesc;
 	@Transient
-	@InforField(xpath = "PROJBUD")
+	
 	private String projectBudget;
 	//
 	@Transient
-	@InforField(xpath = "LOCATIONID/LOCATIONCODE")
+	
 	private String locationCode;
 	@Transient
-	@InforField(xpath = "LOCATIONID/DESCRIPTION", readOnly = true)
+	
 	private String locationDesc;
 	@Transient
-	@InforField(xpath = "LOCATIONID/ORGANIZATIONID/ORGANIZATIONCODE", nullifyParentLevel = 2)
+	
 	private String locationOrganization;
 	//
 	@Transient
-	@InforField(xpath = "PRIORITY/PRIORITYCODE")
+	
 	private String priorityCode;
 	@Transient
-	@InforField(xpath = "PRIORITY/DESCRIPTION", readOnly = true)
+	
 	private String priorityDesc;
 	//
 	@Transient
-	@InforField(xpath = "USERDEFINEDAREA")
+	
 	private CustomField[] customFields;
 	//
 	@Transient
-	@InforField(xpath = "REPORTED")
+	
 	private Date reportedDate;
 	@Transient
-	@InforField(xpath = "REQUESTEDEND")
+	
 	private Date requestedEndDate;
 	@Transient
-	@InforField(xpath = "REQUESTEDSTART")
+	
 	private Date requestedStartDate;
 	@Transient
-	@InforField(xpath = "TARGETDATE")
+	
 	private Date scheduledStartDate; // target date
 	@Transient
-	@InforField(xpath = "SCHEDEND")
+	
 	private Date scheduledEndDate;
 	@Transient
-	@InforField(xpath = "STARTDATE")
+	
 	private Date startDate;
 	@Transient
-	@InforField(xpath = "COMPLETEDDATE")
+	
 	private Date completedDate;
 	@Transient
-	@InforField(xpath = "DUEDATE")
+	
 	private Date dueDate;
 	@Transient
-	@InforField(xpath = "CREATEDDATE")
+	
 	private Date createdDate;
 	@Column(name = "EVT_CREATEDBY")
-	@InforField(xpath = "CREATEDBY/USERCODE")
+	
 	private String createdBy;
 	@Transient
-	@InforField(xpath = "CREATEDBY/DESCRIPTION", readOnly = true)
+	
 	private String createdByDesc;
 
 	@Transient
-	@InforField(xpath = "PROBLEMCODEID/PROBLEMCODE")
+	
 	private String problemCode;
 	@Transient
-	@InforField(xpath = "FAILURECODEID/FAILURECODE")
+	
 	private String failureCode;
 	@Transient
-	@InforField(xpath = "CAUSECODEID/CAUSECODE")
+	
 	private String causeCode;
 	@Transient
-	@InforField(xpath = "ACTIONCODEID/ACTIONCODE")
+	
 	private String actionCode;
 	@Transient
-	@InforField(xpath = "COSTCODEID/COSTCODE")
+	
 	private String costCode;
 	@Transient
-	@InforField(xpath = "COSTCODEID/DESCRIPTION", readOnly = true)
+	
 	private String costCodeDesc;
 
 	@Transient
-	@InforField(xpath = "SCHEDGROUP")
+	
 	private String assignedBy; // schedgroup
 	@Transient
-	@InforField(xpath = "REQUESTEDBY/PERSONCODE")
+	
 	private String reportedBy; // requested by
 	@Transient
-	@InforField(xpath = "REQUESTEDBY/DESCRIPTION", readOnly = true)
+	
 	private String reportedByDesc;
 	@Transient
-	@InforField(xpath = "ASSIGNEDTO/PERSONCODE")
+	
 	private String assignedTo;
 	@Transient
-	@InforField(xpath = "ASSIGNEDTO/DESCRIPTION", readOnly = true)
+	
 	private String assignedToDesc;
 	@Transient
-	@InforField(xpath = "STANDARDWO/STDWOCODE")
+	
 	private String standardWO;
 	@Transient
-	@InforField(xpath = "STANDARDWO/DESCRIPTION", readOnly = true)
+	
 	private String standardWODesc;
 	@Transient
-	@InforField(xpath = "PARENTWO/JOBNUM")
+	
 	private String parentWO;
 	@Transient
-	@InforField(xpath = "PARENTWO/DESCRIPTION", readOnly = true)
+	
 	private String parentWODesc;
 	@Transient
-	@InforField(xpath = "ROUTE/ROUTECODE")
+	
 	private String route;
 	@Transient
-	@InforField(xpath = "ROUTE/ROUTEREVISION")
+	
 	private BigInteger routeRevision;
 	@Transient
 	private String comment;
 	@Transient
-	@InforField(xpath = "TARGETVALUE")
+	
 	private BigDecimal targetValue;
 	@Transient
-	@InforField(xpath = "DOWNTIMEHOURS")
+	
 	private BigDecimal downtimeHours;
 	@Transient
-	@InforField(xpath = "UserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
@@ -232,25 +219,24 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 	@Transient
 	private String copyFrom;
 
-
 	@Transient
-	@InforField(xpath = "BILLABLE", booleanType = BooleanType.PLUS_MINUS)
+	
 	private Boolean billable;
 
 	@Transient
-	@InforField(xpath = "DEPEND", booleanType = BooleanType.TRUE_FALSE)
+	
 	private Boolean depend;
 
 	@Transient
-	@InforField(xpath = "EVTISSTYPE")
+	
 	private String issType;
 
 	@Transient
-	@InforField(xpath = "WARRANTY", booleanType = BooleanType.TRUE_FALSE)
+	
 	private Boolean warranty;
 
 	@Transient
-	@InforField(xpath = "VENDOR")
+	
 	private String vendor;
 
 	@Transient
@@ -369,8 +355,7 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 	}
 
 	@JsonProperty("customField")
-	@XmlElementWrapper(name = "customFields")
-	@XmlElement(name = "customField")
+
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}
@@ -379,7 +364,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.customFields = customFields;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getReportedDate() {
 		return reportedDate;
 	}
@@ -387,7 +371,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 	public void setReportedDate(Date reportedDate) {
 		this.reportedDate = reportedDate;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
 
 	public Date getRequestedEndDate() {
 		return requestedEndDate;
@@ -397,7 +380,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.requestedEndDate = requestedEndDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRequestedStartDate() {
 		return requestedStartDate;
 	}
@@ -405,8 +387,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 	public void setRequestedStartDate(Date requestedStartDate) {
 		this.requestedStartDate = requestedStartDate;
 	}
-
-	@XmlJavaTypeAdapter(DateAdapter.class)
 
 	public Date getScheduledStartDate() {
 		return scheduledStartDate;
@@ -416,8 +396,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.scheduledStartDate = scheduledStartDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
-
 	public Date getScheduledEndDate() {
 		return scheduledEndDate;
 	}
@@ -425,8 +403,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 	public void setScheduledEndDate(Date scheduledEndDate) {
 		this.scheduledEndDate = scheduledEndDate;
 	}
-
-	@XmlJavaTypeAdapter(DateAdapter.class)
 
 	public Date getCompletedDate() {
 		return completedDate;
@@ -540,7 +516,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.costCode = costCode;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -605,7 +580,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.comment = comment;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -614,7 +588,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.startDate = startDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -695,17 +668,14 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.parentWODesc = parentWODesc;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getTargetValue() { return targetValue; }
 
 	public void setTargetValue(BigDecimal targetValue) { this.targetValue = targetValue; }
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getDowntimeHours() { return downtimeHours; }
 
 	public void setDowntimeHours(BigDecimal downtimeHours) { this.downtimeHours = downtimeHours; }
 
-	@XmlJavaTypeAdapter(BigIntegerAdapter.class)
 	public BigInteger getRouteRevision() {
 		return routeRevision;
 	}
@@ -714,7 +684,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.routeRevision = routeRevision;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean isConfirmedIncompleteChecklist() {
 		return confirmedIncompleteChecklist;
 	}
@@ -782,7 +751,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.locationOrganization = locationOrganization;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getBillable() {
 		return billable;
 	}
@@ -791,7 +759,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.billable = billable;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getDepend() {
 		return depend;
 	}
@@ -808,7 +775,6 @@ public class WorkOrder implements Serializable, UserDefinedListHelpable {
 		this.issType = issType;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getWarranty() {
 		return warranty;
 	}

@@ -1,17 +1,10 @@
 package ch.cern.eam.wshub.core.services.administration.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.Department;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.util.*;
 
 @Entity
@@ -19,57 +12,55 @@ import java.util.*;
 @NamedQueries({
 		@NamedQuery(name = EAMUser.ALL_ACTIVE_USERS, query = "Select user from EAMUser user WHERE user.classCode IS NULL OR user.classCode <> '*INA'"),
 		@NamedQuery(name = EAMUser.ALL_GROUP_MEMBER_USERNAMES, query = "Select userCode from EAMUser user WHERE user.userGroup = :group") })
-public class EAMUser implements Serializable {
+public class EAMUser  {
 
-	private static final long serialVersionUID = 1149632956701915140L;
 	public static final String ALL_ACTIVE_USERS = "ALL_ACTIVE_USERS";
 	public static final String ALL_GROUP_MEMBER_USERNAMES = "ALL_GROUP_MEMBER_USERNAMES";
 
 	@Id
 	@Column(name = "USR_CODE")
-	@InforField(xpath = "USERID/USERCODE")
+	
 	private String userCode;
 
 	@Column(name = "USR_DESC")
-	@InforField(xpath = "USERID/DESCRIPTION")
+	
 	private String userDesc;
 
 	@Column(name = "USR_GROUP")
-	@InforField(xpath = "USERGROUP")
+	
 	private String userGroup;
 
 	@Column(name = "USR_EXPUSER")
 	@Temporal(TemporalType.DATE)
-	@InforField(xpath = "USEREXPIREDATE")
+	
 	private Date userIDExpirationDate;
 
-	@XmlTransient
 	@Transient
-	@InforField(xpath = "PASSWORD")
+	
 	private String password;
 
 	@Transient
-	@InforField(xpath = "PASSEXPIREDATE")
+	
 	private Date passwordExpirationDate;
 
 	@Column(name = "USR_EMAILADDRESS")
-	@InforField(xpath = "EMAIL")
+	
 	private String emailAddress;
 
 	@Column(name = "USR_MRC")
-	@InforField(xpath = "DEPARTMENTCODE")
+	
 	private String department;
 
 	@Column(name = "USR_CLASS")
-	@InforField(xpath = "CLASSID/CLASSCODE")
+	
 	private String classCode;
 
 	@Column(name = "USR_LOCALE")
-	@InforField(xpath = "LOCALE")
+	
 	private String locale;
 
 	@Column(name = "USR_LANG")
-	@InforField(xpath = "LANGUAGE")
+	
 	private String language;
 
 	@Transient
@@ -79,11 +70,11 @@ public class EAMUser implements Serializable {
 	private String employeeDesc;
 
 	@Transient
-	@InforField(xpath = "USERDEFINEDAREA")
+	
 	private CustomField[] customFields;
 
 	@Transient
-	@InforField(xpath = "StandardUserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
@@ -137,8 +128,6 @@ public class EAMUser implements Serializable {
 		this.department = department;
 	}
 
-	@XmlElementWrapper(name = "customFields")
-	@XmlElement(name = "customField")
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}
@@ -163,7 +152,6 @@ public class EAMUser implements Serializable {
 		this.locale = locale;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUserIDExpirationDate() {
 		return userIDExpirationDate;
 	}
@@ -172,7 +160,6 @@ public class EAMUser implements Serializable {
 		this.userIDExpirationDate = userIDExpirationDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getPasswordExpirationDate() {
 		return passwordExpirationDate;
 	}

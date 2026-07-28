@@ -1,12 +1,8 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class PartSupplier implements Serializable {
+public class PartSupplier  {
 
 	private String supplierCode;
 	private String supplierPartDescription;
@@ -34,7 +30,6 @@ public class PartSupplier implements Serializable {
 		this.catalogReference = catalogReference;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getGrossPrice() {
 		return grossPrice;
 	}
@@ -42,7 +37,6 @@ public class PartSupplier implements Serializable {
 		this.grossPrice = grossPrice;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMinimumOrderQty() {
 		return minimumOrderQty;
 	}

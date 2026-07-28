@@ -1,15 +1,12 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
-
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 public class EquipmentConfigurationId {
-    @InforField(xpath = "EQUIPMENTCONFIGURATIONID/EQUIPMENTCONFIGURATIONCODE")
+    
     private String equipmentConfigCode;
 
-    @InforField(xpath = "EQUIPMENTCONFIGURATIONID/REVISIONNUM")
     private BigDecimal revisionNum;
 
     public String getEquipmentConfigCode() {

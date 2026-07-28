@@ -2,8 +2,6 @@ package ch.cern.eam.wshub.core.services.entities;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
-import java.io.Serializable;
-
 @Entity
 @NamedNativeQueries({
 	@NamedNativeQuery(name=InstallParameters.GETINSTALLPARAMS,
@@ -11,9 +9,8 @@ import java.io.Serializable;
 	)
 })
 @Table(name="r5install")
-public class InstallParameters implements Serializable {
-	
-	private static final long serialVersionUID = 5661071586437074385L;
+public class InstallParameters  {
+
 	public static final String GETINSTALLPARAMS = "InstallParameters.GETINSTALLPARAMS";
 
 	@Id

@@ -1,12 +1,10 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import java.io.Serializable;
-
 /**
  * Container of one single response, in the context of a batch request
  * @param <T> Type of the entry parameter
  */
-public final class BatchSingleResponse<T> implements Serializable {
+public final class BatchSingleResponse<T>  {
 
     private T response;
     private String errorMessage;

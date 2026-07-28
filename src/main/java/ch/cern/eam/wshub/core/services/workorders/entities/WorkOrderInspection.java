@@ -1,7 +1,5 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.Arrays;
 
 public class WorkOrderInspection {
@@ -119,16 +117,14 @@ public class WorkOrderInspection {
 	public void setEquipmentCode(String equipmentCode) {
 		this.equipmentCode = equipmentCode;
 	}
-	@XmlElementWrapper(name="findingCodes") 
-    @XmlElement(name="code")
+
 	public String[] getFindingCodes() {
 		return findingCodes;
 	}
 	public void setFindingCodes(String[] findingCodes) {
 		this.findingCodes = findingCodes;
 	}
-	@XmlElementWrapper(name="findingDescs") 
-    @XmlElement(name="desc")
+
 	public String[] getFindingDescs() {
 		return findingDescs;
 	}

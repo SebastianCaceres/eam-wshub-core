@@ -2,7 +2,6 @@
  * 
  */
 package ch.cern.eam.wshub.core.services.documents.entities;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -14,9 +13,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "R5DOCENTITIES")
 @IdClass(InforDocEntityPK.class)
-public class InforDocEntity implements Serializable {
-	private static final long serialVersionUID = -4636805288760053482L;
-	
+public class InforDocEntity implements Serializable  {
+
 	@Id
 	@Column(name = "DAE_DOCUMENT")
 	private String document;

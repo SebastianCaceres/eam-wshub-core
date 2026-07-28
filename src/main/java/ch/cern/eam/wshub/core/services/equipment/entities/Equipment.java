@@ -1,9 +1,5 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import ch.cern.eam.wshub.core.services.userdefinedscreens.UserDefinedListHelpable;
@@ -11,89 +7,72 @@ import ch.cern.eam.wshub.core.services.userdefinedscreens.entities.UDLValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
 @Entity
 @Table(name = "R5OBJECTS")
-public class Equipment implements Serializable, UserDefinedListHelpable {
+public class Equipment implements UserDefinedListHelpable {
 
     /**
      *
      */
-    private static final long serialVersionUID = 7865040704362527306L;
 
     @Column(name = "OBJ_DESC")
-    @InforField(xpath = {
-            "ASSETID/DESCRIPTION",
-            "POSITIONID/DESCRIPTION",
-            "SYSTEMID/DESCRIPTION"
-    }, readOnly = true)
+    
     private String description;
     @Id
     @Column(name = "OBJ_CODE")
-    @InforField(xpath = {
-            "ASSETID/EQUIPMENTCODE",
-            "POSITIONID/EQUIPMENTCODE",
-            "SYSTEMID/EQUIPMENTCODE"
-    }, readOnly = true)
+    
     private String code;
 
     @Transient
-    @InforField(xpath = {
-            "ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE"
-    }, readOnly = true)
+    
     private String organization;
 
     @Column(name = "OBJ_OBTYPE")
-    @InforField(xpath = "TYPE/TYPECODE")
+    
     private String typeCode;
-    @InforField(xpath = "TYPE/DESCRIPTION", readOnly = true)
+    
     private String typeDesc;
 
     private String systemTypeCode;
 
     @Transient
-    @InforField(xpath = "EQUIPMENTALIAS")
+    
     private String alias;
 
     @Transient
-    @InforField(xpath = "CLASSID/CLASSCODE", nullifyParentLevel = 1)
+    
     private String classCode;
     @Transient
-    @InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+    
     private String classDesc;
     @Transient
-    @InforField(xpath = "CATEGORYID/CATEGORYCODE", nullifyParentLevel = 1)
+    
     private String categoryCode;
     @Transient
-    @InforField(xpath = "CATEGORYID/DESCRIPTION", readOnly = true)
+    
     private String categoryDesc;
     @Transient
-    @InforField(xpath = "recordid")
+    
     private BigInteger updateCount;
     @Transient
-    @InforField(xpath = "OUTOFSERVICE")
+    
     private Boolean outOfService;
     @Transient
-    @InforField(xpath = "INPRODUCTION")
+    
     private Boolean inProduction;
     @Transient
-    @InforField(xpath = "PROFILEID/OBJECTCODE")
+    
     private String profileCode;
     //
     @Transient
-    @InforField(xpath = "STATUS/STATUSCODE", nullifyParentLevel = 1)
+    
     private String statusCode;
     @Transient
-    @InforField(xpath = "STATUS/DESCRIPTION", readOnly = true)
+    
     private String statusDesc;
 
     @Transient
@@ -109,21 +88,21 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
 
     //
     @Transient
-    @InforField(xpath = "COSTCODEID/COSTCODE", nullifyParentLevel = 1)
+    
     private String costCode;
     @Transient
-    @InforField(xpath = "COSTCODEID/DESCRIPTION", nullifyParentLevel = 0)
+    
     private String costCodeDesc;
 
     @Transient
-    @InforField(xpath = "DEPARTMENTID/DEPARTMENTCODE", nullifyParentLevel = 1)
+    
     private String departmentCode;
     @Transient
-    @InforField(xpath = "DEPARTMENTID/DESCRIPTION", nullifyParentLevel = 0)
+    
     private String departmentDesc;
     //
     @Transient
-    @InforField(xpath = "USERDEFINEDAREA")
+    
     private CustomField[] customFields;
 
     @Transient
@@ -131,307 +110,127 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
 
     //
     @Transient
-    @InforField(xpath = "COMMISSIONDATE")
+    
     private Date comissionDate;
     @Transient
-    @InforField(xpath = "ASSETVALUE")
+    
     private BigDecimal equipmentValue;
     @Transient
-    @InforField(xpath = "ASSIGNEDTO/PERSONCODE", nullifyParentLevel = 1)
+    
     private String assignedTo;
     @Transient
-    @InforField(xpath = "ASSIGNEDTO/DESCRIPTION", readOnly = true)
+    
     private String assignedToDesc;
     @Transient
-    @InforField(xpath = "METERUNIT")
+    
     private String meterUnit;
     @Transient
-    @InforField(xpath = "CRITICALITYID/CRITICALITY", nullifyParentLevel = 1)
+    
     private String criticality;
     @Transient
-    @InforField(xpath = "CGMP")
+    
     private String cGMP;
     @Transient
-    @InforField(xpath = "ORIGINALRECEIPTDATE")
+    
     private Date originalReceiptDate;
     @Transient
-    @InforField(xpath = "EQUIPMENTSTATEID/STATECODE", enforceValidXpath = false, nullifyParentLevel = 1)
+    
     private String stateCode;
     @Transient
-    @InforField(xpath = "EQUIPMENTSTATEID/DESCRIPTION", readOnly = true)
+    
     private String stateDesc;
 
     @Transient
-    @InforField(xpath = "ManufacturerInfo/MANUFACTURERCODE", nullifyParentLevel = 0)
+    
     private String manufacturerCode;
     @Transient
     private String manufacturerDesc;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/SERIALNUMBER", nullifyParentLevel = 0)
+    
     private String serialNumber;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/MODEL", nullifyParentLevel = 0)
+    
     private String model;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/MODELREVISION", nullifyParentLevel = 0)
+    
     private String revision;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/XCOORDINATE", nullifyParentLevel = 0)
+    
     private BigDecimal xCoordinate;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/YCOORDINATE", nullifyParentLevel = 0)
+    
     private BigDecimal yCoordinate;
     @Transient
-    @InforField(xpath = "ManufacturerInfo/ZCOORDINATE", nullifyParentLevel = 0)
+    
     private BigDecimal zCoordinate;
     @Transient
-    @InforField(xpath = "VENDOR", nullifyParentLevel = 0)
+    
     private String vendor;
 
     @Transient
-    @InforField(xpath = "FacilityConditionIndex/COSTOFNEEDEDREPAIRS", nullifyParentLevel = 0)
+    
     private BigDecimal costOfNeededRepairs;
     @Transient
-    @InforField(xpath = "FacilityConditionIndex/REPLACEMENTVALUE", nullifyParentLevel = 0)
+    
     private BigDecimal replacementValue;
     @Transient
-    @InforField(xpath = "FacilityConditionIndex/FACILITYCONDITIONINDEX", nullifyParentLevel = 0)
+    
     private BigDecimal facilityConditionIndex;
     @Transient
-    @InforField(xpath = "FacilityConditionIndex/YEARBUILT", nullifyParentLevel = 0)
+    
     private BigDecimal yearBuilt;
     @Transient
-    @InforField(xpath = "FacilityConditionIndex/SERVICELIFE", nullifyParentLevel = 0)
+    
     private BigDecimal serviceLifetime;
 
     // Hierarchy
     // Asset
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-
-            "PositionParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/EQUIPMENTCODE"},
-            readOnly = true)
+    
     private String hierarchyAssetCode;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/DESCRIPTION",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-
-            "PositionParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/DESCRIPTION",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/DESCRIPTION",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/DESCRIPTION"},
-            readOnly = true)
+    
     private String hierarchyAssetDesc;
 
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-
-            "PositionParentHierarchy/AssetDependency/DEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTASSET/ASSETID/ORGANIZATIONID/ORGANIZATIONCODE"},
-            readOnly = true)
+    
     private String hierarchyAssetOrg;
     @Transient
     private Boolean hierarchyAssetDependent;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/DEPENDENTASSET/COSTROLLUP",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTASSET/COSTROLLUP",
-
-            "PositionParentHierarchy/AssetDependency/DEPENDENTASSET/COSTROLLUP",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTASSET/COSTROLLUP",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTASSET/COSTROLLUP"},
-            readOnly = true)
+    
     private Boolean hierarchyAssetCostRollUp;
     // Position
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/EQUIPMENTCODE"},
-            readOnly = true)
+    
     private String hierarchyPositionCode;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "AssetParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "PositionParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/DESCRIPTION"},
-            readOnly = true)
+    
     private String hierarchyPositionDesc;
 
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PositionDependency/DEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/POSITIONID/ORGANIZATIONID/ORGANIZATIONCODE"},
-            readOnly = true)
+    
     private String hierarchyPositionOrg;
     @Transient
     private Boolean hierarchyPositionDependent;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "AssetParentHierarchy/PositionDependency/DEPENDENTPOSITION/COSTROLLUP",
-            "AssetParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/COSTROLLUP",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "PositionParentHierarchy/PositionDependency/DEPENDENTPOSITION/COSTROLLUP",
-            "PositionParentHierarchy/PrimarySystemDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPOSITION/COSTROLLUP",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPOSITION/COSTROLLUP"},
-            readOnly = true)
+    
     private Boolean hierarchyPositionCostRollUp;
     // Primary System
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-
-            "SystemParentHierarchy/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE",
-            "SystemParentHierarchy/DEPENDENTPRIMARYSYSTEM/SYSTEMID/EQUIPMENTCODE"},
-            readOnly = true)
+    
     private String hierarchyPrimarySystemCode;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "AssetParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "PositionParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-
-            "SystemParentHierarchy/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION",
-            "SystemParentHierarchy/DEPENDENTPRIMARYSYSTEM/SYSTEMID/DESCRIPTION"},
-            readOnly = true)
+    
     private String hierarchyPrimarySystemDesc;
 
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-
-            "SystemParentHierarchy/NONDEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE",
-            "SystemParentHierarchy/DEPENDENTPRIMARYSYSTEM/SYSTEMID/ORGANIZATIONID/ORGANIZATIONCODE"},
-            readOnly = true)
+    
     private String hierarchyPrimarySystemOrg;
     @Transient
     private Boolean hierarchyPrimarySystemDependent;
     @Transient
-    @InforField(xpath = {
-            "AssetParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "AssetParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "AssetParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "AssetParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "AssetParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "AssetParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-
-            "PositionParentHierarchy/AssetDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "PositionParentHierarchy/PositionDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "PositionParentHierarchy/PrimarySystemDependency/DEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "PositionParentHierarchy/SystemDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "PositionParentHierarchy/LocationDependency/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "PositionParentHierarchy/NonDependentParents/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-
-            "SystemParentHierarchy/NONDEPENDENTPRIMARYSYSTEM/COSTROLLUP",
-            "SystemParentHierarchy/DEPENDENTPRIMARYSYSTEM/COSTROLLUP"},
-            readOnly = true)
+    
     private Boolean hierarchyPrimarySystemCostRollUp;
     // System
     @Transient
@@ -450,84 +249,84 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
 
     // Part Association
     @Transient
-    @InforField(xpath = "PartAssociation/PARTID/PARTCODE", enforceValidXpath = false, nullifyParentLevel = 0)
+    
     private String partCode;
     @Transient
-    @InforField(xpath = "PartAssociation/PARTID/DESCRIPTION", enforceValidXpath = false, readOnly = true)
+    
     private String partDesc;
     @Transient
-    @InforField(xpath = "PartAssociation/STORELOCATION/STOREID/STORECODE", enforceValidXpath = false, nullifyParentLevel = 0)
+    
     private String storeCode;
     @Transient
-    @InforField(xpath = "PartAssociation/STORELOCATION/STOREID/DESCRIPTION", enforceValidXpath = false, readOnly = true)
+    
     private String storeDesc;
     @Transient
-    @InforField(xpath = "PartAssociation/STORELOCATION/BIN", enforceValidXpath = false, nullifyParentLevel = 0)
+    
     private String bin;
     @Transient
     private String binDesc;
     @Transient
-    @InforField(xpath = "PartAssociation/STORELOCATION/LOT", enforceValidXpath = false, nullifyParentLevel = 0)
+    
     private String lot;
 
     // Linear Reference
     @Transient
-    @InforField(xpath = "LINEARREFERENCEDETAILS/LINEARREFPRECISION", nullifyParentLevel = 0)
+    
     private String linearRefPrecision;
     @Transient
-    @InforField(xpath = "LINEARREFERENCEDETAILS/LINEARREFUOM", nullifyParentLevel = 0)
+    
     private String linearRefUOM;
     @Transient
-    @InforField(xpath = "LINEARREFERENCEDETAILS/EQUIPMENTLENGTH", nullifyParentLevel = 0)
+    
     private BigDecimal linearRefEquipmentLength;
     @Transient
-    @InforField(xpath = "LINEARREFERENCEDETAILS/EQUIPMENTLENGTHUOM", nullifyParentLevel = 0)
+    
     private String linearRefEquipmentLengthUOM;
     @Transient
-    @InforField(xpath = "LINEARREFERENCEDETAILS/GEOGRAPHICALREFERENCE", nullifyParentLevel = 0)
+    
     private String linearRefGeographicalRef;
 
     // Variables
     @Transient
-    @InforField(xpath = "Variables/VARIABLE1", nullifyParentLevel = 0)
+    
     private String variable1;
     @Transient
-    @InforField(xpath = "Variables/VARIABLE2", nullifyParentLevel = 0)
+    
     private String variable2;
     @Transient
-    @InforField(xpath = "Variables/VARIABLE3", nullifyParentLevel = 0)
+    
     private String variable3;
     @Transient
-    @InforField(xpath = "Variables/VARIABLE4", nullifyParentLevel = 0)
+    
     private String variable4;
     @Transient
-    @InforField(xpath = "Variables/VARIABLE5", nullifyParentLevel = 0)
+    
     private String variable5;
     @Transient
-    @InforField(xpath = "Variables/VARIABLE6", nullifyParentLevel = 0)
+    
     private String variable6;
 
     // Dormant
     @Transient
-    @InforField(xpath = "DORMANT/DORMANTSTART")
+    
     private Date dormantStart;
     @Transient
-    @InforField(xpath = "DORMANT/DORMANTEND")
+    
     private Date dormantEnd;
     @Transient
-    @InforField(xpath = "DORMANT/DORMANTREUSE")
+    
     private String dormantReusePeriod;
 
     @Transient
-    @InforField(xpath = "UserDefinedFields")
+    
     private UserDefinedFields userDefinedFields;
 
     @Transient
-    @InforField(xpath = "SAFETY")
+    
     private String safety;
 
     @Transient
-    @InforField(xpath = "ORIGINALINSTALLDATE")
+    
     private Date originalInstallDate;
 
     public String getOrganization() {
@@ -539,11 +338,11 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
     }
 
     @Transient
-    @InforField(xpath = "XLOCATION")
+    
     private BigDecimal xLocation;
 
     @Transient
-    @InforField(xpath = "YLOCATION")
+    
     private BigDecimal yLocation;
 
     @Transient
@@ -574,48 +373,44 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
     private HashMap<String, ArrayList<UDLValue>> userDefinedList;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/ISVEHICLE", nullifyParentLevel = 0)
+    
     private Boolean vehicle;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/ISRENTAL", nullifyParentLevel = 0)
+    
     private Boolean rental;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/VEHICLETYPE/TYPECODE", nullifyParentLevel = 1)
+    
     private String vehicleTypeCode;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/AVAILABILITYSTATUS/STATUSCODE", nullifyParentLevel = 1)
+    
     private String availabilityStatus;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/ISSUETO/PERSONCODE", nullifyParentLevel = 1)
+    
     private String issueTo;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/CUSTOMERID/CUSTOMERCODE", nullifyParentLevel = 1)
+    
     private String customerCode;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/RENTALTEMPLATEID/RENTALTEMPLATECODE", nullifyParentLevel = 1)
+    
     private String rentalTemplateCode;
 
     @Transient
-    @InforField(xpath = "FleetVehicleInfo/RENTALTEMPLATEID/DESCRIPTION", nullifyParentLevel = 1, readOnly = true)
+    
     private String rentalTemplateDesc;
 
     @Transient
-    @InforField(xpath="CHECKLISTFILTER")
+    
     private String equipmentFilter;
 
-    @InforField(xpath = "WORKSPACEID/WORKSPACENUMBER")
     private String workspaceNo;
 
-    @InforField(xpath = "FUELID/FUELCODE")
     private String primaryFuel;
-
-
 
     public String getDescription() {
         return description;
@@ -690,8 +485,7 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
     }
 
     @JsonProperty("customField")
-    @XmlElementWrapper(name = "customFields")
-    @XmlElement(name = "customField")
+
     public CustomField[] getCustomFields() {
         return customFields;
     }
@@ -740,7 +534,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.costCodeDesc = costCodeDesc;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getComissionDate() {
         return comissionDate;
     }
@@ -749,7 +542,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.comissionDate = comissionDate;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getEquipmentValue() {
         return equipmentValue;
     }
@@ -814,7 +606,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.revision = revision;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getxCoordinate() {
         return xCoordinate;
     }
@@ -823,7 +614,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.xCoordinate = xCoordinate;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getyCoordinate() {
         return yCoordinate;
     }
@@ -832,7 +622,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.yCoordinate = yCoordinate;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getzCoordinate() {
         return zCoordinate;
     }
@@ -873,7 +662,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyAssetDesc = hierarchyAssetDesc;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyAssetDependent() {
         return hierarchyAssetDependent;
     }
@@ -882,7 +670,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyAssetDependent = hierarchyAssetDependent;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyAssetCostRollUp() {
         return hierarchyAssetCostRollUp;
     }
@@ -907,7 +694,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyPositionDesc = hierarchyPositionDesc;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyPositionDependent() {
         return hierarchyPositionDependent;
     }
@@ -916,7 +702,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyPositionDependent = hierarchyPositionDependent;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyPositionCostRollUp() {
         return hierarchyPositionCostRollUp;
     }
@@ -1021,7 +806,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.linearRefGeographicalRef = linearRefGeographicalRef;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getLinearRefEquipmentLength() {
         return linearRefEquipmentLength;
     }
@@ -1086,7 +870,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.variable6 = variable6;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getDormantStart() {
         return dormantStart;
     }
@@ -1095,7 +878,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.dormantStart = dormantStart;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getDormantEnd() {
         return dormantEnd;
     }
@@ -1120,7 +902,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.cGMP = cGMP;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getOutOfService() {
         return outOfService;
     }
@@ -1129,7 +910,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.outOfService = outOfService;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getInProduction() {
         return inProduction;
     }
@@ -1138,7 +918,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.inProduction = inProduction;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getCostOfNeededRepairs() {
         return costOfNeededRepairs;
     }
@@ -1147,7 +926,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.costOfNeededRepairs = costOfNeededRepairs;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getReplacementValue() {
         return replacementValue;
     }
@@ -1156,7 +934,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.replacementValue = replacementValue;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getFacilityConditionIndex() {
         return facilityConditionIndex;
     }
@@ -1173,7 +950,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.vendor = vendor;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getYearBuilt() {
         return yearBuilt;
     }
@@ -1182,7 +958,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.yearBuilt = yearBuilt;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getServiceLifetime() {
         return serviceLifetime;
     }
@@ -1191,7 +966,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.serviceLifetime = serviceLifetime;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getOriginalReceiptDate() {
         return originalReceiptDate;
     }
@@ -1216,7 +990,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.safety = safety;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getOriginalInstallDate() {
         return originalInstallDate;
     }
@@ -1399,7 +1172,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyPrimarySystemDesc = hierarchyPrimarySystemDesc;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyPrimarySystemDependent() {
         return hierarchyPrimarySystemDependent;
     }
@@ -1408,7 +1180,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.hierarchyPrimarySystemDependent = hierarchyPrimarySystemDependent;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getHierarchyPrimarySystemCostRollUp() {
         return hierarchyPrimarySystemCostRollUp;
     }
@@ -1508,7 +1279,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.userDefinedList = userDefinedList;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getVehicle() {
         return vehicle;
     }
@@ -1517,7 +1287,6 @@ public class Equipment implements Serializable, UserDefinedListHelpable {
         this.vehicle = vehicle;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getRental() {
         return rental;
     }

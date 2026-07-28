@@ -1,11 +1,10 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Pair implements Serializable {
+public class Pair  {
 
 	private String code;
 	private String desc;

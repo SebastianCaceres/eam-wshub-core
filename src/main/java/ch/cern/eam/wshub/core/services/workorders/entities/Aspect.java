@@ -40,8 +40,4 @@ public class Aspect {
 		return true;
 	}
 
-	
-
-
-
 }

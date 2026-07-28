@@ -1,28 +1,25 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "R5TRANSACTIONS")
-public class PhysicalInventory implements Serializable {
-    private static final long serialVersionUID = -6871230766779988176L;
+public class PhysicalInventory  {
 
     @Id
     @Column(name = "TRA_CODE")
-    @InforField(xpath = "TRANSACTIONID/TRANSACTIONCODE")
+    
     private String code;
 
     @Column(name = "TRA_DESC")
-    @InforField(xpath = "TRANSACTIONID/DESCRIPTION")
+    
     private String description;
 
     @Column(name = "TRA_FROMCODE")
-    @InforField(xpath = "STOREID/STORECODE")
+    
     private String store;
 
     @Column(name = "TRA_AUTH")
@@ -32,46 +29,37 @@ public class PhysicalInventory implements Serializable {
     private Date createdDate;
 
     @Column(name = "TRA_PERS")
-    @InforField(xpath = "ASSIGNEDTO/PERSONCODE")
+    
     private String assignedTo;
 
     @Column(name = "TRA_STATUS")
-    @InforField(xpath = "TRANSACTIONSTATUS/STATUSCODE")
+    
     private String status;
 
     @Transient
-    @InforField(xpath = "StandardUserDefinedFields")
+    
     private UserDefinedFields userDefinedFields;
 
     // the fields below are not stored on the database and are only used for creation
-    @InforField(xpath = "PARTID/PARTCODE")
+    
     private String part;
 
-    @InforField(xpath = "PARTCLASSID/CLASSCODE")
     private String partClass;
 
-    @InforField(xpath = "STOCKCLASSID/CLASSCODE")
     private String stockClass;
 
-    @InforField(xpath = "ABCCODE")
     private String abcClass;
 
-    @InforField(xpath = "INCLUDECONSIGNMENTITEM")
     private Boolean includeConsignmentItem;
 
-    @InforField(xpath = "FROMBIN/BIN")
     private String fromBin;
 
-    @InforField(xpath = "TOBIN/BIN")
     private String toBin;
 
-    @InforField(xpath = "STOCKDATE")
     private Date physicalInventoryDate;
 
-    @InforField(xpath = "INCLUDECHILDSTORES")
     private Boolean includeChildStores;
 
-    @InforField(xpath = "INCLUDEOUTOFSERVICEITEM")
     private Boolean includeOutOfServiceItem;
 
     public String getCode() {

@@ -1,16 +1,12 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name="R5ENTITYPARTS")
 @NamedQuery(name=PartAssociation.GET_PART_ASSOCIATION, query = "SELECT partass FROM PartAssociation partass WHERE (partass.partCode = :partCode OR :partCode IS NULL) AND partass.equipmentCode = :equipmentCode")
-public class PartAssociation implements Serializable {
+public class PartAssociation  {
 
 	public static final String GET_PART_ASSOCIATION = "GET_PART_ASSOCIATION";
 	@Id
@@ -31,7 +27,6 @@ public class PartAssociation implements Serializable {
 		this.partCode = partCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
@@ -74,7 +69,5 @@ public class PartAssociation implements Serializable {
 	public void setPk(String pk) {
 		this.pk = pk;
 	}
-	
-	
-	
+
 }

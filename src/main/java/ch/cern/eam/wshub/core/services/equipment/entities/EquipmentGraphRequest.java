@@ -1,15 +1,11 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import java.io.Serializable;
-
-public class EquipmentGraphRequest implements Serializable {
+public class EquipmentGraphRequest  {
 
 	private String equipmentCode;
 	private String linkTypes;
 	private int maxDepth;
-	
 
-	
 	public String getLinkTypes() {
 		return linkTypes;
 	}

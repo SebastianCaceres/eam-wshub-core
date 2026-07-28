@@ -1,20 +1,34 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
-
-import java.io.Serializable;
+import javax.persistence.*;
 import java.util.List;
 
-public class Store2StoreTransferDTO implements Serializable {
-    @InforField(xpath = "DESCRIPTION")
+@Entity
+@Table(name = "EAM_STORE_TRANSFERS")
+public class Store2StoreTransferDTO  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    
     private String description;
-    @InforField(xpath = "FROMSTOREID/STORECODE")
+    
     private String fromStoreCode;
-    @InforField(xpath = "TOSTOREID/STORECODE")
+    
     private String toStoreCode;
-    @InforField(xpath = "ADVICENUMBER")
+    
     private String adviceNumber;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "TRANSFER_ID")
     private List<StoreTransactionPartLine> partLines;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getDescription() {
         return description;

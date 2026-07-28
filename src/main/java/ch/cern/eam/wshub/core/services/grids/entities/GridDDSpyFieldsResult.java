@@ -1,12 +1,7 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import java.io.Serializable;
+public class GridDDSpyFieldsResult  {
 
-public class GridDDSpyFieldsResult implements Serializable {
-	private static final long serialVersionUID = 7166460915418241252L;
-	
 	private GridField[] gridFields;
 	private String dataSpyId;
 	
@@ -16,9 +11,7 @@ public class GridDDSpyFieldsResult implements Serializable {
 	public void setDataSpyId(String dataSpyId) {
 		this.dataSpyId = dataSpyId;
 	}
-	
-	@XmlElementWrapper(name="gridFields") 
-    @XmlElement(name="gridField")
+
 	public GridField[] getGridFields() {
 		return gridFields;
 	}

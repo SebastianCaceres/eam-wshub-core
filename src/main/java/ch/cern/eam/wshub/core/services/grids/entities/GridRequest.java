@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.datastream.schemas.mp_functions.gridrequest.GRID;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import java.io.Serializable;
 import java.util.*;
 
-public class GridRequest implements Serializable {
-	private static final long serialVersionUID = 6690766576660475229L;
+public class GridRequest  {
 
 	public enum GRIDTYPE {
 		LIST, LOV
@@ -150,8 +146,7 @@ public class GridRequest implements Serializable {
 	}
 
 	@JsonProperty("gridSort")
-	@XmlElementWrapper(name="gridSorts")
-	@XmlElement(name="gridSort")
+
 	public GridRequestSort[] getGridRequestSorts() {
 		return gridRequestSorts;
 	}
@@ -161,8 +156,7 @@ public class GridRequest implements Serializable {
 	}
 
 	@JsonProperty("gridFilter")
-	@XmlElementWrapper(name="gridFilters")
-    @XmlElement(name="gridFilter")
+
 	public List<GridRequestFilter> getGridRequestFilters() {
 		if (gridRequestFilters == null) {
 			gridRequestFilters = new LinkedList<>();
@@ -204,7 +198,6 @@ public class GridRequest implements Serializable {
 		}
 		return params;
 	}
-
 
 	public void setParams(Map<String, String> params) {
 		this.params = params;

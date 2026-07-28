@@ -1,8 +1,5 @@
 package ch.cern.eam.wshub.core.services.administration.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 
 public class DataspyCopy {
@@ -11,7 +8,6 @@ public class DataspyCopy {
     private String userCode;
     private Boolean defaultDataspy = false;
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getDataspyCode() {
         return dataspyCode;
     }

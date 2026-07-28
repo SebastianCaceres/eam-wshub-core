@@ -1,9 +1,7 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
 import ch.cern.eam.wshub.core.annotations.GridField;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 
 public class WorkOrderPart implements Cloneable {
@@ -46,7 +44,6 @@ public class WorkOrderPart implements Cloneable {
 		this.partCode = partCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getPlannedQty() {
 		return plannedQty;
 	}
@@ -54,7 +51,6 @@ public class WorkOrderPart implements Cloneable {
 		this.plannedQty = plannedQty;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getReservedQty() {
 		return reservedQty;
 	}
@@ -80,7 +76,6 @@ public class WorkOrderPart implements Cloneable {
 		this.storeCode = storeCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getAllocatedQty() {
 		return allocatedQty;
 	}
@@ -112,14 +107,12 @@ public class WorkOrderPart implements Cloneable {
 	public String getActivityDesc() { return activityDesc; }
 	public void setActivityDesc(String activityDesc) { this.activityDesc = activityDesc; }
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUsedQty() { return usedQty; }
 	public void setUsedQty(BigDecimal usedQty) { this.usedQty = usedQty; }
 
 	public String getTransType() { return transType; }
 	public void setTransType(String transType) { this.transType = transType; }
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getQuantity() { return quantity; }
 
 	public void setQuantity(BigDecimal quantity) { this.quantity = quantity; }

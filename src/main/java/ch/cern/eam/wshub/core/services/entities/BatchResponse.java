@@ -1,6 +1,5 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,7 +7,7 @@ import java.util.List;
  * Container of one single response, in the context of a batch request
  * @param <T> Type of the response
  */
-public final class BatchResponse<T> implements Serializable {
+public final class BatchResponse<T>  {
 
     private List<BatchSingleResponse<T>> responseList;
 

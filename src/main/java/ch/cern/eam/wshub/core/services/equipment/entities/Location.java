@@ -1,63 +1,57 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import java.io.Serializable;
 import java.util.Arrays;
 
-public class Location implements Serializable {
-	private static final long serialVersionUID = 3553041780598655021L;
+public class Location  {
 
 	@Id
 	@Column(name = "OBJ_CODE")
-	@InforField(xpath = "LOCATIONID/LOCATIONCODE")
+	
 	private String code;
 
 	@Column(name = "OBJ_DESC")
-	@InforField(xpath = "LOCATIONID/DESCRIPTION")
+	
 	private String description;
 
 	@Transient
-	@InforField(xpath = "USERDEFINEDAREA")
+	
 	private CustomField[] customFields;
 
 	@Transient
-	@InforField(xpath = "DEPARTMENTID/DEPARTMENTCODE")
+	
 	private String departmentCode;
 
 	@Transient
-	@InforField(xpath = "DEPARTMENTID/DESCRIPTION")
+	
 	private String departmentDesc;
 
 	@Transient
-	@InforField(xpath = "CLASSID/CLASSCODE")
+	
 	private String classCode;
 	@Transient
-	@InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+	
 	private String classDesc;
 
 	@Transient
-	@InforField(xpath = "SAFETY", booleanType = BooleanType.TRUE_FALSE)
+	
 	private Boolean safety;
 
 	@Transient
-	@InforField(xpath = "OUTOFSERVICE", booleanType = BooleanType.TRUE_FALSE)
+	
 	private Boolean outOfService;
 
 	@Transient
-	@InforField(xpath = "COSTCODEID/COSTCODE")
+	
 	private String costCode;
 
 	@Transient
-	@InforField(xpath = "UserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
@@ -81,8 +75,7 @@ public class Location implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	@XmlElementWrapper(name="customFields") 
-    @XmlElement(name="customField")
+
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}

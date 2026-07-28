@@ -162,7 +162,5 @@ public class TaskplanCheckList {
 	public void setClassCode(String classCode) {
 		this.classCode = classCode;
 	}
-	
-	
-	
+
 }

@@ -1,9 +1,6 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import java.io.Serializable;
-
-public class Credentials implements Serializable {
-	private static final long serialVersionUID = -196214034034845021L;
+public class Credentials  {
 
 	public Credentials() {
 		super();

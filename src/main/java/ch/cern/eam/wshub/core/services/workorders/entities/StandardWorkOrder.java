@@ -1,72 +1,52 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigIntegerAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
 
 public class StandardWorkOrder {
 
-    @InforField(xpath = "STANDARDWO/STDWOCODE")
     private String code;
-    @InforField(xpath = "STANDARDWO/DESCRIPTION")
+    
     private String desc;
 
-    @InforField(xpath = "TYPE/TYPECODE")
     private String typeCode;
-    @InforField(xpath = "TYPE/DESCRIPTION", readOnly = true)
+    
     private String typeDesc;
 
-    @InforField(xpath = "WORKORDERTYPE/TYPECODE")
     private String workOrderTypeCode;
-    @InforField(xpath = "WORKORDERTYPE/DESCRIPTION", readOnly = true)
+    
     private String workOrderTypeDesc;
 
-    @InforField(xpath = "DURATION")
     private BigInteger duration;
 
-    @InforField(xpath = "CLASSID/CLASSCODE")
     private String classCode;
-    @InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+    
     private String classDesc;
 
-    @InforField(xpath = "WORKORDERCLASSID/CLASSCODE")
     private String woClassCode;
-    @InforField(xpath = "WORKORDERCLASSID/DESCRIPTION", readOnly = true)
+    
     private String woClassDesc;
 
-    @InforField(xpath = "EQUIPMENTCLASSID/CLASSCODE")
     private String equipmentClassCode;
-    @InforField(xpath = "EQUIPMENTCLASSID/DESCRIPTION", readOnly = true)
+    
     private String equipmentCassDesc;
 
-    @InforField(xpath = "CATEGORYID/CATEGORYCODE")
     private String categoryCode;
-    @InforField(xpath = "CATEGORYID/DESCRIPTION", readOnly = true)
+    
     private String categoryDesc;
 
-    @InforField(xpath = "PRIORITY/PRIORITYCODE")
     private String priorityCode;
-    @InforField(xpath = "PRIORITY/DESCRIPTION", readOnly = true)
+    
     private String priorityDesc;
 
-    @InforField(xpath = "OUTOFSERVICE", booleanType = BooleanType.TRUE_FALSE)
     private Boolean outOfService = false;
 
-    @InforField(xpath = "USERDEFINEDAREA")
     private CustomField[] customFields;
 
-    @InforField(xpath = "UserDefinedFields")
     private UserDefinedFields userDefinedFields;
 
-    @InforField(xpath = "PROBLEMCODEID/PROBLEMCODE")
     private String problemCode;
 
     public String getCode() {
@@ -133,7 +113,6 @@ public class StandardWorkOrder {
         this.workOrderTypeDesc = workOrderTypeDesc;
     }
 
-    @XmlJavaTypeAdapter(BigIntegerAdapter.class)
     public BigInteger getDuration() {
         return duration;
     }
@@ -206,7 +185,6 @@ public class StandardWorkOrder {
         this.priorityDesc = priorityDesc;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getOutOfService() {
         return outOfService;
     }
@@ -215,8 +193,6 @@ public class StandardWorkOrder {
         this.outOfService = outOfService;
     }
 
-    @XmlElementWrapper(name = "customFields")
-    @XmlElement(name = "customField")
     public CustomField[] getCustomFields() {
         return customFields;
     }

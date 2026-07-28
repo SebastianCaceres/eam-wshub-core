@@ -1,18 +1,12 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Entity
-public class EquipmentGenerationEntity implements Serializable {
+public class EquipmentGenerationEntity  {
 
     @Transient
     private String equipmentGenerationCode;
@@ -141,8 +135,6 @@ public class EquipmentGenerationEntity implements Serializable {
     @Transient
     private String commissioningWODepartmentDesc;
 
-
-
     public String getEquipmentGenerationCode() {
         return equipmentGenerationCode;
     }
@@ -174,7 +166,7 @@ public class EquipmentGenerationEntity implements Serializable {
     public void setEquipmentConfigurationCode(String equipmentConfigurationCode) {
         this.equipmentConfigurationCode = equipmentConfigurationCode;
     }
-    @XmlJavaTypeAdapter(DateAdapter.class)
+    
     public Date getLastUpdatedDate() {
         return lastUpdatedDate;
     }
@@ -182,7 +174,7 @@ public class EquipmentGenerationEntity implements Serializable {
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
     }
-    @XmlJavaTypeAdapter(DateAdapter.class)
+    
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -190,7 +182,7 @@ public class EquipmentGenerationEntity implements Serializable {
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
-    @XmlJavaTypeAdapter(DateAdapter.class)
+    
     public Date getDateUpdated() {
         return dateUpdated;
     }
@@ -247,7 +239,6 @@ public class EquipmentGenerationEntity implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getRevisionNum() {
         return revisionNum;
     }
@@ -284,7 +275,6 @@ public class EquipmentGenerationEntity implements Serializable {
         this.statusDesc = statusDesc;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getGenerateCount() {
         return generateCount;
     }

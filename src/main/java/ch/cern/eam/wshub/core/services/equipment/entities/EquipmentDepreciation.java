@@ -1,18 +1,14 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name="R5OBJDEPTYPES")
 @NamedQuery(name = EquipmentDepreciation.GETDEPRECIATION, query = "SELECT ed FROM EquipmentDepreciation ed where ed.equipmentCode = :equipmentCode")
-public class EquipmentDepreciation implements Serializable {
+public class EquipmentDepreciation  {
 
 	public static final String GETDEPRECIATION = "GETDEPRECIATION";
 	@Id
@@ -38,7 +34,7 @@ public class EquipmentDepreciation implements Serializable {
 	private String depreciationCategory;
 
 	@Transient
-	@InforField(xpath = "StandardUserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
@@ -47,8 +43,7 @@ public class EquipmentDepreciation implements Serializable {
 	private BigDecimal changeLife;
 	@Transient
 	private BigDecimal changeEstimatedLifetimeOutput;
-	
-	
+
 	public String getDepreciationMethod() {
 		return depreciationMethod;
 	}
@@ -56,7 +51,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.depreciationMethod = depreciationMethod;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getOriginalValue() {
 		return originalValue;
 	}
@@ -64,7 +58,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.originalValue = originalValue;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getEstimatedUsefulLife() {
 		return estimatedUsefulLife;
 	}
@@ -72,7 +65,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.estimatedUsefulLife = estimatedUsefulLife;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getResidualValue() {
 		return residualValue;
 	}
@@ -80,16 +72,13 @@ public class EquipmentDepreciation implements Serializable {
 		this.residualValue = residualValue;
 	}
 
-
 	public String getEquipmentCode() {
 		return equipmentCode;
 	}
 	public void setEquipmentCode(String equipmentCode) {
 		this.equipmentCode = equipmentCode;
 	}
-	
 
-	
 	public String getEstimatedUsefulLifeUOM() {
 		return estimatedUsefulLifeUOM;
 	}
@@ -122,7 +111,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.depreciationType = depreciationType;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getDepreciationPK() {
 		return depreciationPK;
 	}
@@ -130,7 +118,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.depreciationPK = depreciationPK;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getChangeValue() {
 		return changeValue;
 	}
@@ -138,7 +125,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.changeValue = changeValue;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getChangeLife() {
 		return changeLife;
 	}
@@ -146,7 +132,6 @@ public class EquipmentDepreciation implements Serializable {
 		this.changeLife = changeLife;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getChangeEstimatedLifetimeOutput() {
 		return changeEstimatedLifetimeOutput;
 	}
@@ -185,7 +170,5 @@ public class EquipmentDepreciation implements Serializable {
 						+ changeEstimatedLifetimeOutput
 						: "") + "]";
 	}
-	
-	
-	
+
 }

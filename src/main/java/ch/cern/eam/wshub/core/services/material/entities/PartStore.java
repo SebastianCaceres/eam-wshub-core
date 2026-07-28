@@ -1,12 +1,8 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class PartStore implements Serializable {
+public class PartStore  {
 
 	private String storeCode;
 	private String preferredSupplier;
@@ -40,7 +36,6 @@ public class PartStore implements Serializable {
 		this.abcClass = abcClass;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getReorderLevel() {
 		return reorderLevel;
 	}
@@ -48,7 +43,6 @@ public class PartStore implements Serializable {
 		this.reorderLevel = reorderLevel;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getOrderQty() {
 		return orderQty;
 	}
@@ -104,7 +98,6 @@ public class PartStore implements Serializable {
 		this.preferredStore = preferredStore;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMinimumQty() {
 		return minimumQty;
 	}
@@ -124,6 +117,5 @@ public class PartStore implements Serializable {
 	public void setStockMethod(String stockMethod) {
 		this.stockMethod = stockMethod;
 	}
-	
-	
+
 }

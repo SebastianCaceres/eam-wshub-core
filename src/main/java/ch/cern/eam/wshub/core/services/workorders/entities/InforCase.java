@@ -1,25 +1,15 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
 @Entity
 @Table(name = "R5CASEMANAGEMENT")
-public class InforCase implements Serializable, Cloneable {
-	private static final long serialVersionUID = 2632244342851353370L;
+public class InforCase implements Cloneable {
 
 	@Id
 	@Column(name = "CSM_CODE")
@@ -116,11 +106,11 @@ public class InforCase implements Serializable, Cloneable {
 	private Date eventenddate;
 
 	@Transient
-	@InforField(xpath = "USERDEFINEDAREA")
+	
 	private CustomField[] customFields;
 
 	@Transient
-	@InforField(xpath = "StandardUserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	//
@@ -351,8 +341,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.assignedToEMail = assignedToEMail;
 	}
 
-	@XmlElementWrapper(name = "customFields")
-	@XmlElement(name = "customField")
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}
@@ -377,7 +365,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.locationDesc = locationDesc;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getScheduledStartDate() {
 		return scheduledStartDate;
 	}
@@ -386,7 +373,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.scheduledStartDate = scheduledStartDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getScheduledEndDate() {
 		return scheduledEndDate;
 	}
@@ -395,7 +381,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.scheduledEndDate = scheduledEndDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRequestedStartDate() {
 		return requestedStartDate;
 	}
@@ -404,7 +389,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.requestedStartDate = requestedStartDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRequestedEndDate() {
 		return requestedEndDate;
 	}
@@ -413,7 +397,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.requestedEndDate = requestedEndDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -422,7 +405,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.startDate = startDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getCompletedDate() {
 		return completedDate;
 	}
@@ -431,7 +413,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.completedDate = completedDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -440,7 +421,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.createDate = createDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUpdatedDate() {
 		return updatedDate;
 	}
@@ -449,7 +429,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.updatedDate = updatedDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getDaterequested() {
 		return daterequested;
 	}
@@ -458,7 +437,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.daterequested = daterequested;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getEventenddate() {
 		return eventenddate;
 	}
@@ -467,7 +445,6 @@ public class InforCase implements Serializable, Cloneable {
 		this.eventenddate = eventenddate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getEventstartdate() {
 		return eventstartdate;
 	}

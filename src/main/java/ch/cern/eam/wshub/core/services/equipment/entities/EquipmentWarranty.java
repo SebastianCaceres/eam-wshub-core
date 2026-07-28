@@ -1,17 +1,12 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name="R5WARCOVERAGES")
 @NamedQuery(name = EquipmentWarranty.GETEQPWARRANTY, query = "SELECT ew FROM EquipmentWarranty ew WHERE ew.equipmentCode = :equipmentCode AND (ew.warrantyCode = :warrantyCode OR :warrantyCode IS NULL)")
-public class EquipmentWarranty implements Serializable {
+public class EquipmentWarranty  {
 
 	public static final String GETEQPWARRANTY = "GETEQPWARRANTY";
 	@Id
@@ -53,7 +48,6 @@ public class EquipmentWarranty implements Serializable {
 		this.duration = duration;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getThreshold() {
 		return threshold;
 	}
@@ -73,7 +67,6 @@ public class EquipmentWarranty implements Serializable {
 		this.expirationDate = expirationDate;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getActive() {
 		return active;
 	}
@@ -106,6 +99,5 @@ public class EquipmentWarranty implements Serializable {
 				+ (expirationDate != null ? "expirationDate=" + expirationDate + ", " : "")
 				+ (active != null ? "active=" + active : "") + "]";
 	}
-	
-	
+
 }

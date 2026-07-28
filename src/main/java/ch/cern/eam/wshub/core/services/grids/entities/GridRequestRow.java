@@ -1,21 +1,11 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import java.io.Serializable;
 import java.util.Arrays;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-public class GridRequestRow implements Serializable {
-	private static final long serialVersionUID = 19553031459847746L;
-	
-	@XmlElement(name = "cell")
+public class GridRequestRow  {
+
 	private GridRequestCell[] cell;
-	
-    @XmlAttribute(name = "id")
+
     private String id;
     
 	public GridRequestCell[] getCell() {

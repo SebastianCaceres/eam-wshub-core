@@ -1,11 +1,8 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import java.io.Serializable;
-
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-public class PurchaseOrder implements Serializable {
-	private static final long serialVersionUID = 7260288685572669628L; 
+public class PurchaseOrder  {
 
 	private String purchaseOrderId;
 	private String statusCode;

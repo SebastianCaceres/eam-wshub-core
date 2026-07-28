@@ -1,49 +1,34 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
-
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class WorkOrderActivityChecklistDefaultResult implements Serializable {
-    @InforField(xpath = "PERFORMEDBYESIGN/ESIGNATURE/USERID/DESCRIPTION")
+public class WorkOrderActivityChecklistDefaultResult  {
+    
     private String performer1Name;
 
-    @InforField(xpath = "PERFORMEDBYESIGN2/ESIGNATURE/USERID/DESCRIPTION")
     private String performer2Name;
 
-    @InforField(xpath = "REVIEWEDBYESIGN/ESIGNATURE/USERID/DESCRIPTION")
     private String reviewerName;
 
-    @InforField(xpath = "PERFORMBYRESPONSIBILITY/USERDEFINEDCODE")
     private String performer1Qualification;
 
-    @InforField(xpath = "PERFORMBY2RESPONSIBILITY/USERDEFINEDCODE")
     private String performer2Qualification;
 
-    @InforField(xpath = "REVIEWRESPONSIBILITY/USERDEFINEDCODE")
     private String  reviewerQualification;
 
-    @InforField(xpath = "REJECTIONREASON")
     private String rejectionReason;
 
-    @InforField(xpath = "REJECTPERFORMEDBY")
     private String rejectPerformedBy;
 
-    @InforField(xpath = "REJECTPERFORMEDBY2")
     private String rejectPerformedBy2;
 
-    @InforField(xpath = "USERRESPONSIBILITY")
     List<UserQualification> userQualifications;
 
-    @InforField(xpath = "PERFORMEDBYESIGN/ESIGNATURE/EXTERNALDATETIME")
     Date timePerf1;
 
-    @InforField(xpath = "PERFORMEDBYESIGN2/ESIGNATURE/EXTERNALDATETIME")
     Date timePerf2;
 
-    @InforField(xpath = "REVIEWEDBYESIGN/ESIGNATURE/EXTERNALDATETIME")
     Date timeRev1;
 
     public WorkOrderActivityChecklistDefaultResult(){

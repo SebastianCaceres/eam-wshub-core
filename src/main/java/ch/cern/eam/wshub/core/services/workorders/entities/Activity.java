@@ -1,14 +1,7 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BigIntegerAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.annotations.GridField;
-import ch.cern.eam.wshub.core.annotations.InforField;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -18,64 +11,61 @@ import java.util.Map;
 @Entity
 @NamedNativeQuery(name = "FINDACT", query = "select * from R5ACTIVITIES LEFT OUTER JOIN R5TASKS ON R5ACTIVITIES.ACT_TASK = R5TASKS.TSK_CODE WHERE ACT_EVENT = :workOrder ORDER BY ACT_ACT", resultClass = Activity.class)
 @Table(name = "R5ACTIVITIES")
-public class Activity implements Serializable {
-
-	@Transient
-	private static final long serialVersionUID = 2747408324574455910L;
+public class Activity  {
 
 	@Id
 	@Column(name = "ACT_ACT")
 	@GridField(name="activity")
-	@InforField(xpath = "ACTIVITYID/ACTIVITYCODE/value")
+	
 	private BigInteger activityCode;
 
 	@Column(name = "ACT_NOTE")
 	@GridField(name="activitynote")
-	@InforField(xpath = "ACTIVITYID/ACTIVITYNOTE", nullifyParentLevel = 0)
+	
 	private String activityNote;
 
 	@Column(name = "ACT_EVENT")
 	@GridField(name="workordernum")
-	@InforField(xpath = "ACTIVITYID/WORKORDERID/JOBNUM")
+	
 	private String workOrderNumber;
 
 	@Column(name = "ACT_PERSONS")
 	@GridField(name="personsreq")
-	@InforField(xpath = "PERSONS")
+	
 	private BigInteger peopleRequired;
 
 	@Column(name = "ACT_EST")
 	@GridField(name="esthrs")
-	@InforField(xpath = "ESTIMATEDHOURS")
+	
 	private BigDecimal estimatedHours;
 
 	@Column(name = "ACT_REM")
 	@GridField(name="hrsremain")
-	@InforField(xpath = "HOURSREMAINING")
+	
 	private BigDecimal hoursRemaining;
 
 	@Column(name = "ACT_START")
 	@GridField(name="actstartdate")
-	@InforField(xpath = "ACTIVITYSTARTDATE")
+	
 	private Date startDate;
 
 	@Transient
 	@GridField(name="actenddate")
-	@InforField(xpath = "ACTIVITYENDDATE")
+	
 	private Date endDate;
 
 	@Column(name = "ACT_MATLIST")
 	@GridField(name="matlcode")
-	@InforField(xpath = "MATLIST/MTLCODE")
+	
 	private String materialList;
 
 	@Column(name = "ACT_TASK")
 	@GridField(name="task")
-	@InforField(xpath = "TASKSID/TASKCODE")
+	
 	private String taskCode;
 
 	@Column(name = "TSK_DESC")
-	@InforField(xpath = "TASKSID/DESCRIPTION")
+	
 	private String taskDesc;
 
 	@Column(name = "TSK_REVISION")
@@ -84,17 +74,17 @@ public class Activity implements Serializable {
 
 	@Column(name = "ACT_TRADE")
 	@GridField(name="trade")
-	@InforField(xpath = "TRADEID/TRADECODE")
+	
 	private String tradeCode;
 
 	@Column(name = "ACT_QTY")
 	@GridField(name="taskqty")
-	@InforField(xpath = "TASKSID/TASKQUANTITY")
+	
 	private BigDecimal taskQty;
 
 	@Column(name = "ACT_PERCOMPLETE")
 	@GridField(name="percentcomplete")
-	@InforField(xpath = "PERCENTCOMPLETED")
+	
 	private String percentCompleted;
 
 	@Transient
@@ -114,7 +104,6 @@ public class Activity implements Serializable {
 		this.workOrderNumber = workOrderNumber;
 	}
 
-	@XmlJavaTypeAdapter(BigIntegerAdapter.class)
 	public BigInteger getPeopleRequired() {
 		return peopleRequired;
 	}
@@ -123,7 +112,6 @@ public class Activity implements Serializable {
 		this.peopleRequired = peopleRequired;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getEstimatedHours() {
 		return estimatedHours;
 	}
@@ -132,7 +120,6 @@ public class Activity implements Serializable {
 		this.estimatedHours = estimatedHours;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -141,7 +128,6 @@ public class Activity implements Serializable {
 		this.startDate = startDate;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -174,7 +160,6 @@ public class Activity implements Serializable {
 		this.tradeCode = tradeCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getHoursRemaining() {
 		return hoursRemaining;
 	}
@@ -183,7 +168,6 @@ public class Activity implements Serializable {
 		this.hoursRemaining = hoursRemaining;
 	}
 
-	@XmlJavaTypeAdapter(BigIntegerAdapter.class)
 	public BigInteger getActivityCode() {
 		return activityCode;
 	}
@@ -216,7 +200,6 @@ public class Activity implements Serializable {
 		this.checklists = checklists;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getTaskQty() {
 		return taskQty;
 	}

@@ -1,27 +1,19 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class MeterReading implements Serializable {
-    private static final long serialVersionUID = -3004563411794265577L;
+public class MeterReading  {
 
-    @InforField(xpath = "USAGEUOMID/UOMCODE")
     private String UOM;
-    @InforField(xpath = "TARGETEQUIPMENTID/EQUIPMENTCODE")
+    
     private String equipmentCode;
-    @InforField(xpath = "TARGETEQUIPMENTID/ORGANIZATIONID/ORGANIZATIONCODE")
+    
     private String equipmentOrganization;
     private BigDecimal actualValue;
     private BigDecimal differenceValue;
     private Date readingDate;
-    @InforField(xpath = "WORKORDERID/JOBNUM")
+    
     private String woNumber;
 
     public String getUOM() {
@@ -48,7 +40,6 @@ public class MeterReading implements Serializable {
         this.equipmentOrganization = equipmentOrganization;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getActualValue() {
         return actualValue;
     }
@@ -56,7 +47,6 @@ public class MeterReading implements Serializable {
         this.actualValue = actualValue;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getDifferenceValue() {
         return differenceValue;
     }
@@ -64,7 +54,6 @@ public class MeterReading implements Serializable {
         this.differenceValue = differenceValue;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getReadingDate() {
         return readingDate;
     }
@@ -86,6 +75,5 @@ public class MeterReading implements Serializable {
     public void setWoNumber(String woNumber) {
         this.woNumber = woNumber;
     }
-
 
 }

@@ -1,50 +1,47 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Arrays;
 
 @Entity
 @Table(name = "R5OBJECTS")
-public class Category implements Serializable {
+public class Category  {
 
     @Id
     @Column(name = "OBJ_CODE")
-    @InforField(xpath = "CATEGORYID/CATEGORYCODE")
+    
     private String code;
 
     @Column(name = "OBJ_DESC")
-    @InforField(xpath = "CATEGORYID/DESCRIPTION")
+    
     private String description;
 
     @Transient
-    @InforField(xpath = "CLASSID/CLASSCODE")
+    
     private String classCode;
 
     @Transient
-    @InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+    
     private String classDesc;
 
     @Transient
-    @InforField(xpath = "MANUFACTURERID/MANUFACTURERCODE")
+    
     private String manufacturerCode;
 
     @Transient
-    @InforField(xpath = "MANUFACTURERID/DESCRIPTION")
+    
     private String manufacturerDesc;
 
     @Transient
     @Column(name = "OBJ_SCHEMATIC")
-    @InforField(xpath= "SCHEMATICID/USERDEFINEDCODE")
+    
     private String schematic;
 
     @Transient
-    @InforField(xpath = "USERDEFINEDAREA")
+    
     private CustomField[] customFields;
-
 
     public String getCode() {
         return code;

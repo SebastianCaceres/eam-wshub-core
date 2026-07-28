@@ -1,24 +1,13 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
+public class Bin  {
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-
-public class Bin implements Serializable {
-
-	@InforField(xpath = "STOREBINID/STOREID/STORECODE", nullifyParentLevel = 1)
 	private String storeCode;
 
-	@InforField(xpath = "STOREBINID/BINID/BIN", nullifyParentLevel = 1)
 	private String binCode;
 
-	@InforField(xpath = "STOREBINID/BINID/DESCRIPTION", nullifyParentLevel = 0)
 	private String binDesc;
 
-	@InforField(xpath = "OUTOFSERVICE", booleanType = BooleanType.PLUS_MINUS)
 	private Boolean outOfService;
 
 	public String getStoreCode() {
@@ -45,7 +34,6 @@ public class Bin implements Serializable {
 		this.binDesc = binDesc;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getOutOfService() {
 		return outOfService;
 	}

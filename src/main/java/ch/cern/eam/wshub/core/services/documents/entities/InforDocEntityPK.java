@@ -1,9 +1,7 @@
 package ch.cern.eam.wshub.core.services.documents.entities;
-
 import java.io.Serializable;
 
-public class InforDocEntityPK implements Serializable {
-	private static final long serialVersionUID = -4636805288760053482L;
+public class InforDocEntityPK implements Serializable  {
 
 	private String document;
 	private String code;

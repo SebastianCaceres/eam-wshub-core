@@ -1,8 +1,6 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
-
 @Entity
 @NamedNativeQueries({
 		@NamedNativeQuery(name = GridField.GETDDSPYFIELDS, query = "select dqf_ddspyid, gfd_fieldid, gfd_tagname, "
@@ -24,9 +22,8 @@ import java.io.Serializable;
 				+ "     join r5functions on gfd_botfunction = fun_code   " + " where gfd_gridid = :gridid   "
 				+ " and dqf_viewtype = :viewtype  " + " order by bot_text  ", resultClass = GridField.class) })
 @Table(name = "r5gridfield")
-public class GridField implements Serializable {
+public class GridField  {
 
-	private static final long serialVersionUID = 769608262540390595L;
 	public static final String GETDDSPYFIELDS = "GridField.GETDDSPYFIELDS";
 	public static final String GETGRIDFIELDS = "GridField.GETGRIDFIELDS";
 

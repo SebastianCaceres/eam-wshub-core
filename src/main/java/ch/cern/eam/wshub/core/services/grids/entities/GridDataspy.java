@@ -3,8 +3,6 @@ package ch.cern.eam.wshub.core.services.grids.entities;
 import ch.cern.eam.wshub.core.tools.BooleanTFConverter;
 
 import javax.persistence.*;
-import java.io.Serializable;
-
 @Entity
 @NamedNativeQueries({
 	@NamedNativeQuery(name=GridDataspy.GETGRIDDDSFILTER_AND_SORT_STRXML,
@@ -122,9 +120,8 @@ import java.io.Serializable;
 	)
 })
 @Table(name="r5dddataspy")
-public class GridDataspy implements Serializable {
-	
-	private static final long serialVersionUID = -3798374167695279787L;
+public class GridDataspy  {
+
 	public static final String GETGRIDDDSFILTER_AND_SORT_STRXML = "GridDataspy.GETGRIDDDSFILTER_AND_SORT_STRXML";
 	public static final String GETGRIDDATASPIES = "GridDataspy.GETGRIDDATASPIESS";
 	public static final String GETGRIDDATASPYQUERY = "GridDataspy.GETGRIDDATASPYQUERY";

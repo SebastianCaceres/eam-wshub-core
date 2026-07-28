@@ -1,30 +1,26 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
 @Getter
 @Setter
 @ToString
 public class Lot {
 
-    @InforField(xpath = "LOTID/LOTCODE")
     private String code;
-    @InforField(xpath = "LOTID/DESCRIPTION")
+    
     private String desc;
-    @InforField(xpath = "CLASSID/CLASSCODE")
+    
     private String classCode;
-    @InforField(xpath = "EXPIRATIONDATE")
+    
     private Date expirationDate;
-    @InforField(xpath = "MANUFACTLOT")
+    
     private String manufacturerLot;
-    @InforField(xpath = "StandardUserDefinedFields")
+    
     private UserDefinedFields userDefinedFields;
 
     public String getCode() {
@@ -51,7 +47,6 @@ public class Lot {
         this.classCode = classCode;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getExpirationDate() {
         return expirationDate;
     }

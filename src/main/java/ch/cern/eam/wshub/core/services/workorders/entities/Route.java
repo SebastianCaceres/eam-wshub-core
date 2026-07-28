@@ -1,44 +1,28 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
 import java.util.Date;
 
 public class Route {
 
-    @InforField(xpath = "ROUTEID/ROUTECODE")
     private String code;
 
-    @InforField(xpath = "ROUTEID/DESCRIPTION")
     private String desc;
 
-    @InforField(xpath = "ROUTEID/ROUTEREVISION")
     private BigInteger revision;
 
-    @InforField(xpath = "CLASSID/CLASSCODE")
     private String equipmentClassCode;
 
-    @InforField(xpath = "CATEGORYID/CATEGORYCODE")
     private String categoryCode;
 
-    @InforField(xpath = "REVISIONSTATUS/STATUSCODE")
     private String revisionStatusCode;
 
-    @InforField(xpath = "ROUTETEMPLATE", booleanType = BooleanType.TRUE_FALSE)
     private Boolean template;
 
-    @InforField(xpath = "REVISIONCONTROL/APPROVEDATE")
     private Date dateApproved;
 
-    @InforField(xpath = "REVISIONCONTROL/DATEREQUESTED")
     private Date dateRequested;
 
-    @InforField(xpath = "REVISIONCONTROL/REVISIONREASON")
     private String revisionReason;
 
     public String getCode() {
@@ -89,7 +73,6 @@ public class Route {
         this.revisionStatusCode = revisionStatusCode;
     }
 
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     public Boolean getTemplate() {
         return template;
     }
@@ -98,7 +81,6 @@ public class Route {
         this.template = template;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getDateApproved() {
         return dateApproved;
     }
@@ -107,7 +89,6 @@ public class Route {
         this.dateApproved = dateApproved;
     }
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getDateRequested() {
         return dateRequested;
     }

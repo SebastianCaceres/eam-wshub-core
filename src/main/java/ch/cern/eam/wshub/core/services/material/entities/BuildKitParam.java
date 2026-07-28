@@ -1,11 +1,9 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildKitParam implements Serializable {
-	private static final long serialVersionUID = 7865040704362527306L;
+public class BuildKitParam  {
 
 	private String sessionID;  
 	private String storeCode;
@@ -60,8 +58,5 @@ public class BuildKitParam implements Serializable {
 	public void setKitLotDescription(String kitLotDescription) {
 		this.kitLotDescription = kitLotDescription;
 	}
-	
-	
-	
-	
+
 }

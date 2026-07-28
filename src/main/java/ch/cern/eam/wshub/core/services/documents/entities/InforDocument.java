@@ -1,7 +1,5 @@
 package ch.cern.eam.wshub.core.services.documents.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,8 +13,7 @@ import javax.persistence.Table;
 	@NamedQuery(name = InforDocument.GET_DOCUMENTS, query = "select doc from InforDocument doc, InforDocEntity dae where"
 		+ " dae.code = :code and dae.entity = :entity and doc.code = dae.document order by doc.code asc") 
 })
-public class InforDocument implements Serializable {
-	private static final long serialVersionUID = 2632244342851353370L;
+public class InforDocument  {
 
 	public static final String GET_DOCUMENTS = "InforDocument.GET_DOCUMENTS";
 	

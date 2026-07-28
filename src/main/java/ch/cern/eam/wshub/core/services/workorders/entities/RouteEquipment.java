@@ -1,8 +1,6 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
-
 @Entity
 @Table(name="R5ROUTOBJECTS")
 @NamedNativeQueries({
@@ -25,9 +23,8 @@ query = " select EQR_CODE ROB_ROUTE, EQUIPMENT ROB_OBJECT, EQPTYPE ROB_OBTYPE, E
 		resultClass=RouteEquipment.class)
 })
 @IdClass(RouteEquipmentPK.class)
-public class RouteEquipment implements Serializable {
+public class RouteEquipment  {
 
-	
 	@Id
 	@Column(name="ROB_ROUTE")
 	private String routeCode;
@@ -94,7 +91,7 @@ public class RouteEquipment implements Serializable {
 		
 }
 
-class RouteEquipmentPK implements Serializable {
+class RouteEquipmentPK implements java.io.Serializable {
 
 	private String routeCode;
 	private String routeRevision;
@@ -142,7 +139,4 @@ class RouteEquipmentPK implements Serializable {
 		return true;
 	}
 
-	
-	
-	
 }

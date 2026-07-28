@@ -1,15 +1,9 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -115,10 +109,8 @@ import java.util.Date;
 				  		"TCM_PRIORITY from R5CASEMANAGEMENTTASKS where TCM_CASEMANAGEMENT = :caseID",
 				  resultClass=InforCaseTask.class)
 @Table(name = "R5CASEMANAGEMENTTASKS")
-public class InforCaseTask implements Serializable {
+public class InforCaseTask  {
 
-	private static final long serialVersionUID = -6048773043890563354L;
-	
 	public static final String GET_TASKS_FOR_CASE = "InforCaseTask.GET_TASKS_FOR_CASE";
 
 	@Id
@@ -231,8 +223,7 @@ public class InforCaseTask implements Serializable {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	@XmlElementWrapper(name="customFields")
-	@XmlElement(name="customField")
+
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}
@@ -252,7 +243,6 @@ public class InforCaseTask implements Serializable {
 		this.taskPlanForChecklist = taskPlanForChecklist;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getEstimatedCosts() {
 		return estimatedCosts;
 	}
@@ -308,28 +298,28 @@ public class InforCaseTask implements Serializable {
 	public void setDateUpdated(Date dateUpdated) {
 		this.dateUpdated = dateUpdated;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getStartDate() {
 		return startDate;
 	}
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getCompletedDate() {
 		return completedDate;
 	}
 	public void setCompletedDate(Date completedDate) {
 		this.completedDate = completedDate;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getScheduledStartDate() {
 		return scheduledStartDate;
 	}
 	public void setScheduledStartDate(Date scheduledStartDate) {
 		this.scheduledStartDate = scheduledStartDate;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getScheduledEndDate() {
 		return scheduledEndDate;
 	}
@@ -337,7 +327,6 @@ public class InforCaseTask implements Serializable {
 		this.scheduledEndDate = scheduledEndDate;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getPlannedDuration() {
 		return plannedDuration;
 	}
@@ -368,14 +357,14 @@ public class InforCaseTask implements Serializable {
 	public void setAssignedToEMail(String assignedToEMail) {
 		this.assignedToEMail = assignedToEMail;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getRequestedStartDate() {
 		return requestedStartDate;
 	}
 	public void setRequestedStartDate(Date requestedStartDate) {
 		this.requestedStartDate = requestedStartDate;
 	}
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	public Date getRequestedEndDate() {
 		return requestedEndDate;
 	}

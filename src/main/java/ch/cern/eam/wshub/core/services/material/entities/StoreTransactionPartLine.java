@@ -1,41 +1,50 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import net.datastream.schemas.mp_fields.*;
 import org.openapplications.oagis_segments.AMOUNT;
 import org.openapplications.oagis_segments.QUANTITY;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
-public class StoreTransactionPartLine implements Serializable {
-    @InforField(xpath="PARTID/PARTCODE")
+@Entity
+@Table(name = "EAM_STORE_TRANSFER_LINES")
+public class StoreTransactionPartLine  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     private String partCode;
-    @InforField(xpath="REPAIRABLE")
+    
     private String repairable;
-    @InforField(xpath="TRANSACTIONQUANTITY")
+    
     private BigDecimal transactionQuantity;
-    @InforField(xpath="REPAIRQUANTITY")
+    
     private BigDecimal repairQuantity;
-    @InforField(xpath="FROMBIN/BIN")
+    
     private String fromBinCode;
-    @InforField(xpath="TOBIN/BIN")
+    
     private String toBinCode;
-    @InforField(xpath="LOTID/LOTCODE")
+    
     private String lotCode;
-    @InforField(xpath="PRICE")
+    
     private BigDecimal price;
-    @InforField(xpath="ASSETID/EQUIPMENTCODE")
+    
     private String assetCode;
-    @InforField(xpath="SERIALNUMBER")
+    
     private String serialNumber;
-    @InforField(xpath="StandardUserDefinedFields")
+    
     private UserDefinedFields StandardUserDefinedFields;
-    @InforField(xpath="PARTCONDITIONTEMPLATECONDITIONCODE")
+    
     private String partConditionTemplateConditionCode;
 
     public String getPartCode() {
@@ -54,7 +63,6 @@ public class StoreTransactionPartLine implements Serializable {
         this.repairable = repairable;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getTransactionQuantity() {
         return transactionQuantity;
     }
@@ -63,7 +71,6 @@ public class StoreTransactionPartLine implements Serializable {
         this.transactionQuantity = transactionQuantity;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getRepairQuantity() {
         return repairQuantity;
     }
@@ -96,7 +103,6 @@ public class StoreTransactionPartLine implements Serializable {
         this.lotCode = lotCode;
     }
 
-    @XmlJavaTypeAdapter(BigDecimalAdapter.class)
     public BigDecimal getPrice() {
         return price;
     }

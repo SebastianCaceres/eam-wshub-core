@@ -1,14 +1,7 @@
 package ch.cern.eam.wshub.core.services.comments.entities;
 
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
+public class Comment  {
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-
-public class Comment implements Serializable {
-
-	private static final long serialVersionUID = 7120094465433764972L;
 	private String text;
 	private String lineNumber;
 	private String updateCount;
@@ -28,10 +21,9 @@ public class Comment implements Serializable {
 	public String getPk() {
 		return this.getEntityKeyCode() + "C" + this.getLineNumber();
 	}
-	
-	@XmlTransient
+
 	private boolean updated;
-	@XmlTransient
+	
 	private boolean created;
 	
 	public String getText() {
@@ -151,7 +143,6 @@ public class Comment implements Serializable {
 		this.created = created;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getPrint() {
 		return print;
 	}

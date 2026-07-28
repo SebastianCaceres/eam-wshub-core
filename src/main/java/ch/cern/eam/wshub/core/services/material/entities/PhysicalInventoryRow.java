@@ -1,49 +1,46 @@
 package ch.cern.eam.wshub.core.services.material.entities;
+import java.io.Serializable;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Entity
 @Table(name = "R5STOCKLINES")
-public class PhysicalInventoryRow {
+@IdClass(PhysicalInventoryRowPK.class)
+public class PhysicalInventoryRow implements Serializable {
     @Id
     @Column(name = "STL_TRANS")
-    @InforField(xpath = "TRANSACTIONLINEID/TRANSACTIONID/TRANSACTIONCODE")
+    
     String physicalInventoryCode;
 
     @Id
     @Column(name = "STL_LINE")
-    @InforField(xpath = "TRANSACTIONLINEID/TRANSACTIONLINENUM")
+    
     BigInteger lineNumber;
 
     @Column(name = "STL_PART")
-    @InforField(xpath = "PARTID/PARTCODE")
+    
     String part;
 
     @Column(name = "STL_STORE")
-    @InforField(xpath = "STOREID/STORECODE")
+    
     String store;
 
     @Column(name = "STL_BIN")
-    @InforField(xpath = "BIN")
+    
     String bin;
 
     @Column(name = "STL_LOT")
-    @InforField(xpath = "LOT")
+    
     String lot;
 
     @Column(name = "STL_EXPQTY")
-    @InforField(xpath = "EXPECTEDQUANTITY")
+    
     BigDecimal expectedQuantity;
 
     @Column(name = "STL_PHYQTY")
-    @InforField(xpath = "PHYSICALQUANTITY")
+    
     BigDecimal physicalQuantity;
 
     // Field missing: description

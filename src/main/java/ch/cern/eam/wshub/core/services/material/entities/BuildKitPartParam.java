@@ -1,9 +1,6 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import java.io.Serializable;
-
-public class BuildKitPartParam implements Serializable {
-	private static final long serialVersionUID = 7865040704362527306L;
+public class BuildKitPartParam  {
 
 	private String codePk;
 	private String partCode;

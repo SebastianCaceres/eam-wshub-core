@@ -18,8 +18,7 @@ public class CleaningInspectionChecklist {
 	private String description;
 	private boolean yesSelected;
 	private boolean noSelected;
-	
-	
+
 	public int getSequence() {
 		return sequence;
 	}
@@ -45,6 +44,4 @@ public class CleaningInspectionChecklist {
 		this.noSelected = noSelected;
 	}
 
-	
-	
 }

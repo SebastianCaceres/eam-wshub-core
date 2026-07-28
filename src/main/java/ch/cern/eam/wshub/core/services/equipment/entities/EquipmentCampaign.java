@@ -1,8 +1,6 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import java.io.Serializable;
-
-public class EquipmentCampaign implements Serializable {
+public class EquipmentCampaign  {
 
 	private String campaign;
 	private String equipment;
@@ -25,6 +23,5 @@ public class EquipmentCampaign implements Serializable {
 		return "EquipmentCampaign [" + (campaign != null ? "campaign=" + campaign + ", " : "")
 				+ (equipment != null ? "equipment=" + equipment : "") + "]";
 	}
-	
-	
+
 }

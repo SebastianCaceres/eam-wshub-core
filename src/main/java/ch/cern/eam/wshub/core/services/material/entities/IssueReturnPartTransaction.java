@@ -2,14 +2,12 @@ package ch.cern.eam.wshub.core.services.material.entities;
 
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class IssueReturnPartTransaction implements Serializable {
-	private static final long serialVersionUID = -4387702768430557993L;
-	
+public class IssueReturnPartTransaction  {
+
 	private IssueReturnPartTransactionType transactionOn;
 	private List<IssueReturnPartTransactionLine> transactionlines;
 	
@@ -41,7 +39,6 @@ public class IssueReturnPartTransaction implements Serializable {
 	private UserDefinedFields userDefinedFields;
 
 	private String relatedWorkOrder;
-	
 
 	public String getTransactionInfo() {
 		if (transactionOn == null) {

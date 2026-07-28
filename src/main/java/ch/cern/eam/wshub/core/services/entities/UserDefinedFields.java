@@ -1,164 +1,153 @@
 package ch.cern.eam.wshub.core.services.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.annotations.GridField;
-import ch.cern.eam.wshub.core.annotations.InforField;
-
 import javax.persistence.Embeddable;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Embeddable
-public class UserDefinedFields implements Serializable, Cloneable {
+public class UserDefinedFields implements Cloneable {
 
-	private static final long serialVersionUID = 8838910762758979180L;
-
-	@InforField(xpath = "UDFCHAR01")
 	@GridField(name = "udfchar01")
 	private String udfchar01;
-	@InforField(xpath = "UDFCHAR02")
+	
 	@GridField(name = "udfchar02")
 	private String udfchar02;
-	@InforField(xpath = "UDFCHAR03")
+	
 	@GridField(name = "udfchar03")
 	private String udfchar03;
-	@InforField(xpath = "UDFCHAR04")
+	
 	@GridField(name = "udfchar04")
 	private String udfchar04;
-	@InforField(xpath = "UDFCHAR05")
+	
 	@GridField(name = "udfchar05")
 	private String udfchar05;
-	@InforField(xpath = "UDFCHAR06")
+	
 	@GridField(name = "udfchar06")
 	private String udfchar06;
-	@InforField(xpath = "UDFCHAR07")
+	
 	@GridField(name = "udfchar07")
 	private String udfchar07;
-	@InforField(xpath = "UDFCHAR08")
+	
 	@GridField(name = "udfchar08")
 	private String udfchar08;
-	@InforField(xpath = "UDFCHAR09")
+	
 	@GridField(name = "udfchar09")
 	private String udfchar09;
-	@InforField(xpath = "UDFCHAR10")
+	
 	@GridField(name = "udfchar10")
 	private String udfchar10;
-	@InforField(xpath = "UDFCHAR11")
+	
 	@GridField(name = "udfchar11")
 	private String udfchar11;
-	@InforField(xpath = "UDFCHAR12")
+	
 	@GridField(name = "udfchar12")
 	private String udfchar12;
-	@InforField(xpath = "UDFCHAR13")
+	
 	@GridField(name = "udfchar13")
 	private String udfchar13;
-	@InforField(xpath = "UDFCHAR14")
+	
 	@GridField(name = "udfchar14")
 	private String udfchar14;
-	@InforField(xpath = "UDFCHAR15")
+	
 	@GridField(name = "udfchar15")
 	private String udfchar15;
-	@InforField(xpath = "UDFCHAR16")
+	
 	@GridField(name = "udfchar16")
 	private String udfchar16;
-	@InforField(xpath = "UDFCHAR17")
+	
 	@GridField(name = "udfchar17")
 	private String udfchar17;
-	@InforField(xpath = "UDFCHAR18")
+	
 	@GridField(name = "udfchar18")
 	private String udfchar18;
-	@InforField(xpath = "UDFCHAR19")
+	
 	@GridField(name = "udfchar19")
 	private String udfchar19;
-	@InforField(xpath = "UDFCHAR20")
+	
 	@GridField(name = "udfchar20")
 	private String udfchar20;
-	@InforField(xpath = "UDFCHAR21")
+	
 	@GridField(name = "udfchar21")
 	private String udfchar21;
-	@InforField(xpath = "UDFCHAR22")
+	
 	@GridField(name = "udfchar22")
 	private String udfchar22;
-	@InforField(xpath = "UDFCHAR23")
+	
 	@GridField(name = "udfchar23")
 	private String udfchar23;
-	@InforField(xpath = "UDFCHAR24")
+	
 	@GridField(name = "udfchar24")
 	private String udfchar24;
-	@InforField(xpath = "UDFCHAR25")
+	
 	@GridField(name = "udfchar25")
 	private String udfchar25;
-	@InforField(xpath = "UDFCHAR26")
+	
 	@GridField(name = "udfchar26")
 	private String udfchar26;
-	@InforField(xpath = "UDFCHAR27")
+	
 	@GridField(name = "udfchar27")
 	private String udfchar27;
-	@InforField(xpath = "UDFCHAR28")
+	
 	@GridField(name = "udfchar28")
 	private String udfchar28;
-	@InforField(xpath = "UDFCHAR29")
+	
 	@GridField(name = "udfchar29")
 	private String udfchar29;
-	@InforField(xpath = "UDFCHAR30")
+	
 	@GridField(name = "udfchar30")
 	private String udfchar30;
-	@InforField(xpath = "UDFCHAR31", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar31")
 	private String udfchar31;
-	@InforField(xpath = "UDFCHAR32", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar32")
 	private String udfchar32;
-	@InforField(xpath = "UDFCHAR33", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar33")
 	private String udfchar33;
-	@InforField(xpath = "UDFCHAR34", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar34")
 	private String udfchar34;
-	@InforField(xpath = "UDFCHAR35", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar35")
 	private String udfchar35;
-	@InforField(xpath = "UDFCHAR36", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar36")
 	private String udfchar36;
-	@InforField(xpath = "UDFCHAR37", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar37")
 	private String udfchar37;
-	@InforField(xpath = "UDFCHAR38", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar38")
 	private String udfchar38;
-	@InforField(xpath = "UDFCHAR39", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar39")
 	private String udfchar39;
-	@InforField(xpath = "UDFCHAR40", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar40")
 	private String udfchar40;
-	@InforField(xpath = "UDFCHAR41", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar41")
 	private String udfchar41;
-	@InforField(xpath = "UDFCHAR42", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar42")
 	private String udfchar42;
-	@InforField(xpath = "UDFCHAR43", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar43")
 	private String udfchar43;
-	@InforField(xpath = "UDFCHAR44", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar44")
 	private String udfchar44;
-	@InforField(xpath = "UDFCHAR45", enforceValidXpath = false)
+	
 	@GridField(name = "udfchar45")
 	private String udfchar45;
 
-	@InforField(xpath = "UDFNOTE01", enforceValidXpath = false)
 	@GridField(name = "udfnote01")
 	private String udfnote01;
-	@InforField(xpath = "UDFNOTE02", enforceValidXpath = false)
+	
 	@GridField(name = "udfnote02")
 	private String udfnote02;
 
@@ -208,96 +197,93 @@ public class UserDefinedFields implements Serializable, Cloneable {
 	private String udfchar44Desc;
 	private String udfchar45Desc;
 
-	@InforField(xpath = "UDFCHKBOX01")
 	@GridField(name = "udfchkbox01")
 	private Boolean udfchkbox01;
-	@InforField(xpath = "UDFCHKBOX02")
+	
 	@GridField(name = "udfchkbox02")
 	private Boolean udfchkbox02;
-	@InforField(xpath = "UDFCHKBOX03")
+	
 	@GridField(name = "udfchkbox03")
 	private Boolean udfchkbox03;
-	@InforField(xpath = "UDFCHKBOX04")
+	
 	@GridField(name = "udfchkbox04")
 	private Boolean udfchkbox04;
-	@InforField(xpath = "UDFCHKBOX05")
+	
 	@GridField(name = "udfchkbox05")
 	private Boolean udfchkbox05;
-	@InforField(xpath = "UDFCHKBOX06", enforceValidXpath = false)
+	
 	@GridField(name = "udfchkbox06")
 	private Boolean udfchkbox06;
-	@InforField(xpath = "UDFCHKBOX07", enforceValidXpath = false)
+	
 	@GridField(name = "udfchkbox07")
 	private Boolean udfchkbox07;
-	@InforField(xpath = "UDFCHKBOX08", enforceValidXpath = false)
+	
 	@GridField(name = "udfchkbox08")
 	private Boolean udfchkbox08;
-	@InforField(xpath = "UDFCHKBOX09", enforceValidXpath = false)
+	
 	@GridField(name = "udfchkbox09")
 	private Boolean udfchkbox09;
-	@InforField(xpath = "UDFCHKBOX10", enforceValidXpath = false)
+	
 	@GridField(name = "udfchkbox10")
 	private Boolean udfchkbox10;
 
-	@InforField(xpath = "UDFNUM01")
 	@GridField(name = "udfnum01")
 	private BigDecimal udfnum01;
-	@InforField(xpath = "UDFNUM02")
+	
 	@GridField(name = "udfnum02")
 	private BigDecimal udfnum02;
-	@InforField(xpath = "UDFNUM03")
+	
 	@GridField(name = "udfnum03")
 	private BigDecimal udfnum03;
-	@InforField(xpath = "UDFNUM04")
+	
 	@GridField(name = "udfnum04")
 	private BigDecimal udfnum04;
-	@InforField(xpath = "UDFNUM05")
+	
 	@GridField(name = "udfnum05")
 	private BigDecimal udfnum05;
-	@InforField(xpath = "UDFNUM06", enforceValidXpath = false)
+	
 	@GridField(name = "udfnum06")
 	private BigDecimal udfnum06;
-	@InforField(xpath = "UDFNUM07", enforceValidXpath = false)
+	
 	@GridField(name = "udfnum07")
 	private BigDecimal udfnum07;
-	@InforField(xpath = "UDFNUM08", enforceValidXpath = false)
+	
 	@GridField(name = "udfnum08")
 	private BigDecimal udfnum08;
-	@InforField(xpath = "UDFNUM09", enforceValidXpath = false)
+	
 	@GridField(name = "udfnum09")
 	private BigDecimal udfnum09;
-	@InforField(xpath = "UDFNUM10", enforceValidXpath = false)
+	
 	@GridField(name = "udfnum10")
 	private BigDecimal udfnum10;
 
-	@InforField(xpath = "UDFDATE01")
 	@GridField(name = "udfdate01")
 	private Date udfdate01;
-	@InforField(xpath = "UDFDATE02")
+	
 	@GridField(name = "udfdate02")
 	private Date udfdate02;
-	@InforField(xpath = "UDFDATE03")
+	
 	@GridField(name = "udfdate03")
 	private Date udfdate03;
-	@InforField(xpath = "UDFDATE04")
+	
 	@GridField(name = "udfdate04")
 	private Date udfdate04;
-	@InforField(xpath = "UDFDATE05")
+	
 	@GridField(name = "udfdate05")
 	private Date udfdate05;
-	@InforField(xpath = "UDFDATE06", enforceValidXpath = false)
+	
 	@GridField(name = "udfdate06")
 	private Date udfdate06;
-	@InforField(xpath = "UDFDATE07", enforceValidXpath = false)
+	
 	@GridField(name = "udfdate07")
 	private Date udfdate07;
-	@InforField(xpath = "UDFDATE08", enforceValidXpath = false)
+	
 	@GridField(name = "udfdate08")
 	private Date udfdate08;
-	@InforField(xpath = "UDFDATE09", enforceValidXpath = false)
+	
 	@GridField(name = "udfdate09")
 	private Date udfdate09;
-	@InforField(xpath = "UDFDATE10", enforceValidXpath = false)
+	
 	@GridField(name = "udfdate10")
 	private Date udfdate10;
 	
@@ -550,7 +536,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchar30 = udfchar30;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox01() {
 		return udfchkbox01;
 	}
@@ -559,7 +544,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox01 = udfchkbox01;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox02() {
 		return udfchkbox02;
 	}
@@ -568,7 +552,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox02 = udfchkbox02;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox03() {
 		return udfchkbox03;
 	}
@@ -577,7 +560,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox03 = udfchkbox03;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox04() {
 		return udfchkbox04;
 	}
@@ -586,7 +568,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox04 = udfchkbox04;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox05() {
 		return udfchkbox05;
 	}
@@ -595,7 +576,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox05 = udfchkbox05;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum01() {
 		return udfnum01;
 	}
@@ -604,7 +584,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum01 = udfnum01;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum02() {
 		return udfnum02;
 	}
@@ -613,7 +592,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum02 = udfnum02;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum03() {
 		return udfnum03;
 	}
@@ -622,7 +600,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum03 = udfnum03;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum04() {
 		return udfnum04;
 	}
@@ -631,7 +608,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum04 = udfnum04;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum05() {
 		return udfnum05;
 	}
@@ -640,7 +616,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum05 = udfnum05;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox06() {
 		return udfchkbox06;
 	}
@@ -649,7 +624,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox06 = udfchkbox06;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox07() {
 		return udfchkbox07;
 	}
@@ -658,7 +632,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox07 = udfchkbox07;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox08() {
 		return udfchkbox08;
 	}
@@ -667,7 +640,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox08 = udfchkbox08;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox09() {
 		return udfchkbox09;
 	}
@@ -676,7 +648,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox09 = udfchkbox09;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getUdfchkbox10() {
 		return udfchkbox10;
 	}
@@ -685,7 +656,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchkbox10 = udfchkbox10;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum06() {
 		return udfnum06;
 	}
@@ -694,7 +664,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum06 = udfnum06;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum07() {
 		return udfnum07;
 	}
@@ -703,7 +672,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum07 = udfnum07;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum08() {
 		return udfnum08;
 	}
@@ -712,7 +680,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum08 = udfnum08;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum09() {
 		return udfnum09;
 	}
@@ -721,7 +688,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfnum09 = udfnum09;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getUdfnum10() {
 		return udfnum10;
 	}
@@ -850,7 +816,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfchar45 = udfchar45;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate01() {
 		return udfdate01;
 	}
@@ -859,7 +824,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate01 = udfdate01;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate02() {
 		return udfdate02;
 	}
@@ -868,7 +832,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate02 = udfdate02;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate03() {
 		return udfdate03;
 	}
@@ -877,7 +840,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate03 = udfdate03;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate04() {
 		return udfdate04;
 	}
@@ -886,7 +848,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate04 = udfdate04;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate05() {
 		return udfdate05;
 	}
@@ -895,7 +856,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate05 = udfdate05;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate06() {
 		return udfdate06;
 	}
@@ -904,7 +864,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate06 = udfdate06;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate07() {
 		return udfdate07;
 	}
@@ -913,7 +872,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate07 = udfdate07;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate08() {
 		return udfdate08;
 	}
@@ -922,7 +880,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate08 = udfdate08;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate09() {
 		return udfdate09;
 	}
@@ -931,7 +888,6 @@ public class UserDefinedFields implements Serializable, Cloneable {
 		this.udfdate09 = udfdate09;
 	}
 
-	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getUdfdate10() {
 		return udfdate10;
 	}

@@ -3,20 +3,17 @@
  */
 package ch.cern.eam.wshub.core.services.equipment.entities;
 
-import java.io.Serializable;
-
 /**
  * Entity for the functionality of the equipment replacement
  * 
  * @author jmesapol
  *
  */
-public class EquipmentReplacement implements Serializable {
+public class EquipmentReplacement  {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3050639863872974781L;
 
 	/**
 	 * Old equipment

@@ -1,54 +1,51 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-public class PickTicket implements Serializable {
+public class PickTicket  {
 
-    @InforField(xpath = "PICKLISTID/PICKLIST")
     private String code;
-    @InforField(xpath = "PICKLISTID/PICKLISTDESC")
+    
     private String description;
-    @InforField(xpath = "STOREID/STORECODE")
+    
     private String storeCode;
-    @InforField(xpath = "STATUS/STATUSCODE")
+    
     private String status;
-    @InforField(xpath = "DATEREQUIRED")
+    
     private Date requestedEndDate;
-    @InforField(xpath = "CLASSID/CLASSCODE")
+    
     private String classCode;
-    @InforField(xpath = "WORKORDERACTIVITY/ACTIVITYID/WORKORDERID")
+    
     private String workorderCode;
-    @InforField(xpath = "WORKORDERACTIVITY/ACTIVITYID/ACTIVITYCODE")
+    
     private Long activityNumber;
-    @InforField(xpath = "JOBSEQUENCE")
+    
     private Long jobSequence;
-    @InforField(xpath = "ASSETID/EQUIPMENTCODE")
+    
     private String assetCode;
-    @InforField(xpath = "ASSETID/EQUIPMENTCODE")
+    
     private String eventCode;
-    @InforField(xpath = "DELIVERYADDRESSID/DELADDRESSCODE")
+    
     private String deliveryAddressId;
-    @InforField(xpath = "DELIVERYSUPPLIERID/SUPPLIERCODE")
+    
     private String deliverySupplierId;
-    @InforField(xpath = "DELIVERPERSONNEL/PERSONCODE")
+    
     private String deliverPersonnelCode;
-    @InforField(xpath = "ORIGINID/USERCODE")
+    
     private String originCode;
-    @InforField(xpath = "DEFAULTAPPROVER/USERCODE")
+    
     private String defaultApproverCode;
-    @InforField(xpath = "APPROVER/USERCODE")
+    
     private String approverCode;
-    @InforField(xpath = "APPROVEDATE")
+    
     private Date approvedate;
-    @InforField(xpath = "PRINTDATE")
+    
     private Date printDate;
-    @InforField(xpath = "USERDEFINEDAREA")
+    
     private CustomField[] customFields;
 
     public String getCode() {

@@ -1,19 +1,12 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-public class WorkOrderActivityChecklistItem implements Serializable {
+public class WorkOrderActivityChecklistItem  {
 	public static final class CheckListType {
 		public static final String CHECKLIST_ITEM = "01";
 		public static final String QUESTION_YES_NO = "02";
@@ -50,7 +43,6 @@ public class WorkOrderActivityChecklistItem implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 4618078230002480288L;
 
 	private String checkListCode;
 	private String workOrderCode;
@@ -80,9 +72,9 @@ public class WorkOrderActivityChecklistItem implements Serializable {
 	private Boolean hideFollowUp;
 	private String color;
 	private String freeText;
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	private Date date;
-	@XmlJavaTypeAdapter(DateAdapter.class)
+	
 	private Date dateTime;
 
 	private String newCheckListCode;

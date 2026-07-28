@@ -1,8 +1,6 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import java.io.Serializable;
-
-public class PartSubstitute implements Serializable {
+public class PartSubstitute  {
 
 	private String partA;
 	private String partB;

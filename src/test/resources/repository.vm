@@ -1,0 +1,15 @@
+package ch.cern.eam.wshub.core.repositories;
+
+import ${entityPackage}.${entityClass};
+#if ($pkType == "BigDecimal")
+import java.math.BigDecimal;
+#end
+#if ($pkType == "BigInteger")
+import java.math.BigInteger;
+#end
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ${entityClass}Repository extends JpaRepository<${entityClass}, ${pkType}> {
+}

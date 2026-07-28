@@ -1,12 +1,8 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.annotations.GridField;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
@@ -14,9 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "R5BOOKEDHOURS")
 @NamedNativeQuery(name = LaborBooking.GETBOOKEDLABOR, query = "select r5bookedhours.*, r5personnel.*, boo_date from r5bookedhours, r5personnel where r5bookedhours.boo_person = r5personnel.per_code and boo_event = :workOrder", resultClass = LaborBooking.class)
-public class LaborBooking implements Serializable, Comparable<LaborBooking> {
-
-	private static final long serialVersionUID = -7876074587300796418L;
+public class LaborBooking implements Comparable<LaborBooking> {
 
 	public static final String GETBOOKEDLABOR = "LaborBooking.GETBOOKEDLABOR";
 
@@ -74,7 +68,6 @@ public class LaborBooking implements Serializable, Comparable<LaborBooking> {
 		this.typeOfHours = typeOfHours;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getHoursWorked() {
 		return hoursWorked;
 	}
@@ -82,8 +75,6 @@ public class LaborBooking implements Serializable, Comparable<LaborBooking> {
 	public void setHoursWorked(BigDecimal hoursWorked) {
 		this.hoursWorked = hoursWorked;
 	}
-
-	@XmlJavaTypeAdapter(DateAdapter.class)
 
 	public Date getDateWorked() {
 		return dateWorked;

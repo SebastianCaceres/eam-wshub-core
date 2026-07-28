@@ -1,12 +1,8 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.adapters.DateAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.util.Date;
 
-public class WorkOrderActivityChecklistSignatureResult implements Serializable {
+public class WorkOrderActivityChecklistSignatureResult  {
     private String type;
 
     private String signer;
@@ -23,7 +19,6 @@ public class WorkOrderActivityChecklistSignatureResult implements Serializable {
 
     private Date time;
 
-    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getTime() {
         return time;
     }

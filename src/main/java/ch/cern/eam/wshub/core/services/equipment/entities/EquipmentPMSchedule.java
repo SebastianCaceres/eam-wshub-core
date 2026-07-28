@@ -1,19 +1,16 @@
 package ch.cern.eam.wshub.core.services.equipment.entities;
+import java.io.Serializable;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @IdClass(EquipmentPMSchedulePK.class)
 @Table(name="R5PPMOBJECTS")
 @NamedQuery(name=EquipmentPMSchedule.FIND_PM_SCHEDULE, query="SELECT pmschedule FROM EquipmentPMSchedule pmschedule WHERE pmschedule.equipmentCode = :equipmentCode AND (pmschedule.pmCode = :pmCode OR :pmCode IS NULL)")
-public class EquipmentPMSchedule implements Serializable {
+public class EquipmentPMSchedule implements Serializable  {
 
 	public static final String FIND_PM_SCHEDULE = "FIND_PM_SCHEDULE";
 	@Id
@@ -47,7 +44,7 @@ public class EquipmentPMSchedule implements Serializable {
 	@Transient private String workOrder;
 
 	@Transient
-	@InforField(xpath = "StandardUserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	public String getWorkOrderClass() {
@@ -130,7 +127,6 @@ public class EquipmentPMSchedule implements Serializable {
 		this.costCode = costCode;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMeter1Interval() {
 		return meter1Interval;
 	}
@@ -144,7 +140,6 @@ public class EquipmentPMSchedule implements Serializable {
 		meter1UOM = meter1uom;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMeter1Due() {
 		return meter1Due;
 	}
@@ -152,7 +147,6 @@ public class EquipmentPMSchedule implements Serializable {
 		this.meter1Due = meter1Due;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMeter2Interval() {
 		return meter2Interval;
 	}
@@ -166,7 +160,6 @@ public class EquipmentPMSchedule implements Serializable {
 		meter2UOM = meter2uom;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getMeter2Due() {
 		return meter2Due;
 	}

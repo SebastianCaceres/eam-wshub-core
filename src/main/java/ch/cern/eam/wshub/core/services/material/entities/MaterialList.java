@@ -1,8 +1,5 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 
 public class MaterialList {
@@ -35,7 +32,6 @@ public class MaterialList {
 		this.lineNumber = lineNumber;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
@@ -75,6 +71,5 @@ public class MaterialList {
 	public void setEquipmentCode(String equipmentCode) {
 		this.equipmentCode = equipmentCode;
 	}
-	
 
 }

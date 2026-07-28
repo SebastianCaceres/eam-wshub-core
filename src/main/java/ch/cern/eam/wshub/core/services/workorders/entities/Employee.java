@@ -1,9 +1,7 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -13,44 +11,43 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "R5PERSONNEL")
-public class Employee implements Serializable {
+public class Employee  {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "PER_CODE")
-	@InforField(xpath = "EMPLOYEEID/EMPLOYEECODE")
+	
 	private String code;
 
 	@Column(name = "PER_DESC")
-	@InforField(xpath = "EMPLOYEEID/DESCRIPTION", readOnly = true)
+	
 	private String description;
 	
 	@Column(name = "PER_PHONE")
-	@InforField(xpath = "PHONE")
+	
 	private String phone;
 	
 	@Column(name = "PER_MOBILEPHONENO")
-	@InforField(xpath = "MOBILEPHONENUMBER")
+	
 	private String mobilePhone;
 	
 	@Column(name = "PER_ADDRESS")
-	@InforField(xpath = "ADDRESS")
+	
 	private String address;
 	
 	@Column(name = "PER_CLASS")
-	@InforField(xpath = "CLASSID/CLASSCODE")
+	
 	private String clazz;
 	
 	@Column(name = "PER_MRC")
-	@InforField(xpath = "DEPARTMENTCODE")
+	
 	private String MRC;
 	
 	@Column(name = "PER_EMAILADDRESS")
-	@InforField(xpath = "EMAIL")
+	
 	private String email;
 	
 	@Column(name = "PER_UDFNUM01")
@@ -59,9 +56,8 @@ public class Employee implements Serializable {
 	@Column(name = "PER_UDFNUM02")
 	private BigDecimal personID;
 
-
 	@Column(name = "PER_USER")
-	@InforField(xpath = "USERCODE")
+	
 	private String userCode;
 	
 	@Column(name = "PER_TRADE")
@@ -82,10 +78,8 @@ public class Employee implements Serializable {
 	@Column(name = "PER_UDFCHKBOX01")
 	private String accountBlocked;
 
-	@InforField(xpath = "OUTOFSERVICE")
 	private String outOfService;
 
-	@InforField(xpath = "StandardUserDefinedFields")
 	private UserDefinedFields userDefinedFields;
 
 	public String getCode() {
@@ -342,8 +336,7 @@ public class Employee implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 	@Override
 	public String toString() {
 		return "Employee [code=" + code + ", description=" + description + ", phone=" + phone + ", mobilePhone="

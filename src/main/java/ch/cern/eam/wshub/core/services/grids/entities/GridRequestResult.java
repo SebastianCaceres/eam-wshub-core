@@ -1,12 +1,8 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import java.io.Serializable;
 import java.util.List;
 
-public class GridRequestResult implements Serializable {
-	private static final long serialVersionUID = 8397596268554531607L;
+public class GridRequestResult  {
 
 	private String gridCode;
 	private String gridName;
@@ -19,8 +15,6 @@ public class GridRequestResult implements Serializable {
 	private List<GridField> gridFields;
 	private GridRequestRow[] rows;
 
-	@XmlElementWrapper(name="rows") 
-    @XmlElement(name="row")
 	public GridRequestRow[] getRows() {
 		return rows;
 	}
@@ -28,8 +22,6 @@ public class GridRequestResult implements Serializable {
 		this.rows = rows;
 	}
 
-	@XmlElementWrapper(name="gridDataspies")
-	@XmlElement(name="gridDataspy")
 	public List<GridDataspy> getGridDataspies() {
 		return gridDataspies;
 	}
@@ -37,8 +29,6 @@ public class GridRequestResult implements Serializable {
 		this.gridDataspies = gridDataspies;
 	}
 
-	@XmlElementWrapper(name="gridFields")
-	@XmlElement(name="gridField")
 	public List<GridField> getGridFields() {
 		return gridFields;
 	}

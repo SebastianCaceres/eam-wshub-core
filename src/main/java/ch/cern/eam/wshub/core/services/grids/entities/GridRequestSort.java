@@ -1,10 +1,6 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
-import java.io.Serializable;
-
-public class GridRequestSort implements Serializable {
-	
-	private static final long serialVersionUID = 7569167581446605742L;
+public class GridRequestSort  {
 
 	private String sortBy;
 	private String sortType;

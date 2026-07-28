@@ -62,7 +62,6 @@ public class AspectPoint implements Comparable<AspectPoint>{
 		return true;
 	}
 
-
     public int getOrder(String pointType1, String pointType2)
     {
         String[] pointTypes = { "VOLU", "SOLC", "MCP", "SOLT", "HUIS", "LAV", "WC", "URI", "DOU", "AUX", "EQFI", "TSH", "TSV", "SGS", "POUB", "BUR", "TAB", "TEL", "INT", "LAMP", "CEN" };
@@ -89,7 +88,6 @@ public class AspectPoint implements Comparable<AspectPoint>{
         {
             return 0;
         }
-
 
     }
 

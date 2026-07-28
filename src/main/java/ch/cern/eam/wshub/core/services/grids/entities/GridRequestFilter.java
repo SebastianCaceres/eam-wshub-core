@@ -2,10 +2,7 @@ package ch.cern.eam.wshub.core.services.grids.entities;
 
 import net.datastream.schemas.mp_functions.gridrequest.AND_OR;
 
-import java.io.Serializable;
-
-public class GridRequestFilter implements Serializable {
-	private static final long serialVersionUID = 2336324664740111857L;
+public class GridRequestFilter  {
 
 	public enum JOINER {
 		AND(AND_OR.AND),
@@ -121,7 +118,6 @@ public class GridRequestFilter implements Serializable {
 	public Boolean getForceCaseInsensitive() {
 		return forceCaseInsensitive;
 	}
-	
 
 	public void setForceCaseInsensitive(Boolean forceCaseInsensitive) {
 		this.forceCaseInsensitive = forceCaseInsensitive!=null && forceCaseInsensitive;

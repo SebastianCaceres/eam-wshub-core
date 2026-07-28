@@ -1,8 +1,6 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import java.io.Serializable;
-
-public class PickTicketPart implements Serializable {
+public class PickTicketPart  {
     String partCode;
     String pickTicket;
     Long quantity;

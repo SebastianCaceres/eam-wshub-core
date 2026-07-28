@@ -1,6 +1,5 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-
 public class InspectionPoint {
 
 	public int sumYes;
@@ -12,9 +11,5 @@ public class InspectionPoint {
 		return "InspectionPoint [sumYes=" + sumYes + ", sumNo=" + sumNo
 				+ ", sumTotal=" + sumTotal + ", threshold=" + threshold + "]";
 	}
-	
 
-
-	
-		
 }

@@ -1,9 +1,5 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-import ch.cern.eam.wshub.core.adapters.BigDecimalAdapter;
-import ch.cern.eam.wshub.core.adapters.BooleanAdapter;
-import ch.cern.eam.wshub.core.annotations.BooleanType;
-import ch.cern.eam.wshub.core.annotations.InforField;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import ch.cern.eam.wshub.core.services.userdefinedscreens.UserDefinedListHelpable;
@@ -12,10 +8,6 @@ import ch.cern.eam.wshub.core.services.userdefinedscreens.entities.xmlhashmap.Xm
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,106 +16,105 @@ import java.util.Map;
 
 @Entity
 @Table(name = "R5PARTS")
-public class Part implements Serializable, UserDefinedListHelpable {
+public class Part implements UserDefinedListHelpable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7865040704362527306L;
 
 	@Id
 	@Column(name = "PAR_CODE")
-	@InforField(xpath = "PARTID/PARTCODE")
+	
 	private String code;
 
 	@Transient
 	private String newCode;
 
 	@Column(name = "PAR_DESC")
-	@InforField(xpath = "PARTID/DESCRIPTION")
+	
 	private String description;
 
 	@Column(name = "PAR_ORG")
-	@InforField(xpath = "PARTID/ORGANIZATIONID/ORGANIZATIONCODE")
+	
 	private String organization;
 
 	@Column(name = "PAR_UOM")
-	@InforField(xpath = "UOMID/UOMCODE")
+	
 	private String UOM;
 	@Transient
-	@InforField(xpath = "UOMID/DESCRIPTION", readOnly = true)
+	
 	private String UOMDesc;
 
 	@Column(name = "PAR_CLASS")
-	@InforField(xpath = "CLASSID/CLASSCODE")
+	
 	private String classCode;
 	@Transient
-	@InforField(xpath = "CLASSID/DESCRIPTION", readOnly = true)
+	
 	private String classDesc;
 
 	@Transient
-	@InforField(xpath = "CATEGORYID/CATEGORYCODE")
+	
 	private String categoryCode;
 	@Transient
-	@InforField(xpath = "CATEGORYID/DESCRIPTION", readOnly = true)
+	
 	private String categoryDesc;
 	@Transient
-	@InforField(xpath = "PRIMARYCOMMODITY/COMMODITYCODE")
+	
 	private String commodityCode;
 	@Transient
-	@InforField(xpath = "PRIMARYCOMMODITY/DESCRIPTION", readOnly = true)
+	
 	private String commodityDesc;
 	@Transient
-	@InforField(xpath = "TRACKMETHOD/TYPECODE")
+	
 	private String trackingMethod;
 	@Transient
-	@InforField(xpath = "PRICETYPE/TYPECODE")
+	
 	private String priceType;
 	@Transient
-	@InforField(xpath = "BASEPRICE")
+	
 	private BigDecimal basePrice;
 	@Transient
-	@InforField(xpath = "AVERAGEPRICE")
+	
 	private BigDecimal averagePrice;
 	@Transient
-	@InforField(xpath = "STANDARDPRICE")
+	
 	private BigDecimal standardPrice;
 	@Transient
-	@InforField(xpath = "LASTPRICE")
+	
 	private BigDecimal lastPrice;
 	@Transient
-	@InforField(xpath = "BYASSET", booleanType = BooleanType.PLUS_MINUS)
+	
 	private Boolean trackByAsset;
 	@Transient
-	@InforField(xpath = "KIT")
+	
 	private Boolean trackAsKit;
 	@Transient
-	@InforField(xpath = "REPAIRABLE")
+	
 	private Boolean trackCores;
 	@Transient
-	@InforField(xpath = "OUTOFSERVICE")
+	
 	private Boolean outOfService;
 	@Transient
-	@InforField(xpath = "BYLOT", booleanType = BooleanType.PLUS_MINUS)
+	
 	private Boolean trackByLot;
 	@Transient
-	@InforField(xpath = "PREVENTREORDERS")
+	
 	private Boolean preventReorders;
 	@Transient
-	@InforField(xpath = "BUYER/USERCODE")
+	
 	private String buyerCode;
 	@Transient
-	@InforField(xpath = "PREFERREDSUPPLIER/SUPPLIERCODE")
+	
 	private String preferredSupplier;
 	@Transient
-	@InforField(xpath = "LONGDESCRIPTION")
+	
 	private String longDescription;
 
 	@Transient
-	@InforField(xpath = "USERDEFINEDAREA")
+	
 	private CustomField[] customFields;
 	@Transient
-	@InforField(xpath = "UserDefinedFields")
+	
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
@@ -165,8 +156,7 @@ public class Part implements Serializable, UserDefinedListHelpable {
 	}
 
 	@JsonProperty("customField")
-	@XmlElementWrapper(name = "customFields")
-	@XmlElement(name = "customField")
+
 	public CustomField[] getCustomFields() {
 		return customFields;
 	}
@@ -199,7 +189,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.priceType = priceType;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getBasePrice() {
 		return basePrice;
 	}
@@ -208,7 +197,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.basePrice = basePrice;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getAveragePrice() {
 		return averagePrice;
 	}
@@ -217,7 +205,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.averagePrice = averagePrice;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getStandardPrice() {
 		return standardPrice;
 	}
@@ -226,7 +213,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.standardPrice = standardPrice;
 	}
 
-	@XmlJavaTypeAdapter(BigDecimalAdapter.class)
 	public BigDecimal getLastPrice() {
 		return lastPrice;
 	}
@@ -235,7 +221,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.lastPrice = lastPrice;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getTrackByAsset() {
 		return trackByAsset;
 	}
@@ -244,7 +229,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.trackByAsset = trackByAsset;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getTrackAsKit() {
 		return trackAsKit;
 	}
@@ -253,7 +237,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.trackAsKit = trackAsKit;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getTrackCores() {
 		return trackCores;
 	}
@@ -262,7 +245,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.trackCores = trackCores;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getOutOfService() {
 		return outOfService;
 	}
@@ -359,7 +341,6 @@ public class Part implements Serializable, UserDefinedListHelpable {
 		this.trackByLot = trackByLot;
 	}
 
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	public Boolean getPreventReorders() {
 		return preventReorders;
 	}

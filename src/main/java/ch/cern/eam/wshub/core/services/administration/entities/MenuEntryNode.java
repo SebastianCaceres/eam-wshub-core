@@ -22,7 +22,6 @@ public class MenuEntryNode extends DefaultMutableTreeNode {
     private boolean deleteAllowed;
     private boolean updateAllowed;
 
-
     public MenuEntryNode(FOLDER_Type folder) {
         super();
         Objects.requireNonNull(folder);
