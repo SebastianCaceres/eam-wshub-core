@@ -1,28 +1,39 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.Date;
 
+@Entity
+@Table(name = "R5ROUTES")
 public class Route {
 
+    @Id
+    @Column(name = "ROT_CODE")
     private String code;
 
+    @Column(name = "ROT_DESC")
     private String desc;
 
+    @Transient
     private BigInteger revision;
 
+    @Column(name = "ROT_CAT")
     private String equipmentClassCode;
 
-    private String categoryCode;
-
+    @Column(name = "ROT_STATUS")
     private String revisionStatusCode;
 
+    @Transient
     private Boolean template;
 
+    @Column(name = "ROT_APPROVEDAT")
     private Date dateApproved;
 
+    @Column(name = "ROT_REQUESTDAT")
     private Date dateRequested;
 
+    @Column(name = "ROT_REVISOREAS")
     private String revisionReason;
 
     public String getCode() {
@@ -58,11 +69,11 @@ public class Route {
     }
 
     public String getCategoryCode() {
-        return categoryCode;
+        return equipmentClassCode;
     }
 
     public void setCategoryCode(String categoryCode) {
-        this.categoryCode = categoryCode;
+        this.equipmentClassCode = categoryCode;
     }
 
     public String getRevisionStatusCode() {

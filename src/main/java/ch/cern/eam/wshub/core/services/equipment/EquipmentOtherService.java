@@ -13,6 +13,9 @@ public interface EquipmentOtherService {
     @Operation(logOperation = INFOR_OPERATION.EQP_DEPR_C)
     String createEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException;
 
+    @Operation(logOperation = INFOR_OPERATION.EQP_DEPR_R)
+    EquipmentDepreciation readEquipmentDepreciation(InforContext context, String equipmentCode) throws InforException;
+
     @Operation(logOperation = INFOR_OPERATION.EQP_DEPR_U)
     String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException;
 

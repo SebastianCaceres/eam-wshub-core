@@ -179,6 +179,26 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 		return "OK";
 	}
 
+	@Override
+	public EquipmentDepreciation readEquipmentDepreciation(InforContext context, String equipmentCode) throws InforException {
+		if (equipmentDepreciationRepository != null) {
+			java.util.List<EquipmentDepreciation> results =
+				equipmentDepreciationRepository.findByEquipmentCode(equipmentCode.trim().toUpperCase());
+			if (!results.isEmpty()) {
+				return results.get(0);
+			}
+		}
+		// SOAP fallback
+		MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
+		getDepreciation.setEQUIPMENTID(new EQUIPMENTID_Type());
+		getDepreciation.getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
+		getDepreciation.getEQUIPMENTID().setEQUIPMENTCODE(equipmentCode);
+		MP3016_GetDepreciation_001_Result result =
+			tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
+		return tools.getInforFieldTools().transformInforObject(
+			new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
+	}
+
 	public String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
 		//
 		// GET THE DEPRECIATION VALUE FIRST
@@ -189,16 +209,26 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 				throw tools.generateFault("Equipment Code is mandatory field");
 			}
 
-			EntityManager em = tools.getEntityManager();
-			try {
-				equipmentDepreciation.setDepreciationPK(em
-						.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class)
-						.setParameter("equipmentCode", equipmentDepreciation.getEquipmentCode().trim().toUpperCase())
-						.getSingleResult().getDepreciationPK());
-			} catch (Exception e) {
-				throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
-			} finally {
-				em.close();
+			if (equipmentDepreciationRepository != null) {
+				java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(
+					equipmentDepreciation.getEquipmentCode().trim().toUpperCase());
+				if (!results.isEmpty()) {
+					equipmentDepreciation.setDepreciationPK(results.get(0).getDepreciationPK());
+				} else {
+					throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
+				}
+			} else {
+				EntityManager em = tools.getEntityManager();
+				try {
+					equipmentDepreciation.setDepreciationPK(em
+							.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class)
+							.setParameter("equipmentCode", equipmentDepreciation.getEquipmentCode().trim().toUpperCase())
+							.getSingleResult().getDepreciationPK());
+				} catch (Exception e) {
+					throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
+				} finally {
+					em.close();
+				}
 			}
 		}
 

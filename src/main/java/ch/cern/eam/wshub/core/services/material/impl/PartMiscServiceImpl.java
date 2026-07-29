@@ -330,19 +330,28 @@ public class PartMiscServiceImpl implements PartMiscService {
 		deletepass.setPARTASSOCIATEDID(new PARTASSOCIATEDID_Type());
 		deletepass.getPARTASSOCIATEDID().setParentcode(partAssociation.getEquipmentCode() + "#*");
 
-
-		EntityManager em = tools.getEntityManager();
-		try {
-			deletepass.getPARTASSOCIATEDID().setPARTASSOCIATEDPK(
-					em.createNamedQuery(PartAssociation.GET_PART_ASSOCIATION, PartAssociation.class)
-							.setParameter("partCode", partAssociation.getPartCode())
-							.setParameter("equipmentCode", partAssociation.getEquipmentCode() + "#*").getSingleResult()
-							.getPk());
-		} catch (Exception e) {
-			throw tools.generateFault(
-					"Couldn't fetch part association record for this equipment (" + e.getMessage() + ")");
-		} finally {
-			em.close();
+		if (partAssociationRepository != null) {
+			java.util.List<PartAssociation> results = partAssociationRepository.findByPartCodeAndEquipmentCode(
+					partAssociation.getPartCode(), partAssociation.getEquipmentCode() + "#*");
+			if (results.isEmpty()) {
+				throw tools.generateFault(
+						"Couldn't fetch part association record for this equipment");
+			}
+			deletepass.getPARTASSOCIATEDID().setPARTASSOCIATEDPK(results.get(0).getPk());
+		} else {
+			EntityManager em = tools.getEntityManager();
+			try {
+				deletepass.getPARTASSOCIATEDID().setPARTASSOCIATEDPK(
+						em.createNamedQuery(PartAssociation.GET_PART_ASSOCIATION, PartAssociation.class)
+								.setParameter("partCode", partAssociation.getPartCode())
+								.setParameter("equipmentCode", partAssociation.getEquipmentCode() + "#*").getSingleResult()
+								.getPk());
+			} catch (Exception e) {
+				throw tools.generateFault(
+						"Couldn't fetch part association record for this equipment (" + e.getMessage() + ")");
+			} finally {
+				em.close();
+			}
 		}
 
 		tools.performInforOperation(context, inforws::deletePartsAssociatedOp, deletepass);

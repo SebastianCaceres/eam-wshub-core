@@ -188,6 +188,7 @@ public class InforClient implements Serializable {
         private PhysicalInventoryRepository physicalInventoryRepository;
         private PhysicalInventoryRowRepository physicalInventoryRowRepository;
         private RouteEquipmentRepository routeEquipmentRepository;
+        private RouteRepository routeRepository;
         private Store2StoreTransferDTORepository store2StoreTransferDTORepository;
         private StoreTransactionPartLineRepository storeTransactionPartLineRepository;
 
@@ -383,6 +384,11 @@ public class InforClient implements Serializable {
             return this;
         }
 
+        public Builder withRouteRepository(RouteRepository routeRepository) {
+            this.routeRepository = routeRepository;
+            return this;
+        }
+
         public Builder withStore2StoreTransferDTORepository(Store2StoreTransferDTORepository store2StoreTransferDTORepository) {
             this.store2StoreTransferDTORepository = store2StoreTransferDTORepository;
             return this;
@@ -483,7 +489,7 @@ public class InforClient implements Serializable {
             inforClient.screenLayoutService = proxy(ScreenLayoutService.class, new ScreenLayoutServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedTableServices = proxy(UserDefinedTableService.class, new UserDefinedTableServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedListService = proxy(UserDefinedListService.class, new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.routeService = proxy(RouteService.class, new RouteServiceImpl(applicationData, tools, inforWebServicesToolkitClient, routeEquipmentRepository), inforInterceptor, tools);
+            inforClient.routeService = proxy(RouteService.class, new RouteServiceImpl(applicationData, tools, inforWebServicesToolkitClient, routeEquipmentRepository, routeRepository), inforInterceptor, tools);
             inforClient.mecService = proxy(MECService.class, new MECServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.inforWebServicesToolkitClient = inforWebServicesToolkitClient;
             inforClient.safetyService = proxy(SafetyService.class, new SafetyServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);

@@ -68,6 +68,10 @@ public class PhysicalInventoryServiceImpl implements PhysicalInventoryService {
 
     @Override
     public PhysicalInventory readPhysicalInventory(InforContext context, String code) throws InforException {
+        if (physicalInventoryRepository != null) {
+            PhysicalInventory pi = physicalInventoryRepository.findById(code).orElse(null);
+            if (pi != null) return pi;
+        }
         ResultData resultData = getInventoryResultData(context, code);
         PhysicalInventory physicalInventory = tools.getInforFieldTools().transformInforObject(
             new PhysicalInventory(),
@@ -115,6 +119,14 @@ public class PhysicalInventoryServiceImpl implements PhysicalInventoryService {
 
     @Override
     public PhysicalInventoryRow readPhysicalInventoryLine(InforContext context, PhysicalInventoryRow row) throws InforException {
+        if (physicalInventoryRowRepository != null) {
+            java.util.List<PhysicalInventoryRow> rows =
+                physicalInventoryRowRepository.findByPhysicalInventoryCode(row.getPhysicalInventoryCode());
+            java.util.Optional<PhysicalInventoryRow> match = rows.stream()
+                .filter(r -> r.getLineNumber().equals(row.getLineNumber()))
+                .findFirst();
+            if (match.isPresent()) return match.get();
+        }
         return tools.getInforFieldTools().transformInforObject(
             new PhysicalInventoryRow(),
             getLine(context, row.getPhysicalInventoryCode(), row.getLineNumber()), context);
