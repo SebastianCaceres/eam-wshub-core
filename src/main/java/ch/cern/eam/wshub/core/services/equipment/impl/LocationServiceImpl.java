@@ -18,7 +18,9 @@ import net.datastream.schemas.mp_functions.mp0361_001.MP0361_GetLocationParentHi
 import net.datastream.schemas.mp_results.mp0318_001.MP0318_GetLocation_001_Result;
 import net.datastream.schemas.mp_results.mp0361_001.MP0361_GetLocationParentHierarchy_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.LocationRepository;
 import java.util.List;
+import java.util.Optional;
 
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
@@ -27,11 +29,17 @@ public class LocationServiceImpl implements LocationService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private LocationRepository locationRepository;
 
 	public LocationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public LocationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, LocationRepository locationRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.locationRepository = locationRepository;
 	}
 
 	//
@@ -56,6 +64,13 @@ public class LocationServiceImpl implements LocationService {
 
 	public Location readLocation(InforContext context, String locationCode) throws InforException
 	{
+		if (locationRepository != null && locationCode != null) {
+			Optional<Location> location = locationRepository.findById(locationCode);
+			if (location.isPresent()) {
+				return location.get();
+			}
+		}
+
 		MP0318_GetLocation_001 getLocation = new MP0318_GetLocation_001();
 		getLocation.setLOCATIONID(new LOCATIONID_Type());
 		getLocation.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));

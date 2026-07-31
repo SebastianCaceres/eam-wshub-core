@@ -27,16 +27,25 @@ import java.math.BigDecimal;
 
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
+import ch.cern.eam.wshub.core.repositories.PickTicketRepository;
+import java.util.Optional;
+
 public class PickTicketServiceImpl implements PickTicketService {
 
     private Tools tools;
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
+    private PickTicketRepository pickTicketRepository;
 
     public PickTicketServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public PickTicketServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, PickTicketRepository pickTicketRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.pickTicketRepository = pickTicketRepository;
     }
 
     public String createPickTicket(InforContext context, PickTicket pickTicketParam) throws InforException {
@@ -92,6 +101,13 @@ public class PickTicketServiceImpl implements PickTicketService {
     }
 
     public PickTicket readPickTicket(InforContext context, String code) throws InforException {
+        if (pickTicketRepository != null && code != null) {
+            Optional<PickTicket> pickTicket = pickTicketRepository.findById(code);
+            if (pickTicket.isPresent()) {
+                return pickTicket.get();
+            }
+        }
+
         PickList pickList = readPickList(context, code);
         final PickTicket pickTicket = tools.getInforFieldTools().transformInforObject(new PickTicket(), pickList, context);
         return pickTicket;

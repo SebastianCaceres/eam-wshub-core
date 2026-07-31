@@ -16,16 +16,25 @@ import net.datastream.schemas.mp_results.mp1203_001.MP1203_DeleteLot_001_Result;
 import net.datastream.schemas.mp_results.mp1205_001.MP1205_GetLot_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
+import ch.cern.eam.wshub.core.repositories.LotRepository;
+import java.util.Optional;
+
 public class PartLotServiceImpl implements PartLotService {
 
     private Tools tools;
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
+    private LotRepository lotRepository;
 
     public PartLotServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public PartLotServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, LotRepository lotRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.lotRepository = lotRepository;
     }
 
     @Override
@@ -41,6 +50,13 @@ public class PartLotServiceImpl implements PartLotService {
 
     @Override
     public Lot readLot(InforContext context, String lotPk) throws InforException {
+        if (lotRepository != null && lotPk != null) {
+            Optional<Lot> lot = lotRepository.findById(lotPk);
+            if (lot.isPresent()) {
+                return lot.get();
+            }
+        }
+
         net.datastream.schemas.mp_entities.lot_001.Lot lot = readLotInfor(context, lotPk);
 
         return tools.getInforFieldTools().transformInforObject(new Lot(), lot, context);

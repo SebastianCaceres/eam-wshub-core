@@ -61,4 +61,13 @@ public class Store2StoreTransferServiceImpl implements Store2StoreTransferServic
 						"," + store2StoreTransfer001Result.getResultData().getRECEIVETRANSACTIONID().getTRANSACTIONCODE() ;
 		return transactId;
 	}
+
+	@Override
+	public Store2StoreTransferDTO readStore2StoreTransfer(InforContext context, Long transferId) throws InforException {
+		if (store2StoreTransferDTORepository == null) {
+			throw tools.generateFault("Database connection required for store transfer reads");
+		}
+		return store2StoreTransferDTORepository.findById(transferId)
+				.orElseThrow(() -> tools.generateFault("Store transfer not found: " + transferId));
+	}
 }

@@ -37,6 +37,7 @@ public class Equipment implements UserDefinedListHelpable {
     
     private String typeDesc;
 
+    @Column(name = "OBJ_SYSID")
     private String systemTypeCode;
 
     @Transient

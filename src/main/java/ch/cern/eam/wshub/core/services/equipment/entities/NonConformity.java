@@ -9,6 +9,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,17 +21,20 @@ import java.util.Date;
 @Setter
 @ToString
 //@JsonInclude(JsonInclude.Include.NON_NULL)
+@Entity
+@Table(name = "R5NONCONFORMITIES")
 public class NonConformity {
     @GridField(name = "description")
-    
+    @Column(name = "NCR_DESC")
     private String description;
 
     @GridField(name = "organization")
-    
+    @Transient
     private String organizationCode;
 
     @GridField(name = "nonconformity")
-    
+    @Id
+    @Column(name = "NCR_CODE")
     private String code;
 
     @GridField(name = "aspectcode")

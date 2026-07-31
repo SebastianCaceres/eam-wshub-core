@@ -12,4 +12,7 @@ import ch.cern.eam.wshub.core.tools.InforException;
 public interface Store2StoreTransferService {
     @Operation(logOperation = INFOR_OPERATION.STORE2STORETRANSFER)
     String store2storeTransfer(InforContext context, Store2StoreTransferDTO store2StoreTransferDTO) throws InforException;
+
+    @Operation(logOperation = INFOR_OPERATION.STORE2STORE_R)
+    Store2StoreTransferDTO readStore2StoreTransfer(InforContext context, Long transferId) throws InforException;
 }

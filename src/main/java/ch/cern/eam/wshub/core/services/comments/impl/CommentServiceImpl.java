@@ -19,6 +19,8 @@ import net.datastream.wsdls.inforws.InforWebServicesPT;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.cern.eam.wshub.core.repositories.CommentRepository;
+
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.encodeBoolean;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
 import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
@@ -30,11 +32,17 @@ public class CommentServiceImpl implements CommentService {
 	private Tools tools;
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
+	private CommentRepository commentRepository;
 
 	public CommentServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public CommentServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, CommentRepository commentRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
+		this.commentRepository = commentRepository;
 	}
 
 	public String createComment(InforContext context, Comment comment) throws InforException {
@@ -108,6 +116,12 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	public Comment[] readComments(InforContext context, String entityCode, String entityKeyCode, String typeCode) throws InforException {
+		if (commentRepository != null) {
+			List<Comment> comments = commentRepository.findByEntityCodeAndEntityKeyCode(entityCode, extractEntityCode(entityKeyCode));
+			if (comments != null && !comments.isEmpty()) {
+				return comments.toArray(new Comment[0]);
+			}
+		}
 		return readCommentsInfor(context, entityCode, extractEntityCode(entityKeyCode), typeCode, tools.getOrganizationCode(context, extractOrganizationCode(entityKeyCode)))
 				.stream().map(this::convertToComment)
 				.toArray(Comment[]::new);

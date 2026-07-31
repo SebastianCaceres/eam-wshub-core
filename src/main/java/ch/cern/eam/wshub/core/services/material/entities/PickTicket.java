@@ -2,22 +2,36 @@ package ch.cern.eam.wshub.core.services.material.entities;
 
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "R5PICKISSUE")
 public class PickTicket  {
 
+    @Id
+    @Column(name = "PIC_CODE")
     private String code;
-    
+
+    @Column(name = "PIC_DESC")
     private String description;
-    
+
+    @Column(name = "PIC_STORE")
     private String storeCode;
-    
+
+    @Column(name = "PIC_STATUS")
     private String status;
-    
+
+    @Column(name = "PIC_REQENDDATE")
     private Date requestedEndDate;
-    
+
+    @Column(name = "PIC_CLASS")
     private String classCode;
     
     private String workorderCode;

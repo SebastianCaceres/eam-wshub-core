@@ -3,50 +3,75 @@ package ch.cern.eam.wshub.core.services.workorders.entities;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
+import javax.persistence.*;
 import java.math.BigInteger;
 
+@Entity
+@Table(name = "R5STANDARDWOS")
 public class StandardWorkOrder {
 
+    @Id
+    @Column(name = "STW_CODE")
     private String code;
     
+    @Column(name = "STW_DESC")
     private String desc;
 
+    @Column(name = "STW_TYPE")
     private String typeCode;
     
+    @Transient
     private String typeDesc;
 
+    @Transient
     private String workOrderTypeCode;
     
+    @Transient
     private String workOrderTypeDesc;
 
+    @Transient
     private BigInteger duration;
 
+    @Column(name = "STW_CLASS")
     private String classCode;
     
+    @Transient
     private String classDesc;
 
+    @Transient
     private String woClassCode;
     
+    @Transient
     private String woClassDesc;
 
+    @Transient
     private String equipmentClassCode;
     
+    @Transient
     private String equipmentCassDesc;
 
+    @Transient
     private String categoryCode;
     
+    @Transient
     private String categoryDesc;
 
+    @Transient
     private String priorityCode;
     
+    @Transient
     private String priorityDesc;
 
+    @Transient
     private Boolean outOfService = false;
 
+    @Transient
     private CustomField[] customFields;
 
+    @Transient
     private UserDefinedFields userDefinedFields;
 
+    @Transient
     private String problemCode;
 
     public String getCode() {

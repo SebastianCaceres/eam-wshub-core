@@ -95,4 +95,20 @@ public class DataspyServiceImpl implements DataspyService {
         return dataspyId.toPlainString();
     }
 
+    public java.util.List<ch.cern.eam.wshub.core.services.grids.customfields.DataspyCustomField> readDataspyCustomFields(
+            InforContext context, String dataspyId) throws InforException {
+        if (dataspyCustomFieldRepository == null) {
+            throw tools.generateFault("Database connection required for readDataspyCustomFields");
+        }
+        return dataspyCustomFieldRepository.findByDataspyID(dataspyId);
+    }
+
+    public java.util.List<ch.cern.eam.wshub.core.services.grids.entities.DataspyField> readDataspyFields(
+            InforContext context, String dataspyId) throws InforException {
+        if (dataspyFieldRepository == null) {
+            throw tools.generateFault("Database connection required for readDataspyFields");
+        }
+        return dataspyFieldRepository.findByDataspy(dataspyId);
+    }
+
 }

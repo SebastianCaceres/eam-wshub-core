@@ -1,25 +1,63 @@
 package ch.cern.eam.wshub.core.services.comments.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "R5COMMENTS")
 public class Comment  {
 
+	@Id
+	@Column(name = "CMT_CODE")
+	private String pk;
+
+	@Column(name = "CMT_TEXT")
 	private String text;
+
+	@Column(name = "CMT_LINE")
 	private String lineNumber;
+
+	@Transient
 	private String updateCount;
+
+	@Column(name = "CMT_CREATEUSER")
 	private String creationUserCode;
+
+	@Transient
 	private String creationUserDesc;
+
+	@Transient
 	private String updateUserCode;
+
+	@Transient
 	private String updateUserDesc;
+
+	@Transient
 	private String creationDate;
+
+	@Transient
 	private String updateDate;
+
+	@Column(name = "CMT_TYPE")
 	private String typeCode;
+
+	@Column(name = "CMT_RKEY")
 	private String entityKeyCode;
+
+	@Column(name = "CMT_RENTITY")
 	private String entityCode;
+
+	@Transient
 	private Boolean print;
 
+	@Transient
 	private String organization;
 
 	public String getPk() {
-		return this.getEntityKeyCode() + "C" + this.getLineNumber();
+		return pk != null ? pk : (this.getEntityKeyCode() + "C" + this.getLineNumber());
+	}
+
+	public void setPk(String pk) {
+		this.pk = pk;
 	}
 
 	private boolean updated;

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "ch.cern.eam.wshub.core.services.equipment.entities",
     "ch.cern.eam.wshub.core.services.administration.entities",
     "ch.cern.eam.wshub.core.services.documents.entities",
+    "ch.cern.eam.wshub.core.services.comments.entities",
     "ch.cern.eam.wshub.core.services.entities",
     "ch.cern.eam.wshub.core.services.grids.entities",
     "ch.cern.eam.wshub.core.services.grids.customfields"

@@ -23,6 +23,8 @@ import net.datastream.wsdls.inforws.InforWebServicesPT;
 
 import javax.xml.ws.Holder;
 
+import ch.cern.eam.wshub.core.repositories.StandardWorkOrderRepository;
+
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
@@ -30,14 +32,26 @@ public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
     private Tools tools;
     private InforWebServicesPT inforws;
     private ApplicationData applicationData;
+    private StandardWorkOrderRepository standardWorkOrderRepository;
 
     public StandardWorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public StandardWorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, StandardWorkOrderRepository standardWorkOrderRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.standardWorkOrderRepository = standardWorkOrderRepository;
     }
 
     public StandardWorkOrder readStandardWorkOrder(InforContext context, String number) throws InforException {
+        if (standardWorkOrderRepository != null) {
+            StandardWorkOrder found = standardWorkOrderRepository.findById(number).orElse(null);
+            if (found != null) {
+                return found;
+            }
+        }
         return tools.getInforFieldTools().transformInforObject(new StandardWorkOrder(), readStandardWorkOrderInfor(context, number), context);
     }
 

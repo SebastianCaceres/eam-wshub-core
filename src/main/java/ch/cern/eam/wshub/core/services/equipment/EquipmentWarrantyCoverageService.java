@@ -13,4 +13,6 @@ public interface EquipmentWarrantyCoverageService {
 
     @Operation(logOperation = INFOR_OPERATION.EQP_WARR_U)
     String updateEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException;
+
+    EquipmentWarranty readEquipmentWarranty(InforContext context, String equipmentCode, String warrantyCode) throws InforException;
 }

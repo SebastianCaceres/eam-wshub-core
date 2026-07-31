@@ -191,6 +191,13 @@ public class InforClient implements Serializable {
         private RouteRepository routeRepository;
         private Store2StoreTransferDTORepository store2StoreTransferDTORepository;
         private StoreTransactionPartLineRepository storeTransactionPartLineRepository;
+        private CommentRepository commentRepository;
+        private StandardWorkOrderRepository standardWorkOrderRepository;
+        private TaskPlanRepository taskPlanRepository;
+        private LocationRepository locationRepository;
+        private NonConformityRepository nonConformityRepository;
+        private LotRepository lotRepository;
+        private PickTicketRepository pickTicketRepository;
 
         private Boolean localizeResults = true;
         private Map<CacheKey, Cache<String, Object>> cacheMap = InforClient.cacheMap;
@@ -399,6 +406,41 @@ public class InforClient implements Serializable {
             return this;
         }
 
+        public Builder withCommentRepository(CommentRepository commentRepository) {
+            this.commentRepository = commentRepository;
+            return this;
+        }
+
+        public Builder withStandardWorkOrderRepository(StandardWorkOrderRepository standardWorkOrderRepository) {
+            this.standardWorkOrderRepository = standardWorkOrderRepository;
+            return this;
+        }
+
+        public Builder withTaskPlanRepository(TaskPlanRepository taskPlanRepository) {
+            this.taskPlanRepository = taskPlanRepository;
+            return this;
+        }
+
+        public Builder withLocationRepository(LocationRepository locationRepository) {
+            this.locationRepository = locationRepository;
+            return this;
+        }
+
+        public Builder withNonConformityRepository(NonConformityRepository nonConformityRepository) {
+            this.nonConformityRepository = nonConformityRepository;
+            return this;
+        }
+
+        public Builder withLotRepository(LotRepository lotRepository) {
+            this.lotRepository = lotRepository;
+            return this;
+        }
+
+        public Builder withPickTicketRepository(PickTicketRepository pickTicketRepository) {
+            this.pickTicketRepository = pickTicketRepository;
+            return this;
+        }
+
         private <T> T proxy(Class<T> targetClass, T target, InforInterceptor inforInterceptor, Tools tools) {
             return (T) Proxy.newProxyInstance(targetClass.getClassLoader(), new Class[] { targetClass }, new InforInvocationHandler<>(target, inforInterceptor, tools));
         }
@@ -448,9 +490,9 @@ public class InforClient implements Serializable {
             // Init Service Classes
             //
             inforClient.workOrderService = proxy(WorkOrderService.class, new WorkOrderServiceImpl(applicationData, tools, inforWebServicesToolkitClient, workOrderRepository), inforInterceptor, tools);
-            inforClient.standardWorkOrderService = proxy(StandardWorkOrderService.class, new StandardWorkOrderServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.standardWorkOrderService = proxy(StandardWorkOrderService.class, new StandardWorkOrderServiceImpl(applicationData, tools, inforWebServicesToolkitClient, standardWorkOrderRepository), inforInterceptor, tools);
             inforClient.standardWorkOrderChildService = proxy(StandardWorkOrderChildService.class, new StandardWorkOrderChildServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.commentService = proxy(CommentService.class, new CommentServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.commentService = proxy(CommentService.class, new CommentServiceImpl(applicationData, tools, inforWebServicesToolkitClient, commentRepository), inforInterceptor, tools);
             inforClient.caseService = proxy(CaseService.class, new CaseServiceImpl(applicationData, tools, inforWebServicesToolkitClient, inforCaseRepository), inforInterceptor, tools);
             inforClient.caseTaskService = proxy(CaseTaskService.class, new CaseTaskServiceImpl(applicationData, tools, inforWebServicesToolkitClient, inforCaseTaskRepository), inforInterceptor, tools);
             inforClient.checklistService = proxy(ChecklistService.class, new ChecklistServiceImpl(applicationData, tools, inforWebServicesToolkitClient, findingRepository), inforInterceptor, tools);
@@ -460,8 +502,8 @@ public class InforClient implements Serializable {
             inforClient.employeeService = proxy(EmployeeService.class, new EmployeeServiceImpl(applicationData, tools, inforWebServicesToolkitClient, employeeRepository), inforInterceptor, tools);
             inforClient.categoryService = proxy(CategoryService.class, new CategoryServiceImpl(tools, inforWebServicesToolkitClient, categoryRepository), inforInterceptor, tools);
             inforClient.assetService = proxy(AssetService.class, new AssetServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentRepository), inforInterceptor, tools);
-            inforClient.positionService = proxy(PositionService.class, new PositionServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.systemService = proxy(SystemService.class, new SystemServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.positionService = proxy(PositionService.class, new PositionServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentRepository), inforInterceptor, tools);
+            inforClient.systemService = proxy(SystemService.class, new SystemServiceImpl(applicationData, tools, inforWebServicesToolkitClient, equipmentRepository), inforInterceptor, tools);
             inforClient.equipmentFacadeService = proxy(EquipmentFacadeService.class, new EquipmentFacadeServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.equipmentStructureService = proxy(EquipmentStructureService.class, new EquipmentStructureServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.linearReferenceService = proxy(LinearReferenceService.class, new LinearReferenceServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
@@ -473,14 +515,14 @@ public class InforClient implements Serializable {
             inforClient.partStoreService = proxy(PartStoreService.class, new PartStoreServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.partManufacturerService = proxy(PartManufacturerService.class, new PartManufacturerServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.partBinStockService = proxy(PartBinStockService.class, new PartBinStockServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.partLotService = proxy(PartLotService.class, new PartLotServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.locationService = proxy(LocationService.class, new LocationServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.partLotService = proxy(PartLotService.class, new PartLotServiceImpl(applicationData, tools, inforWebServicesToolkitClient, lotRepository), inforInterceptor, tools);
+            inforClient.locationService = proxy(LocationService.class, new LocationServiceImpl(applicationData, tools, inforWebServicesToolkitClient, locationRepository), inforInterceptor, tools);
             inforClient.partKitService = proxy(PartKitService.class, new PartKitServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.purchaseOrdersService = proxy(PurchaseOrdersService.class, new PurchaseOrdersImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userSetupService = proxy(UserSetupService.class, new UserSetupServiceImpl(applicationData, tools, inforWebServicesToolkitClient, eamUserRepository), inforInterceptor, tools);
             inforClient.gridsService = proxy(GridsService.class, new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient, gridDataspyRepository, gridFieldRepository, gridMetadataRequestResultRepository, installParametersRepository), inforInterceptor, tools);
             inforClient.documentsService = proxy(DocumentsService.class, new DocumentsServiceImpl(applicationData, tools, inforWebServicesToolkitClient, inforDocumentRepository, inforDocEntityRepository), inforInterceptor, tools);
-            inforClient.pickTicketService = proxy(PickTicketService.class, new PickTicketServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.pickTicketService = proxy(PickTicketService.class, new PickTicketServiceImpl(applicationData, tools, inforWebServicesToolkitClient, pickTicketRepository), inforInterceptor, tools);
             inforClient.physicalInventoryService = proxy(PhysicalInventoryService.class, new PhysicalInventoryServiceImpl(applicationData, tools, inforWebServicesToolkitClient, physicalInventoryRepository, physicalInventoryRowRepository), inforInterceptor, tools);
             inforClient.equipmentGenerationService = proxy(EquipmentGenerationService.class, new EquipmentGenerationServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
             inforClient.equipmentConfigurationService = proxy(EquipmentConfigurationService.class, new EquipmentConfigurationServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
@@ -493,11 +535,11 @@ public class InforClient implements Serializable {
             inforClient.mecService = proxy(MECService.class, new MECServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.inforWebServicesToolkitClient = inforWebServicesToolkitClient;
             inforClient.safetyService = proxy(SafetyService.class, new SafetyServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
-            inforClient.taskPlanService = proxy(TaskPlanService.class, new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.taskPlanService = proxy(TaskPlanService.class, new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient, taskPlanRepository), inforInterceptor, tools);
             inforClient.salesPriceService = proxy(SalesPriceService.class, new SalesPricesImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedScreenService = proxy(UserDefinedScreenService.class, new UserDefinedScreenServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.equipmentReservationService = proxy(EquipmentReservationService.class, new EquipmentReservationServiceImpl(applicationData, tools, inforWebServicesToolkitClient),inforInterceptor, tools);
-            inforClient.nonconformityService = proxy(NonconformityService.class, new NonconformityServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.nonconformityService = proxy(NonconformityService.class, new NonconformityServiceImpl(applicationData, tools, inforWebServicesToolkitClient, nonConformityRepository), inforInterceptor, tools);
             inforClient.nonConformityObservationService = proxy(NonConformityObservationService.class, new NonConformityObservationServiceImpl(applicationData, tools, inforWebServicesToolkitClient, findingRepository), inforInterceptor, tools);
             inforClient.nonPoReceiptPartService = proxy(NonPoReceiptPartService.class, new NonPoReceiptPartServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.nonPoReceiptService = proxy(NonPoReceiptService.class, new NonPoReceiptServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);

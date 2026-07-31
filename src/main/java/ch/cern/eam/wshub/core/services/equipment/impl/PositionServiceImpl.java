@@ -27,6 +27,12 @@ import net.datastream.wsdls.inforws.InforWebServicesPT;
 import java.util.HashMap;
 import java.util.List;
 
+import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.*;
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.readHierarchyType;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
@@ -37,15 +43,22 @@ public class PositionServiceImpl implements PositionService {
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
 	private UserDefinedListService userDefinedListService;
+	private EquipmentRepository equipmentRepository;
 
 	public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
 		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+		this.equipmentRepository = equipmentRepository;
 	}
 
 	public String createPosition(InforContext context, Equipment positionParam) throws InforException {
+
 
 		PositionEquipment positionEquipment = new PositionEquipment();
 		//
@@ -107,6 +120,13 @@ public class PositionServiceImpl implements PositionService {
 	}
 
 	public Equipment readPosition(InforContext context, String positionCode, String organization) throws InforException {
+		if (equipmentRepository != null && positionCode != null) {
+			Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(positionCode, "P");
+			if (equipment.isPresent()) {
+				return equipment.get();
+			}
+		}
+
 		PositionEquipment positionEquipment = readInforPosition(context, positionCode, organization);
 		Equipment position = tools.getInforFieldTools().transformInforObject(new Equipment(), positionEquipment, context);
 		position.setSystemTypeCode("P");

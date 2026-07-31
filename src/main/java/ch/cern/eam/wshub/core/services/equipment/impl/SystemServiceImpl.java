@@ -22,9 +22,11 @@ import net.datastream.schemas.mp_results.mp0312_001.MP0312_GetSystemEquipment_00
 import net.datastream.schemas.mp_results.mp0315_001.MP0315_GetSystemEquipmentDefault_001_Result;
 import net.datastream.schemas.mp_results.mp0329_001.MP0329_GetSystemParentHierarchy_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
+import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
+import java.util.HashMap;
+import java.util.Optional;
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.createPrimarySystemParent;
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.createLocationParent;
-import java.util.HashMap;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
 
 public class SystemServiceImpl implements SystemService {
@@ -33,12 +35,18 @@ public class SystemServiceImpl implements SystemService {
 	private InforWebServicesPT inforws;
 	private ApplicationData applicationData;
 	private UserDefinedListService userDefinedListService;
+	private EquipmentRepository equipmentRepository;
 
 	public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+		this(applicationData, tools, inforWebServicesToolkitClient, null);
+	}
+
+	public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
 		this.applicationData = applicationData;
 		this.tools = tools;
 		this.inforws = inforWebServicesToolkitClient;
 		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+		this.equipmentRepository = equipmentRepository;
 	}
 
 	public Equipment readSystemDefault(InforContext context, String organization) throws InforException {
@@ -63,6 +71,12 @@ public class SystemServiceImpl implements SystemService {
 	}
 
 	public Equipment readSystem(InforContext context, String systemCode, String organization) throws InforException {
+		if (equipmentRepository != null && systemCode != null) {
+			Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(systemCode, "S");
+			if (equipment.isPresent()) {
+				return equipment.get();
+			}
+		}
 
 		SystemEquipment systemEquipment = readSystemInfor(context, systemCode, organization);
 

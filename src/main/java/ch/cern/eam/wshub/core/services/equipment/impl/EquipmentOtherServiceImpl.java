@@ -188,15 +188,25 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 				return results.get(0);
 			}
 		}
-		// SOAP fallback
-		MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
-		getDepreciation.setEQUIPMENTID(new EQUIPMENTID_Type());
-		getDepreciation.getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-		getDepreciation.getEQUIPMENTID().setEQUIPMENTCODE(equipmentCode);
-		MP3016_GetDepreciation_001_Result result =
-			tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
-		return tools.getInforFieldTools().transformInforObject(
-			new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
+		// SOAP fallback: MP3016 requires a DEPRECIATIONPK; fetch it via EntityManager first
+		EntityManager em = tools.getEntityManager();
+		try {
+			EquipmentDepreciation found = em
+				.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class)
+				.setParameter("equipmentCode", equipmentCode.trim().toUpperCase())
+				.getSingleResult();
+			MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
+			getDepreciation.setDEPRECIATIONPK(
+				tools.getDataTypeTools().encodeQuantity(found.getDepreciationPK(), "Depreciation PK"));
+			MP3016_GetDepreciation_001_Result result =
+				tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
+			return tools.getInforFieldTools().transformInforObject(
+				new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
+		} catch (Exception e) {
+			throw tools.generateFault("Couldn't fetch depreciation for equipment " + equipmentCode + ": " + e.getMessage());
+		} finally {
+			em.close();
+		}
 	}
 
 	public String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {

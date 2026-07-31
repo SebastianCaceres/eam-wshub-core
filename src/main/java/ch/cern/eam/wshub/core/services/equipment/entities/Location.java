@@ -4,10 +4,14 @@ import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Arrays;
 
+@Entity
+@Table(name = "R5OBJECTS")
 public class Location  {
 
 	@Id

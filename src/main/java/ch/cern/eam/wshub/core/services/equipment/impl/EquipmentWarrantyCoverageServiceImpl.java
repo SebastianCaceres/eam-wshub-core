@@ -165,5 +165,15 @@ public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCo
 		return result.getResultData().getWARRANTYCOVERAGESEQNUM() + "";
 	}
 
+	@Override
+	public EquipmentWarranty readEquipmentWarranty(InforContext context, String equipmentCode, String warrantyCode) throws InforException {
+		if (equipmentWarrantyRepository != null) {
+			return equipmentWarrantyRepository.findByEquipmentCodeAndWarrantyCode(
+					equipmentCode != null ? equipmentCode.trim().toUpperCase() : null,
+					warrantyCode
+			).orElse(null);
+		}
+		throw tools.generateFault("Database connection required for readEquipmentWarranty");
+	}
 
 }

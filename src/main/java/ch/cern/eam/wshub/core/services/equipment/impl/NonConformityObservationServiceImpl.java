@@ -65,6 +65,16 @@ public class NonConformityObservationServiceImpl implements NonConformityObserva
 
     @Override
     public NonConformityObservation readNonConformityObservation(InforContext context, String nonconformityObsPk) throws InforException {
+        if (findingRepository != null) {
+            ch.cern.eam.wshub.core.services.workorders.entities.Finding finding = findingRepository.findById(nonconformityObsPk).orElse(null);
+            if (finding != null) {
+                NonConformityObservation obs = new NonConformityObservation();
+                obs.setObservationPk(finding.getCode());
+                obs.setDescription(finding.getDesc());
+                return obs;
+            }
+        }
+
         NonconformityObservation nonconformityObservation =
                 readNonconformityObservationInfor(context, nonconformityObsPk);
 

@@ -2,61 +2,91 @@ package ch.cern.eam.wshub.core.services.workorders.entities;
 
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+@Entity
+@Table(name = "R5TASKS")
 public class TaskPlan {
 
+	@Id
+	@Column(name = "TSK_CODE")
 	private String code;
 
+	@Column(name = "TSK_DESC")
 	private String description;
 
+	@Transient
 	private BigInteger taskRevision;
 
+	@Transient
 	private Boolean performedByRequired;
 
+	@Transient
 	private Boolean reviewedByRequired;
 
+	@Transient
 	private String viewOnlyResponsibility;
 
+	@Transient
 	private String reviewResponsibility;
 
+	@Transient
 	private String performByResponsibility;
 
+	@Transient
 	private String performBy2Responsibility;
 
+	@Transient
 	private Boolean activeChecklist;
 
+	@Column(name = "TSK_TRADE")
 	private String tradeCode;
 
+	@Column(name = "TSK_CLASS")
 	private String classCode;
 
+	@Column(name = "TSK_EST")
 	private BigDecimal estimatedHours;
 
+	@Transient
 	private BigInteger peopleRequired;
 
+	@Column(name = "TSK_TYPE")
 	private String typeCode;
 
+	@Transient
 	private String revisionStatus;
 
+	@Transient
 	private Boolean outOfService;
 
+	@Transient
 	private String equipmentType;
 
+	@Transient
 	private String equipmentClass;
 
+	@Transient
 	private String materialList;
 
+	@Transient
 	private UserDefinedFields userDefinedFields;
 
+	@Transient
 	private String workOrderDescription;
 
+	@Transient
 	private String workOrderType;
 
+	@Transient
 	private String workOrderClass;
 
+	@Transient
 	private String workOrderStatus;
 
+	@Transient
 	private String workOrderPriority;
 
 	public String getCode() {

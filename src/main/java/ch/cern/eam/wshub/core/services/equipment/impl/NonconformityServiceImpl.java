@@ -20,6 +20,9 @@ import net.datastream.schemas.mp_results.mp3398_001.MP3398_SyncNonconformity_001
 import net.datastream.schemas.mp_results.mp3400_001.MP3400_GetNonconformity_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
+import ch.cern.eam.wshub.core.repositories.NonConformityRepository;
+import java.util.Optional;
+
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
 
 public class NonconformityServiceImpl implements NonconformityService {
@@ -27,11 +30,17 @@ public class NonconformityServiceImpl implements NonconformityService {
     private ApplicationData applicationData;
     private Tools tools;
     private InforWebServicesPT inforws;
+    private NonConformityRepository nonConformityRepository;
 
     public NonconformityServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
+
+    public NonconformityServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, NonConformityRepository nonConformityRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
+        this.nonConformityRepository = nonConformityRepository;
     }
 
     @Override
@@ -71,6 +80,14 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public NonConformity readNonconformity(InforContext context, String nonconformityCode) throws InforException {
+        if (nonConformityRepository != null && nonconformityCode != null) {
+            String code = Tools.extractEntityOrganizationCodePair(nonconformityCode).getEntityCode();
+            Optional<NonConformity> nonConformity = nonConformityRepository.findById(code);
+            if (nonConformity.isPresent()) {
+                return nonConformity.get();
+            }
+        }
+
         net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
                 readNonconformityInfor(context, nonconformityCode);
 
