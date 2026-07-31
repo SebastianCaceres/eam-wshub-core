@@ -39,6 +39,14 @@ public class PartLotServiceImpl implements PartLotService {
 
     @Override
     public String createLot(InforContext context, Lot lot) throws InforException {
+        if (lotRepository != null) {
+            try {
+                Lot saved = lotRepository.save(lot);
+                return saved.getCode();
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
 
         net.datastream.schemas.mp_entities.lot_001.Lot lotInfor = new net.datastream.schemas.mp_entities.lot_001.Lot();
         tools.getInforFieldTools().transformWSHubObject(lotInfor, lot, context);
@@ -65,6 +73,15 @@ public class PartLotServiceImpl implements PartLotService {
 
     @Override
     public String updateLot(InforContext context, Lot lot) throws InforException {
+        if (lotRepository != null) {
+            try {
+                Lot saved = lotRepository.save(lot);
+                return saved.getCode();
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
+
         MP1202_SyncLot_001 syncLot = new MP1202_SyncLot_001();
 
         net.datastream.schemas.mp_entities.lot_001.Lot prev = readLotInfor(context, lot.getCode());
@@ -77,6 +94,15 @@ public class PartLotServiceImpl implements PartLotService {
 
     @Override
     public String deleteLot(InforContext context, String lotCode) throws InforException {
+        if (lotRepository != null && lotCode != null) {
+            try {
+                lotRepository.deleteById(lotCode);
+                return lotCode;
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
+
         MP1203_DeleteLot_001 deleteLot = new MP1203_DeleteLot_001();
         LOTID_Type idType = new LOTID_Type();
         idType.setLOTCODE(lotCode);

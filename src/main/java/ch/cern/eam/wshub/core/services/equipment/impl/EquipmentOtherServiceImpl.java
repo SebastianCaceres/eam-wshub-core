@@ -45,9 +45,14 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 	}
 
 	public String createEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
-		//
-		// Fetch default values
-		//
+		if (equipmentDepreciationRepository != null) {
+			try {
+				EquipmentDepreciation saved = equipmentDepreciationRepository.save(equipmentDepreciation);
+				return saved.getEquipmentCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		MP3015_GetDepreciationDefault_001 getdepdef = new MP3015_GetDepreciationDefault_001();
 
 		getdepdef.setEQUIPMENTID(new EQUIPMENTID_Type());

@@ -267,5 +267,12 @@ public class NonConformityObservation  {
         this.customFields = customFields;
     }
 
+    public String getObservationPk() { return observationPk; }
+    public void setObservationPk(String observationPk) { this.observationPk = observationPk; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getJobNum() { return null; }
 }
 

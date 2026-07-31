@@ -129,6 +129,15 @@ public class PartServiceImpl implements PartService {
 	}
 
 	public String createPart(InforContext context, Part partParam) throws InforException {
+		if (partRepository != null) {
+			try {
+				Part saved = partRepository.save(partParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.part_001.Part inforPart = new net.datastream.schemas.mp_entities.part_001.Part();
 		//
 		//
@@ -155,6 +164,14 @@ public class PartServiceImpl implements PartService {
 	}
 
 	public String updatePart(InforContext context, Part partParam) throws InforException {
+		if (partRepository != null) {
+			try {
+				Part saved = partRepository.save(partParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		if (partParam.getNewCode() != null && !partParam.getNewCode().trim().equals("")) {
 

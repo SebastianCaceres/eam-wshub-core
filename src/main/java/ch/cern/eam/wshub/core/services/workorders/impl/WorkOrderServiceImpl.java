@@ -195,6 +195,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		END OF DEFAULT VALUE IMPLEMENTATION NOTES
 	 */
 	public String createWorkOrder(InforContext context, WorkOrder workorderParam) throws InforException {
+		if (workOrderRepository != null) {
+			try {
+				WorkOrder saved = workOrderRepository.save(workorderParam);
+				return saved.getNumber();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.workorder_001.WorkOrder inforWorkOrder;
 
 		if(workorderParam.getCopyFrom() == null) {
@@ -321,6 +330,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	public String updateWorkOrder(InforContext context, WorkOrder workorderParam) throws InforException {
+		if (workOrderRepository != null) {
+			try {
+				WorkOrder saved = workOrderRepository.save(workorderParam);
+				return saved.getNumber();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.workorder_001.WorkOrder inforWorkOrder = readWorkOrderInfor(context, workorderParam.getNumber(), workorderParam.getOrganization()).getResultData().getWorkOrder();
 
 		// Check Custom fields. If they change, or now we have them
@@ -354,6 +372,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	public String deleteWorkOrder(InforContext context, String workOrderNumber) throws InforException {
+		if (workOrderRepository != null && workOrderNumber != null) {
+			try {
+				workOrderRepository.deleteById(extractEntityCode(workOrderNumber));
+				return workOrderNumber;
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		MP0055_DeleteWorkOrder_001 deleteWO = new MP0055_DeleteWorkOrder_001();
 		deleteWO.setWORKORDERID(new WOID_Type());
 		deleteWO.getWORKORDERID().setORGANIZATIONID(tools.getOrganization(context, extractOrganizationCode(workOrderNumber)));

@@ -44,17 +44,13 @@ public class Equipment implements UserDefinedListHelpable {
     
     private String alias;
 
-    @Transient
-    
+    @Column(name = "OBJ_CLASS")
     private String classCode;
     @Transient
-    
     private String classDesc;
-    @Transient
-    
+    @Column(name = "OBJ_CATEGORY")
     private String categoryCode;
     @Transient
-    
     private String categoryDesc;
     @Transient
     
@@ -69,11 +65,9 @@ public class Equipment implements UserDefinedListHelpable {
     
     private String profileCode;
     //
-    @Transient
-    
+    @Column(name = "OBJ_STATUS")
     private String statusCode;
     @Transient
-    
     private String statusDesc;
 
     @Transient
@@ -88,18 +82,14 @@ public class Equipment implements UserDefinedListHelpable {
     }
 
     //
-    @Transient
-    
+    @Column(name = "OBJ_COSTCODE")
     private String costCode;
     @Transient
-    
     private String costCodeDesc;
 
-    @Transient
-    
+    @Column(name = "OBJ_MRC")
     private String departmentCode;
     @Transient
-    
     private String departmentDesc;
     //
     @Transient
@@ -110,50 +100,36 @@ public class Equipment implements UserDefinedListHelpable {
     private Map<String, String> customFieldMap;
 
     //
-    @Transient
-    
+    @Column(name = "OBJ_COMMISS")
     private Date comissionDate;
     @Transient
-    
     private BigDecimal equipmentValue;
-    @Transient
-    
+    @Column(name = "OBJ_PERSON")
     private String assignedTo;
     @Transient
-    
     private String assignedToDesc;
     @Transient
-    
     private String meterUnit;
-    @Transient
-    
+    @Column(name = "OBJ_CRITICALITY")
     private String criticality;
     @Transient
-    
     private String cGMP;
     @Transient
-    
     private Date originalReceiptDate;
     @Transient
-    
     private String stateCode;
     @Transient
-    
     private String stateDesc;
 
-    @Transient
-    
+    @Column(name = "OBJ_MANUFACT")
     private String manufacturerCode;
     @Transient
     private String manufacturerDesc;
-    @Transient
-    
+    @Column(name = "OBJ_SERIALNO")
     private String serialNumber;
-    @Transient
-    
+    @Column(name = "OBJ_MODEL")
     private String model;
     @Transient
-    
     private String revision;
     @Transient
     
@@ -411,6 +387,7 @@ public class Equipment implements UserDefinedListHelpable {
 
     private String workspaceNo;
 
+    @Transient
     private String primaryFuel;
 
     public String getDescription() {

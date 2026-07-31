@@ -58,8 +58,15 @@ public class PositionServiceImpl implements PositionService {
 	}
 
 	public String createPosition(InforContext context, Equipment positionParam) throws InforException {
-
-
+		if (equipmentRepository != null) {
+			try {
+				positionParam.setSystemTypeCode("P");
+				Equipment saved = equipmentRepository.save(positionParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		PositionEquipment positionEquipment = new PositionEquipment();
 		//
 		positionEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
@@ -83,6 +90,14 @@ public class PositionServiceImpl implements PositionService {
 	}
 
 	public String deletePosition(InforContext context, String positionCode, String organization) throws InforException {
+		if (equipmentRepository != null && positionCode != null) {
+			try {
+				equipmentRepository.deleteById(positionCode);
+				return positionCode;
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		MP0309_DeletePositionEquipment_001 deletePosition = new MP0309_DeletePositionEquipment_001();
 		deletePosition.setPOSITIONID(new EQUIPMENTID_Type());
@@ -160,6 +175,15 @@ public class PositionServiceImpl implements PositionService {
 	}
 
 	public String updatePosition(InforContext context, Equipment positionParam) throws InforException {
+		if (equipmentRepository != null) {
+			try {
+				positionParam.setSystemTypeCode("P");
+				Equipment saved = equipmentRepository.save(positionParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		// Read position
 		PositionEquipment positionEquipment = readInforPosition(context, positionParam.getCode(), positionParam.getOrganization());
 		//

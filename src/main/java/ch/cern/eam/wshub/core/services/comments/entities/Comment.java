@@ -16,25 +16,19 @@ public class Comment  {
 	@Column(name = "CMT_LINE")
 	private String lineNumber;
 
-	@Transient
 	private String updateCount;
 
 	@Column(name = "CMT_CREATEUSER")
 	private String creationUserCode;
 
-	@Transient
 	private String creationUserDesc;
 
-	@Transient
 	private String updateUserCode;
 
-	@Transient
 	private String updateUserDesc;
 
-	@Transient
 	private String creationDate;
 
-	@Transient
 	private String updateDate;
 
 	@Column(name = "CMT_TYPE")
@@ -46,10 +40,8 @@ public class Comment  {
 	@Column(name = "CMT_RENTITY")
 	private String entityCode;
 
-	@Transient
 	private Boolean print;
 
-	@Transient
 	private String organization;
 
 	public String getPk() {

@@ -54,6 +54,15 @@ public class RouteServiceImpl implements RouteService {
     }
 
     public String createRoute(InforContext inforContext, Route route) throws InforException {
+        if (routeRepository != null) {
+            try {
+                Route saved = routeRepository.save(route);
+                return saved.getCode();
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
+
         WorkRoute workRoute = new WorkRoute();
         tools.getInforFieldTools().transformWSHubObject(workRoute, route, inforContext);
 

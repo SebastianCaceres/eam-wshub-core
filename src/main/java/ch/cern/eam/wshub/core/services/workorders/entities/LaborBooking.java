@@ -60,6 +60,9 @@ public class LaborBooking implements Comparable<LaborBooking> {
 	@GridField(name="event")
 	private String workOrderNumber;
 
+	public String getCode() { return code; }
+	public void setCode(String code) { this.code = code; }
+
 	public String getTypeOfHours() {
 		return typeOfHours;
 	}

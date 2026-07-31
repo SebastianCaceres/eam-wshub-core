@@ -202,6 +202,14 @@ public class CaseServiceImpl implements CaseService {
 	}
 
 	public String createCase(InforContext context, InforCase caseMT) throws InforException {
+		if (inforCaseRepository != null) {
+			try {
+				InforCase saved = inforCaseRepository.save(caseMT);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		CaseManagement caseManagement = new CaseManagement();
 		caseManagement.setStandardUserDefinedFields(new StandardUserDefinedFields());
@@ -223,6 +231,14 @@ public class CaseServiceImpl implements CaseService {
 	}
 
 	public String deleteCase(InforContext context, String caseID) throws InforException {
+		if (inforCaseRepository != null && caseID != null) {
+			try {
+				inforCaseRepository.deleteById(caseID);
+				return caseID;
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		MP3642_DeleteCaseManagement_001 deleteCase = new MP3642_DeleteCaseManagement_001();
 		deleteCase.setCASEID(new CASEID_Type());
@@ -235,6 +251,15 @@ public class CaseServiceImpl implements CaseService {
 
 	public synchronized String updateCase(InforContext context, InforCase caseMT)
 			throws InforException {
+		if (inforCaseRepository != null) {
+			try {
+				InforCase saved = inforCaseRepository.save(caseMT);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		//
 		// FETCH IT FIRST
 		//

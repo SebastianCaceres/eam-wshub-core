@@ -43,9 +43,11 @@ public class EquipmentPMSchedule implements Serializable  {
 	@Transient private String location;
 	@Transient private String workOrder;
 
-	@Transient
 	
 	private UserDefinedFields userDefinedFields;
+
+	@Transient private String workOrderClass;
+	@Transient private String assignedTo;
 
 	public String getWorkOrderClass() {
 		return workOrderClass;
@@ -54,9 +56,6 @@ public class EquipmentPMSchedule implements Serializable  {
 	public void setWorkOrderClass(String workOrderClass) {
 		this.workOrderClass = workOrderClass;
 	}
-
-	@Transient private String workOrderClass;
-	@Transient private String assignedTo;
 	
 	public String getEquipmentCode() {
 		return equipmentCode;

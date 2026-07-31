@@ -45,9 +45,14 @@ public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCo
 
 
 	public String createEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
-		//
-		//
-		//
+		if (equipmentWarrantyRepository != null) {
+			try {
+				EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
+				return saved.getSequenceNumber();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		net.datastream.schemas.mp_entities.warrantycoverage_001.EquipmentWarranty equipmentWarranty = new net.datastream.schemas.mp_entities.warrantycoverage_001.EquipmentWarranty();
 
 		// EQUIPMENT ID
@@ -90,9 +95,14 @@ public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCo
 	}
 
 	public String updateEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
-		//
-		// Get it first
-		//
+		if (equipmentWarrantyRepository != null) {
+			try {
+				EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
+				return saved.getSequenceNumber();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		MP3238_GetWarrantyCoverage_001 getwarrantycoverege = new MP3238_GetWarrantyCoverage_001();
 		MP3238_GetWarrantyCoverage_001_Result getwarrantycoveregeResult = new MP3238_GetWarrantyCoverage_001_Result();
 

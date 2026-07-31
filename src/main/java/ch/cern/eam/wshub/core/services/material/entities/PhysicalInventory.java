@@ -36,7 +36,6 @@ public class PhysicalInventory  {
     
     private String status;
 
-    @Transient
     
     private UserDefinedFields userDefinedFields;
 

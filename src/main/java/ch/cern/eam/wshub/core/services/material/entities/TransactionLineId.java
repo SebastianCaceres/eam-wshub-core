@@ -27,4 +27,10 @@ public class TransactionLineId implements Serializable  {
     public TransactionLineId() {
 
     }
+
+    public BigInteger getTransactionLineId() { return transactionLineId; }
+    public void setTransactionLineId(BigInteger transactionLineId) { this.transactionLineId = transactionLineId; }
+
+    public String getTransactionCode() { return transactionCode; }
+    public void setTransactionCode(String transactionCode) { this.transactionCode = transactionCode; }
 }

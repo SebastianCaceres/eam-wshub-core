@@ -80,6 +80,15 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 	}
 
 	public String createLaborBooking(InforContext context, LaborBooking laborBookingParam) throws InforException {
+		if (laborBookingRepository != null) {
+			try {
+				LaborBooking saved = laborBookingRepository.save(laborBookingParam);
+				return saved.getCode() != null ? saved.getCode() : laborBookingParam.getActivityCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.laborbooking_001.LaborBooking laborBookingInfor = new net.datastream.schemas.mp_entities.laborbooking_001.LaborBooking();
 
 		//
@@ -207,6 +216,15 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 	}
 
 	public String createActivity (InforContext context, Activity activityParam) throws InforException {
+		if (activityRepository != null) {
+			try {
+				Activity saved = activityRepository.save(activityParam);
+				return saved.getActivityCode() != null ? saved.getActivityCode() + "" : "";
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.activity_001.Activity activityInfor = new net.datastream.schemas.mp_entities.activity_001.Activity();
 
 		tools.getInforFieldTools().transformWSHubObject(activityInfor, activityParam, context);
@@ -230,6 +248,15 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 	}
 
 	public String updateActivity(InforContext context, Activity activityParam, String confirmDeleteChecklist) throws InforException {
+		if (activityRepository != null) {
+			try {
+				Activity saved = activityRepository.save(activityParam);
+				return saved.getActivityCode() != null ? saved.getActivityCode() + "" : "";
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		//
 		// READ THE ACTIVITY FIRST
 		//
@@ -269,6 +296,15 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 	}
 
 	public String deleteActivity(InforContext context, Activity activityParam) throws InforException {
+		if (activityRepository != null && activityParam.getActivityCode() != null) {
+			try {
+				activityRepository.deleteById(activityParam.getActivityCode());
+				return activityParam.getActivityCode() != null ? activityParam.getActivityCode() + "" : "";
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		//
 		// CALL THE WS
 		//

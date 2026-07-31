@@ -64,6 +64,15 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public String createNonconformity(InforContext context, NonConformity nonconformityParam) throws InforException {
+        if (nonConformityRepository != null) {
+            try {
+                NonConformity saved = nonConformityRepository.save(nonconformityParam);
+                return saved.getCode();
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
+
         net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
                 new net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity();
 
@@ -110,6 +119,15 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public String updateNonconformity(InforContext context, NonConformity nonconformityParam) throws InforException {
+        if (nonConformityRepository != null) {
+            try {
+                NonConformity saved = nonConformityRepository.save(nonconformityParam);
+                return saved.getCode();
+            } catch (Exception e) {
+                // Fallback to SOAP
+            }
+        }
+
         net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
                 readNonconformityInfor(context, nonconformityParam.getCode());
 

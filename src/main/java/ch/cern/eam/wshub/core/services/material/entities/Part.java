@@ -52,17 +52,13 @@ public class Part implements UserDefinedListHelpable {
 	
 	private String classDesc;
 
-	@Transient
-	
+	@Column(name = "PAR_CATEGORY")
 	private String categoryCode;
 	@Transient
-	
 	private String categoryDesc;
-	@Transient
-	
+	@Column(name = "PAR_COMMODITY")
 	private String commodityCode;
 	@Transient
-	
 	private String commodityDesc;
 	@Transient
 	
@@ -70,17 +66,13 @@ public class Part implements UserDefinedListHelpable {
 	@Transient
 	
 	private String priceType;
-	@Transient
-	
+	@Column(name = "PAR_BASEPRICE")
 	private BigDecimal basePrice;
 	@Transient
-	
 	private BigDecimal averagePrice;
 	@Transient
-	
 	private BigDecimal standardPrice;
-	@Transient
-	
+	@Column(name = "PAR_LASTPRICE")
 	private BigDecimal lastPrice;
 	@Transient
 	
@@ -100,11 +92,9 @@ public class Part implements UserDefinedListHelpable {
 	@Transient
 	
 	private Boolean preventReorders;
-	@Transient
-	
+	@Column(name = "PAR_BUYER")
 	private String buyerCode;
-	@Transient
-	
+	@Column(name = "PAR_PREFSUP")
 	private String preferredSupplier;
 	@Transient
 	

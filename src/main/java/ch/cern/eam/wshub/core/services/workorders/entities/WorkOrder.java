@@ -29,19 +29,15 @@ public class WorkOrder implements UserDefinedListHelpable {
 	@Column(name = "EVT_ORG")
 	
 	private String organization;
-	@Transient
-	
+	@Column(name = "EVT_CLASS")
 	private String classCode;
 	@Transient
-	
 	private String classDesc;
 	@Transient
-	
 	private String classOrganization;
 	@Transient
-	
 	private BigInteger updateCount;
-	@Transient
+	@Column(name = "EVT_TYPE")
 	private String eventType;
 	//
 	@Column(name = "EVT_STATUS")
@@ -54,11 +50,9 @@ public class WorkOrder implements UserDefinedListHelpable {
 	@Transient
 	private String systemStatusCode;
 	//
-	@Transient
-	
+	@Column(name = "EVT_JOBTYPE")
 	private String typeCode;
 	@Transient
-	
 	private String typeDesc;
 	//
 	@Column(name = "EVT_MRC")
@@ -91,109 +85,77 @@ public class WorkOrder implements UserDefinedListHelpable {
 	
 	private String projectBudget;
 	//
-	@Transient
-	
+	@Column(name = "EVT_LOCATION")
 	private String locationCode;
 	@Transient
-	
 	private String locationDesc;
 	@Transient
-	
 	private String locationOrganization;
 	//
-	@Transient
-	
+	@Column(name = "EVT_PRIORITY")
 	private String priorityCode;
 	@Transient
-	
 	private String priorityDesc;
 	//
 	@Transient
 	
 	private CustomField[] customFields;
 	//
-	@Transient
-	
+	@Column(name = "EVT_DATE")
 	private Date reportedDate;
-	@Transient
-	
+	@Column(name = "EVT_TARGET")
 	private Date requestedEndDate;
-	@Transient
-	
+	@Column(name = "EVT_START")
 	private Date requestedStartDate;
-	@Transient
-	
+	@Column(name = "EVT_SCHEDSTART")
 	private Date scheduledStartDate; // target date
-	@Transient
-	
+	@Column(name = "EVT_SCHEDEND")
 	private Date scheduledEndDate;
 	@Transient
-	
 	private Date startDate;
-	@Transient
-	
+	@Column(name = "EVT_COMPLETED")
 	private Date completedDate;
 	@Transient
-	
 	private Date dueDate;
-	@Transient
-	
+	@Column(name = "EVT_CREATED")
 	private Date createdDate;
 	@Column(name = "EVT_CREATEDBY")
-	
 	private String createdBy;
 	@Transient
 	
 	private String createdByDesc;
 
-	@Transient
-	
+	@Column(name = "EVT_PCODE")
 	private String problemCode;
-	@Transient
-	
+	@Column(name = "EVT_FCODE")
 	private String failureCode;
-	@Transient
-	
+	@Column(name = "EVT_CCODE")
 	private String causeCode;
-	@Transient
-	
+	@Column(name = "EVT_ACODE")
 	private String actionCode;
-	@Transient
-	
+	@Column(name = "EVT_COSTCODE")
 	private String costCode;
 	@Transient
-	
 	private String costCodeDesc;
-
 	@Transient
-	
 	private String assignedBy; // schedgroup
-	@Transient
-	
+	@Column(name = "EVT_REPORTEDBY")
 	private String reportedBy; // requested by
 	@Transient
-	
 	private String reportedByDesc;
-	@Transient
-	
+	@Column(name = "EVT_PERSON")
 	private String assignedTo;
 	@Transient
-	
 	private String assignedToDesc;
-	@Transient
-	
+	@Column(name = "EVT_STANDWO")
 	private String standardWO;
 	@Transient
-	
 	private String standardWODesc;
-	@Transient
-	
+	@Column(name = "EVT_PARENT")
 	private String parentWO;
 	@Transient
-	
 	private String parentWODesc;
-	@Transient
-	
+	@Column(name = "EVT_ROUTE")
 	private String route;
 	@Transient
 	

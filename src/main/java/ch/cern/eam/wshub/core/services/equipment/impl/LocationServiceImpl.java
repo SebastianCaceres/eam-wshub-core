@@ -92,6 +92,15 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	public String createLocation(InforContext context, Location locationParam) throws InforException {
+		if (locationRepository != null) {
+			try {
+				Location saved = locationRepository.save(locationParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		net.datastream.schemas.mp_entities.location_001.Location locationInfor =
 			new net.datastream.schemas.mp_entities.location_001.Location();
 
@@ -120,6 +129,15 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	public String updateLocation(InforContext context, Location locationParam) throws InforException {
+		if (locationRepository != null) {
+			try {
+				Location saved = locationRepository.save(locationParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		MP0318_GetLocation_001 getLocation = new MP0318_GetLocation_001();
 		getLocation.setLOCATIONID(new LOCATIONID_Type());
 		getLocation.getLOCATIONID().setLOCATIONCODE(locationParam.getCode());
@@ -160,6 +178,15 @@ public class LocationServiceImpl implements LocationService {
 
 	@Override
 	public String deleteLocation(InforContext context, String locationCode) throws InforException {
+		if (locationRepository != null && locationCode != null) {
+			try {
+				locationRepository.deleteById(locationCode);
+				return locationCode;
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		MP0320_DeleteLocation_001 deleteLocation = new MP0320_DeleteLocation_001();
 		deleteLocation.setLOCATIONID(new LOCATIONID_Type());
 		deleteLocation.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));

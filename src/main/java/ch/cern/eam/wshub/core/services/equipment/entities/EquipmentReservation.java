@@ -4,27 +4,38 @@ import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "R5BOOKINGS")
 public class EquipmentReservation {
     // Main identifying fields
-    
+    @Id
+    @Column(name = "BOO_CODE")
     private String code;
-    
+
+    @Column(name = "BOO_ORG")
     private String organizationCode;
-    
+
+    @Column(name = "BOO_DESC")
     private String description;
 
     // Rental Details
-    
+    @Column(name = "BOO_TYPE")
     private String rentalType;
-    
+
+    @Column(name = "BOO_STATUS")
     private String status;
-    
+
+    @Column(name = "BOO_OBJECT")
     private String equipmentCode;
     
     private String locationCode;
@@ -125,4 +136,27 @@ public class EquipmentReservation {
     public Date getEstimatedReturnDate() {
         return estimatedReturnDate;
     }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public String getOrganizationCode() { return organizationCode; }
+    public void setOrganizationCode(String organizationCode) { this.organizationCode = organizationCode; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getRentalType() { return rentalType; }
+    public void setRentalType(String rentalType) { this.rentalType = rentalType; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getEquipmentCode() { return equipmentCode; }
+    public void setEquipmentCode(String equipmentCode) { this.equipmentCode = equipmentCode; }
+
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public void setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
 }

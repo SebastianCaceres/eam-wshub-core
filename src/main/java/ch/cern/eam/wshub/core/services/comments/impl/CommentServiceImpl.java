@@ -61,9 +61,18 @@ public class CommentServiceImpl implements CommentService {
 			throw tools.generateFault("Entity key code can't end with '#*'");
 		}
 
-		//
-		// CREATION
-		//
+		if (commentRepository != null) {
+			try {
+				if (comment.getPk() == null && comment.getEntityKeyCode() != null) {
+					comment.setPk(comment.getEntityKeyCode() + "C" + (comment.getLineNumber() != null ? comment.getLineNumber() : "1"));
+				}
+				Comment saved = commentRepository.save(comment);
+				return saved.getPk();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		COMMENT_Type commentInfor = new COMMENT_Type();
 
 		if (comment.getEntityCode() != null) {
@@ -137,6 +146,15 @@ public class CommentServiceImpl implements CommentService {
 			throw tools.generateFault("Entity Key Code is required.");
 		}
 
+		if (commentRepository != null) {
+			try {
+				Comment saved = commentRepository.save(comment);
+				return saved.getPk();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		COMMENT_Type commentInfor = readCommentsInfor(context, comment.getEntityCode(), comment.getEntityKeyCode(), comment.getTypeCode(), comment.getOrganization())
 				.stream().filter(commentTemp -> commentTemp.getENTITYCOMMENTID().getLINENUM().toString().equals(comment.getLineNumber())).findFirst().orElse(null);
 
@@ -162,6 +180,15 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	public String deleteComment(InforContext context, Comment comment) throws InforException {
+		if (commentRepository != null && comment.getPk() != null) {
+			try {
+				commentRepository.deleteById(comment.getPk());
+				return comment.getPk();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		MP0111_DeleteComments_001 deleteComments = new MP0111_DeleteComments_001();
 		deleteComments.setENTITYCOMMENTID(new ENTITYCOMMENTID_Type());
 

@@ -285,6 +285,14 @@ public class PartMiscServiceImpl implements PartMiscService {
 	}
 
 	public String createPartAssociation(InforContext context, PartAssociation partAssociation) throws InforException {
+		if (partAssociationRepository != null) {
+			try {
+				PartAssociation saved = partAssociationRepository.save(partAssociation);
+				return saved.getPk();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		MP0612_AddPartsAssociated_001 addpass = new MP0612_AddPartsAssociated_001();
 
@@ -326,6 +334,15 @@ public class PartMiscServiceImpl implements PartMiscService {
 	}
 
 	public String deletePartAssociation(InforContext context, PartAssociation partAssociation) throws InforException {
+		if (partAssociationRepository != null && partAssociation.getPk() != null) {
+			try {
+				partAssociationRepository.deleteById(partAssociation.getPk());
+				return partAssociation.getPk();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
+
 		MP0614_DeletePartsAssociated_001 deletepass = new MP0614_DeletePartsAssociated_001();
 		deletepass.setPARTASSOCIATEDID(new PARTASSOCIATEDID_Type());
 		deletepass.getPARTASSOCIATEDID().setParentcode(partAssociation.getEquipmentCode() + "#*");

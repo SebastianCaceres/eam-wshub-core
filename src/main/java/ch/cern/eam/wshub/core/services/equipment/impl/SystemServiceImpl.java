@@ -110,6 +110,15 @@ public class SystemServiceImpl implements SystemService {
 	}
 
 	public String updateSystem(InforContext context, Equipment systemParam) throws InforException {
+		if (equipmentRepository != null) {
+			try {
+				systemParam.setSystemTypeCode("S");
+				Equipment saved = equipmentRepository.save(systemParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 			SystemEquipment systemEquipment = readSystemInfor(context, systemParam.getCode(), systemParam.getOrganization());
 			//
@@ -133,6 +142,15 @@ public class SystemServiceImpl implements SystemService {
 	}
 
 	public String createSystem(InforContext context, Equipment systemParam) throws InforException {
+		if (equipmentRepository != null) {
+			try {
+				systemParam.setSystemTypeCode("S");
+				Equipment saved = equipmentRepository.save(systemParam);
+				return saved.getCode();
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 		SystemEquipment systemEquipment = new SystemEquipment();
 		//
 		systemEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
@@ -157,6 +175,14 @@ public class SystemServiceImpl implements SystemService {
 	}
 
 	public String deleteSystem(InforContext context, String systemCode, String organization) throws InforException {
+		if (equipmentRepository != null && systemCode != null) {
+			try {
+				equipmentRepository.deleteById(systemCode);
+				return systemCode;
+			} catch (Exception e) {
+				// Fallback to SOAP
+			}
+		}
 
 		MP0314_DeleteSystemEquipment_001 deleteSystem = new MP0314_DeleteSystemEquipment_001();
 		deleteSystem.setSYSTEMID(new EQUIPMENTID_Type());

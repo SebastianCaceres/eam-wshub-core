@@ -20,6 +20,7 @@ public class Store2StoreTransferDTO  {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "TRANSFER_ID")
+    @Transient
     private List<StoreTransactionPartLine> partLines;
 
     public Long getId() {

@@ -29,13 +29,15 @@ public class NonConformity {
     private String description;
 
     @GridField(name = "organization")
-    @Transient
     private String organizationCode;
 
     @GridField(name = "nonconformity")
     @Id
     @Column(name = "NCR_CODE")
     private String code;
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 
     @GridField(name = "aspectcode")
     
