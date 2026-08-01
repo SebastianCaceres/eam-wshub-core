@@ -465,13 +465,17 @@ public class InforClient implements Serializable {
             }
 
             InforWebServicesPT inforWebServicesToolkitClient = service.getPort(InforWebServicesPT.class);
-            inforClient.bindingProvider = (BindingProvider) inforWebServicesToolkitClient;
-            inforClient.bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, applicationData.getUrl());
-            inforClient.bindingProvider.getRequestContext().put("set-jaxb-validation-event-handler", false);
+            if (inforWebServicesToolkitClient instanceof BindingProvider) {
+                inforClient.bindingProvider = (BindingProvider) inforWebServicesToolkitClient;
+                if (applicationData.getUrl() != null) {
+                    inforClient.bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, applicationData.getUrl());
+                }
+                inforClient.bindingProvider.getRequestContext().put("set-jaxb-validation-event-handler", false);
 
-            List<Handler> handlerChain = inforClient.bindingProvider.getBinding().getHandlerChain();
-            handlerChain.add(0, new AuthenticationHandler());
-            inforClient.bindingProvider.getBinding().setHandlerChain(handlerChain);
+                List<Handler> handlerChain = inforClient.bindingProvider.getBinding().getHandlerChain();
+                handlerChain.add(0, new AuthenticationHandler());
+                inforClient.bindingProvider.getBinding().setHandlerChain(handlerChain);
+            }
 
             if (this.executorService != null) {
                 // Init new Executor Service

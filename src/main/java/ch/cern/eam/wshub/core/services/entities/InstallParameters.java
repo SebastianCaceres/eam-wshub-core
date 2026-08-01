@@ -5,7 +5,8 @@ import javax.persistence.Entity;
 @Entity
 @NamedNativeQueries({
 	@NamedNativeQuery(name=InstallParameters.GETINSTALLPARAMS,
-		query="select * from r5install"
+		query="select * from r5install",
+		resultClass = InstallParameters.class
 	)
 })
 @Table(name="r5install")
