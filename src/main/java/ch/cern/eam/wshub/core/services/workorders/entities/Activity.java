@@ -96,6 +96,9 @@ public class Activity  {
 	@Transient
 	private Boolean forceActivityExpansion;
 
+	@Column(name = "ACK_NOTE")
+	private String note;
+
 	public String getWorkOrderNumber() {
 		return workOrderNumber;
 	}
@@ -258,4 +261,11 @@ public class Activity  {
 				'}';
 	}
 
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
 }

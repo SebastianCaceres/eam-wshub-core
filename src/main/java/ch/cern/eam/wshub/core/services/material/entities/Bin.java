@@ -1,13 +1,22 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
-public class Bin  {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "R5BINS")
+public class Bin {
+
+	@Column(name = "BIN_STORE")
 	private String storeCode;
 
+	@Id
+	@Column(name = "BIN_CODE")
 	private String binCode;
 
+	@Column(name = "BIN_DESC")
 	private String binDesc;
 
+	@Transient
 	private Boolean outOfService;
 
 	public String getStoreCode() {
