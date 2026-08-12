@@ -10,7 +10,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.EquipmentWarrantyRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.xml.ws.Holder;
 
 public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCoverageService {
 

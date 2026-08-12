@@ -42,11 +42,6 @@ import lombok.Setter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -68,7 +63,6 @@ public class InforClient implements Serializable {
     public static Map<CacheKey, Cache<String, Object>> cacheMap = new ConcurrentHashMap<>();
 
     private Tools tools;
-    private BindingProvider bindingProvider;
 
     private CommentService commentService;
     private WorkOrderService workOrderService;
@@ -154,7 +148,6 @@ public class InforClient implements Serializable {
         private String tenant;
         private String defaultOrganizationCode;
         private InforInterceptor inforInterceptor;
-        private HandlerResolver soapHandlerResolver;
         private ExecutorService executorService;
         private DataSource dataSource;
         private EntityManagerFactory entityManagerFactory;
@@ -216,11 +209,6 @@ public class InforClient implements Serializable {
 
         public Builder withInforInterceptor(InforInterceptor inforInterceptor) {
             this.inforInterceptor = inforInterceptor;
-            return this;
-        }
-
-        public Builder withSOAPHandlerResolver(HandlerResolver soapHandlerResolver) {
-            this.soapHandlerResolver = soapHandlerResolver;
             return this;
         }
 

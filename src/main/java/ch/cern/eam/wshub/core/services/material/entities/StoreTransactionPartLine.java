@@ -1,7 +1,7 @@
 package ch.cern.eam.wshub.core.services.material.entities;
 
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
-import net.datastream.schemas.mp_fields.*;
+
 import org.openapplications.oagis_segments.AMOUNT;
 import org.openapplications.oagis_segments.QUANTITY;
 

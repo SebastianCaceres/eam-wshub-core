@@ -14,7 +14,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import java.util.HashMap;
 import java.util.List;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
 import static ch.cern.eam.wshub.core.tools.Tools.extractOrganizationCode;
 

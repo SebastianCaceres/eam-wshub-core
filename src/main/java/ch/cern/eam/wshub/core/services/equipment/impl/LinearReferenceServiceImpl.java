@@ -6,7 +6,6 @@ import ch.cern.eam.wshub.core.services.equipment.entities.LinearReference;
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import javax.xml.ws.Holder;
 
 public class LinearReferenceServiceImpl implements LinearReferenceService {
 

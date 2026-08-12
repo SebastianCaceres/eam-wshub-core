@@ -11,7 +11,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isNotEmpty;
 import ch.cern.eam.wshub.core.repositories.EquipmentPMScheduleRepository;
 import javax.persistence.EntityManager;
-import javax.xml.ws.Holder;
 
 public class PMScheduleServiceImpl implements PMScheduleService {
 

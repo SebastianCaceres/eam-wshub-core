@@ -1,7 +1,6 @@
 package ch.cern.eam.wshub.core.services.material.impl;
 
 import java.math.BigDecimal;
-import javax.xml.ws.Holder;
 import ch.cern.eam.wshub.core.client.InforContext;
 import ch.cern.eam.wshub.core.services.material.PartKitService;
 import ch.cern.eam.wshub.core.tools.ApplicationData;

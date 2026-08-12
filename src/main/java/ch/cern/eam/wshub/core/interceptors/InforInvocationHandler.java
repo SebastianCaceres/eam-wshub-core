@@ -7,17 +7,12 @@ import ch.cern.eam.wshub.core.interceptors.beans.InforExtractedData;
 import ch.cern.eam.wshub.core.interceptors.beans.InforRequestData;
 import ch.cern.eam.wshub.core.interceptors.beans.InforResponseData;
 import ch.cern.eam.wshub.core.services.INFOR_OPERATION;
-import ch.cern.eam.wshub.core.tools.ExceptionInfo;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.ws.soap.SOAPFaultException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.logging.Level;
 
 /**
@@ -141,47 +136,7 @@ public class InforInvocationHandler<T> implements InvocationHandler {
 
     // Conversion to InforException
     private InforException convertException(Throwable e) {
-        if (e instanceof SOAPFaultException) {
-            SOAPFaultException se = (SOAPFaultException) e;
-            return new InforException(e.getMessage(), se, extractSOAPFaultException(se));
-        } else {
-            return new InforException(e.getMessage(), e, null);
-        }
-    }
-
-    private ExceptionInfo[] extractSOAPFaultException(SOAPFaultException exception) {
-        LinkedList<ExceptionInfo> exs = new LinkedList<ExceptionInfo>();
-        try {
-            // nodeList = list of <ExceptionInfo> elements (see example below)
-            NodeList nodeList =  exception.getFault().getDetail().getFirstChild().getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                ExceptionInfo exceptionInfo = new ExceptionInfo();
-
-                Node locationNode = nodeList.item(i).getAttributes().getNamedItem("location_reference");
-                if (locationNode != null) {
-                    String locationString = locationNode.getTextContent().replace("/", "_");
-                    if (locationString.startsWith("_")) {
-                        locationString = "EAMID" + locationString;
-                    } else {
-                        locationString = "EAMID_" + locationString;
-                    }
-                    exceptionInfo.setLocation(locationString);
-                }
-
-                Node exceptionNode = nodeList.item(i).getFirstChild();
-
-                exceptionInfo.setMessage(exceptionNode.getLastChild().getTextContent());
-
-                Node nameAttribute = exceptionNode.getAttributes().getNamedItem("name");
-                if (nameAttribute != null) {
-                    exceptionInfo.setName(nameAttribute.getTextContent());
-                }
-                exs.add(exceptionInfo);
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return exs.toArray(new ExceptionInfo[0]);
+        return new InforException(e.getMessage(), e, null);
     }
 
 }

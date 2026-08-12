@@ -9,7 +9,6 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import javax.persistence.EntityManager;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 

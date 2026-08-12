@@ -11,7 +11,7 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
-import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;

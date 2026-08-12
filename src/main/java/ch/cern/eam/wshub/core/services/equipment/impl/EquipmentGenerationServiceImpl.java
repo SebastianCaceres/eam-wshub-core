@@ -9,7 +9,6 @@ import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentGenerationEnt
 import org.openapplications.oagis_segments.QUANTITY;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.decodeQuantity;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.encodeQuantity;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 
 public class EquipmentGenerationServiceImpl implements EquipmentGenerationService {

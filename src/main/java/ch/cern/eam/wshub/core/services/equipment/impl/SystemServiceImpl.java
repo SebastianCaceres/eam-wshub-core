@@ -12,8 +12,7 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
 import java.util.HashMap;
 import java.util.Optional;
-import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.createPrimarySystemParent;
-import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.createLocationParent;
+
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
 
 public class SystemServiceImpl implements SystemService {

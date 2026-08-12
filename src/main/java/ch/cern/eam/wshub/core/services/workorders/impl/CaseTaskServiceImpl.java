@@ -8,7 +8,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.InforCaseTask;
 import ch.cern.eam.wshub.core.repositories.InforCaseTaskRepository;
 import java.util.Optional;
-import javax.xml.ws.Holder;
 
 public class CaseTaskServiceImpl implements CaseTaskService {
 

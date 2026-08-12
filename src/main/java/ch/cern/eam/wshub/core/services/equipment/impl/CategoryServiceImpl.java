@@ -7,7 +7,6 @@ import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.CategoryRepository;
 import java.util.Optional;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class CategoryServiceImpl implements CategoryService {
 

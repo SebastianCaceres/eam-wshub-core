@@ -10,7 +10,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.LocationRepository;
 import java.util.List;
 import java.util.Optional;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class LocationServiceImpl implements LocationService {
 

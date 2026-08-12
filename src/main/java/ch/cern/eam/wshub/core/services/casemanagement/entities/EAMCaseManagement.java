@@ -3,7 +3,7 @@ package ch.cern.eam.wshub.core.services.casemanagement.entities;
 import ch.cern.eam.wshub.core.services.entities.CustomField;
 import ch.cern.eam.wshub.core.services.entities.UserDefinedFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.datastream.schemas.mp_fields.StandardUserDefinedFields;
+
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

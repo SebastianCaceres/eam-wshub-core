@@ -1,9 +1,7 @@
 package ch.cern.eam.wshub.core.tools;
 
-import javax.xml.ws.WebFault;
 import java.util.Arrays;
 
-@WebFault(name="ExceptionInfoList")
 public class InforException extends Exception {
 
 	private static final long serialVersionUID = 2888535819761291339L;

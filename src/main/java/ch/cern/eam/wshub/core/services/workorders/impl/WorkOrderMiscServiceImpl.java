@@ -11,7 +11,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.RouteEquipment;
 import ch.cern.eam.wshub.core.services.workorders.entities.TaskPlan;
 import ch.cern.eam.wshub.core.services.workorders.entities.AdditionalWOEquipDetails;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;

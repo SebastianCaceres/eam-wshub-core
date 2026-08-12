@@ -8,8 +8,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.InforCase;
 import ch.cern.eam.wshub.core.repositories.InforCaseRepository;
 import java.util.Optional;
-import javax.xml.ws.Holder;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class CaseServiceImpl implements CaseService {
 

@@ -8,9 +8,7 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import org.openapplications.oagis_segments.QUANTITY;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 import ch.cern.eam.wshub.core.repositories.PickTicketRepository;
 import java.util.Optional;
 

@@ -9,9 +9,7 @@ import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import javax.xml.ws.Holder;
 import ch.cern.eam.wshub.core.repositories.StandardWorkOrderRepository;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
 
@@ -34,11 +32,7 @@ public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
         return standardWorkOrderRepository.findById(number).orElse(null);
     }
 
-    public net.datastream.schemas.mp_entities.standardworkorder_001.StandardWorkOrder readStandardWorkOrderInfor(InforContext context, String number) throws InforException {
-        return null;
-        //
-        // Fetch WO
-    }
+
 
     public String createStandardWorkOrder(InforContext context, StandardWorkOrder standardWorkOrder) throws InforException {
         StandardWorkOrder saved = standardWorkOrderRepository.save(standardWorkOrder);

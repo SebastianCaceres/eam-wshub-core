@@ -3,7 +3,6 @@ package ch.cern.eam.wshub.core.tools;
 import ch.cern.eam.wshub.core.client.InforContext;
 import ch.cern.eam.wshub.core.services.entities.*;
 
-import org.w3c.dom.NodeList;
 import org.xmlsoap.schemas.ws._2002._04.secext.Password;
 import org.xmlsoap.schemas.ws._2002._04.secext.Username;
 import org.xmlsoap.schemas.ws._2002._04.secext.UsernameToken;
@@ -13,8 +12,6 @@ import org.xmlsoap.schemas.ws._2002._04.secext.ObjectFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import javax.xml.ws.Holder;
-import javax.xml.ws.soap.SOAPFaultException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -191,12 +188,7 @@ public class Tools {
 					return new BatchSingleResponse(future.get(), null);
 				}
 				catch (ExecutionException exception) {
-					if (exception.getCause() instanceof SOAPFaultException) {
-						SOAPFaultException soapFaultException = (SOAPFaultException) exception.getCause();
-						return new BatchSingleResponse(null, decodeExceptionInfoList(soapFaultException));
-					} else {
-						return new BatchSingleResponse(null, exception.getCause().getMessage());
-					}
+					return new BatchSingleResponse(null, exception.getCause().getMessage());
 				}
 				catch (Exception exception) {
 					return new BatchSingleResponse(null, "Server error");
@@ -221,19 +213,6 @@ public class Tools {
 		} catch (Exception exception) {
 			log(Level.SEVERE, "Error during Tools.processRunnables() execution: " + exception.getMessage());
 		}
-	}
-
-	private String decodeExceptionInfoList(SOAPFaultException soapFaultException) {
-		String errorMessage = soapFaultException.getMessage();
-		try {
-			NodeList nodeList = soapFaultException.getFault().getDetail().getFirstChild().getChildNodes();
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				errorMessage += ", " + nodeList.item(i).getFirstChild().getLastChild().getTextContent();
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		return errorMessage;
 	}
 
 	//

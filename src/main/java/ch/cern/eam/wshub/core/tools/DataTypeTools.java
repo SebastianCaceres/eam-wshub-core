@@ -2,8 +2,7 @@ package ch.cern.eam.wshub.core.tools;
 
 import ch.cern.eam.wshub.core.adapters.DateAdapter;
 import ch.cern.eam.wshub.core.annotations.BooleanType;
-import net.datastream.schemas.mp_fields.CLASSID_Type;
-import net.datastream.schemas.mp_fields.LOCATIONID_Type;
+
 import org.openapplications.oagis_segments.AMOUNT;
 import org.openapplications.oagis_segments.DATETIME;
 import org.openapplications.oagis_segments.DATETIMEqual;
@@ -378,14 +377,6 @@ public class DataTypeTools {
 
     public static <T> T nonNullOrDefault(T newValue, T defaultValue) {
         return newValue == null ? defaultValue : newValue;
-    }
-
-    public static String toCodeString(CLASSID_Type classIdType) {
-        return classIdType == null ? null : classIdType.getCLASSCODE();
-    }
-
-    public static String toCodeString(LOCATIONID_Type locationIdType) {
-        return locationIdType == null ? null : locationIdType.getLOCATIONCODE();
     }
 
     public static Long convertBigIntegerToLong(BigInteger value) {

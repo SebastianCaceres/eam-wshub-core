@@ -1,9 +1,6 @@
 package ch.cern.eam.wshub.core.services.workorders.entities;
 
-import net.datastream.schemas.mp_entities.workorderequipment_001.AdditionalDetails;
-import net.datastream.schemas.mp_fields.EQUIPMENTID_Type;
-import net.datastream.schemas.mp_fields.USERDEFINEDCODEID_Type;
-import net.datastream.schemas.mp_fields.WOID_Type;
+
 
 import java.math.BigDecimal;
 

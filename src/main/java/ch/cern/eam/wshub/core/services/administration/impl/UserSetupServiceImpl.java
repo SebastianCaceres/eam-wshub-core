@@ -15,13 +15,11 @@ import static ch.cern.eam.wshub.core.tools.GridTools.convertGridResultToMap;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.EAMUserRepository;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class UserSetupServiceImpl implements UserSetupService {
 

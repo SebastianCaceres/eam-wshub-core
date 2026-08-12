@@ -15,8 +15,7 @@ import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.*;
-import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.readHierarchyType;
+
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
 
 public class PositionServiceImpl implements PositionService {

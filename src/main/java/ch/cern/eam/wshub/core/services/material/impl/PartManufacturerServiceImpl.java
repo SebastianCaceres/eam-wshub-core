@@ -7,7 +7,6 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.annotations.BooleanType;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import javax.xml.ws.Holder;
 
 public class PartManufacturerServiceImpl implements PartManufacturerService {
 

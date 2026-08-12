@@ -8,7 +8,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.Aspect;
 import ch.cern.eam.wshub.core.services.workorders.entities.AspectPoint;
 import ch.cern.eam.wshub.core.services.workorders.entities.Point;
-import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 
 public class InspectionServiceImpl implements InspectionService {
