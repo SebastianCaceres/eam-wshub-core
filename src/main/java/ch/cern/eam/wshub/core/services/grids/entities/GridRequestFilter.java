@@ -1,23 +1,10 @@
 package ch.cern.eam.wshub.core.services.grids.entities;
 
-import net.datastream.schemas.mp_functions.gridrequest.AND_OR;
-
 public class GridRequestFilter  {
 
 	public enum JOINER {
-		AND(AND_OR.AND),
-		OR(AND_OR.OR);
-
-		private final AND_OR eamValue;
-
-		JOINER(AND_OR eamValue) {
-			this.eamValue = eamValue;
-		}
-
-		public AND_OR getEamValue() {
-			return eamValue;
-		}
-
+		AND,
+		OR;
 	}
 
 	private String fieldName;

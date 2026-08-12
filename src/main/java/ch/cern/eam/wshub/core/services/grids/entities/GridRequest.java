@@ -2,7 +2,7 @@ package ch.cern.eam.wshub.core.services.grids.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.datastream.schemas.mp_functions.gridrequest.GRID;
+
 
 import java.util.*;
 

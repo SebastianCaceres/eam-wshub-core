@@ -2,11 +2,7 @@ package ch.cern.eam.wshub.core.tools;
 
 import ch.cern.eam.wshub.core.client.InforContext;
 import ch.cern.eam.wshub.core.services.entities.*;
-import net.datastream.schemas.mp_fields.*;
-import net.datastream.schemas.mp_functions.MessageConfigType;
-import net.datastream.schemas.mp_functions.MessageItemConfigType;
-import net.datastream.schemas.mp_functions.SessionType;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
+
 import org.w3c.dom.NodeList;
 import org.xmlsoap.schemas.ws._2002._04.secext.Password;
 import org.xmlsoap.schemas.ws._2002._04.secext.Username;
@@ -38,7 +34,6 @@ public class Tools {
 	public static final String CACHE_SEPARATOR = "_";
 
 	private ApplicationData applicationData;
-	private InforWebServicesPT inforws;
 
 	private ExecutorService executorService;
 	private DataSource dataSource;
@@ -46,27 +41,21 @@ public class Tools {
 
 	private Logger logger;
 
-	private CustomFieldsTools customFieldsTools;
 	private DataTypeTools dataTypeTools;
 	private FieldDescriptionTools fieldDescriptionsTools;
 	private GridTools gridTools;
-	private InforFieldTools inforFieldTools;
 
 	public Tools(ApplicationData applicationData,
-				 InforWebServicesPT inforWebServicesToolkitClient,
 				 ExecutorService executorService,
 				 DataSource dataSource,
 				 EntityManagerFactory entityManagerFactory,
 				 Logger logger) {
 		//
 		this.applicationData = applicationData;
-		this.inforws = inforWebServicesToolkitClient;
 		this.executorService = executorService;
 		this.dataSource = dataSource;
 		this.entityManagerFactory = entityManagerFactory;
 		// Init specific tool classes
-		this.customFieldsTools = new CustomFieldsTools(this, applicationData, inforws);
-		this.inforFieldTools = new InforFieldTools(customFieldsTools, this);
 		this.dataTypeTools = new DataTypeTools(this);
 		this.fieldDescriptionsTools = new FieldDescriptionTools(this, applicationData);
 		this.gridTools = new GridTools(this);
@@ -86,15 +75,13 @@ public class Tools {
 		return this.dataSource;
 	}
 
-	public CustomFieldsTools getCustomFieldsTools() {return this.customFieldsTools; }
-
 	public DataTypeTools getDataTypeTools() {return this.dataTypeTools; }
 
 	public FieldDescriptionTools getFieldDescriptionsTools() {return fieldDescriptionsTools; }
 
 	public GridTools getGridTools() {return gridTools;}
 
-	public InforFieldTools getInforFieldTools() {return inforFieldTools;}
+
 
 	//
 	//
@@ -129,47 +116,7 @@ public class Tools {
 		return security;
 	}
 
-	public SessionType createInforSession(InforContext context) {
-		SessionType session = new SessionType();
-		if (context.getSessionID() != null) {
-			session.setSessionId(context.getSessionID());
-		} else if (context.getAuthToken() != null) {
-			// Set it temporarily in order to read it (and remove from the SOAP Envelope) in the AuthenticationHandler
-			session.setSessionId("Bearer " + context.getAuthToken());
-		}
-		return session;
-	}
 
-	/**
-	 * Generates MessageConfig element that can be added to the request to tell the
-	 * server to omit the InformationAlert and WarningAlert elements from the
-	 * response.
-	 *
-	 * @return MessageConfig
-	 */
-	public MessageConfigType createMessageConfig() {
-		MessageConfigType messageConfigType = new MessageConfigType();
-		MessageItemConfigType returnAlertsMessageItemConfigType = new MessageItemConfigType();
-		returnAlertsMessageItemConfigType.setName("returnAlerts");
-		returnAlertsMessageItemConfigType.setValue("false");
-		messageConfigType.getConfigItem().add(returnAlertsMessageItemConfigType);
-		return messageConfigType;
-	}
-
-	//
-	// ORGANIZATION
-	//
-	public ORGANIZATIONID_Type getOrganization(InforContext inforContext) {
-		ORGANIZATIONID_Type org = new ORGANIZATIONID_Type();
-		org.setORGANIZATIONCODE(getOrganizationCode(inforContext));
-		return org;
-	}
-
-	public ORGANIZATIONID_Type getOrganization(InforContext inforContext, String organizationCode) {
-		ORGANIZATIONID_Type org = new ORGANIZATIONID_Type();
-		org.setORGANIZATIONCODE(getOrganizationCode(inforContext, organizationCode));
-		return org;
-	}
 
 	public String getOrganizationCode(InforContext context, String organizationCode) {
 		if (isNotEmpty(organizationCode)) {
@@ -392,40 +339,7 @@ public class Tools {
 		return returnMap;
 	}
 
-	public <A, R> R performInforOperation(InforContext context, InforOperation<A, R> operation, A argument)
-			throws InforException {
-		Security security = null;
-		String organization = getOrganizationCode(context);
-		String sessionTerminationScenario = "terminate";
-		Holder holder = null;
-		MessageConfigType messageConfigType = createMessageConfig();
 
-		if (context.getKeepSession() != null && context.getKeepSession()) {
-			sessionTerminationScenario = null;
-		}
-
-		if(context.getCredentials() != null &&
-				isNotEmpty(context.getCredentials().getUsername()) &&
-				isNotEmpty(context.getCredentials().getPassword())) {
-			security = createSecurityHeader(context);
-		} else {
-			holder = new Holder<>(createInforSession(context));
-		}
-
-		// Every MP class extending BaseSchemaRequestElement has ESIGNATURE property
-		if (argument instanceof BaseSchemaRequestElement && context.getSignature() != null) {
-			((BaseSchemaRequestElement) argument).setESIGNATURE(inforFieldTools.transformWSHubObject(new ESIGNATURE(), context.getSignature(), context));
-		}
-
-		String tenant = getTenant(context);
-
-		try {
-			return operation.apply(argument, organization, security, sessionTerminationScenario, holder, messageConfigType, tenant);
-		} catch (Exception e) {
-			log(Level.WARNING, "SOAP web service operation failed or offline: " + e.getMessage());
-			throw generateFault(e.getMessage() != null ? e.getMessage() : "SOAP operation unavailable");
-		}
-	}
 
 	public static String getCacheKey(InforContext inforContext, String ...parts) {
 		final String tenant = inforContext.getTenant();

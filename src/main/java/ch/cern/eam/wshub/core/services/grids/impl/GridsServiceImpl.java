@@ -26,8 +26,6 @@ public class GridsServiceImpl implements GridsService {
 
     private final Tools tools;
 
-    private final InforGrids inforGrids;
-
     private final JPAGrids jpaGrids;
 
     private GridDataspyRepository gridDataspyRepository;
@@ -41,7 +39,6 @@ public class GridsServiceImpl implements GridsService {
     public GridsServiceImpl(ApplicationData applicationData, Tools tools) {
         this.tools = tools;
         this.applicationData = applicationData;
-        this.inforGrids = new InforGrids();
         this.jpaGrids = new JPAGrids(applicationData, tools);
     }
 
@@ -59,18 +56,17 @@ public class GridsServiceImpl implements GridsService {
     }
 
     public GridRequestResult executeQuery(InforContext context, GridRequest gridRequest) throws InforException {
-        if (gridRequest.getUseNative() || !tools.isDatabaseConnectionConfigured()) {
-            return inforGrids.executeQuery(context, gridRequest);
-        }
         tools.demandDatabaseConnection();
         if (isEmpty(gridRequest.getDataspyID()) || isEmpty(gridRequest.getGridID()) || isEmpty(gridRequest.getGridName())) {
             GridMetadataRequestResult gridMetadataInfor = getGridMetadataInfor(context, gridRequest.getGridName(), gridRequest.getGridID());
-            gridRequest.setGridID(gridMetadataInfor.getGridCode());
-            gridRequest.setGridName(gridMetadataInfor.getGridName());
-            if (gridRequest.getDataspyID() == null)
-                gridRequest.setDataspyID(gridMetadataInfor.getDataSpyId());
-            if (gridRequest.getUserFunctionName() == null)
-                gridRequest.setUserFunctionName(gridMetadataInfor.getGridName());
+            if (gridMetadataInfor != null) {
+                gridRequest.setGridID(gridMetadataInfor.getGridCode());
+                gridRequest.setGridName(gridMetadataInfor.getGridName());
+                if (gridRequest.getDataspyID() == null)
+                    gridRequest.setDataspyID(gridMetadataInfor.getDataSpyId());
+                if (gridRequest.getUserFunctionName() == null)
+                    gridRequest.setUserFunctionName(gridMetadataInfor.getGridName());
+            }
         }
 
         return jpaGrids.executeQuery(context, gridRequest);
@@ -97,7 +93,7 @@ public class GridsServiceImpl implements GridsService {
             if (gridId != null) {
                 gridRequest.getGridRequestFilters().add(new GridRequestFilter("grd_gridid", gridId, "="));
             }
-            GridRequestResult result = inforGrids.executeQuery(context, gridRequest);
+            GridRequestResult result = jpaGrids.executeQuery(context, gridRequest);
             GridMetadataRequestResult gridData = new GridMetadataRequestResult();
             gridData.setGridName(getCellContent("grd_gridname", result.getRows()[0]));
             gridData.setGridCode(getCellContent("grd_gridid", result.getRows()[0]));
@@ -131,7 +127,7 @@ public class GridsServiceImpl implements GridsService {
     public String getGridCsvData(InforContext context, GridRequest gridRequest) throws InforException {
         // Always fetch the metadata to ensure that the grid fields will be included
         gridRequest.setIncludeMetadata(true);
-        GridRequestResult gridRequestResult = inforGrids.executeQuery(context, gridRequest);
+        GridRequestResult gridRequestResult = executeQuery(context, gridRequest);
         return CSVUtils.convertGridRequestResultToCsv(gridRequestResult);
     }
 }

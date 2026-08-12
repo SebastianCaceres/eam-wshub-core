@@ -458,7 +458,6 @@ public class InforClient implements Serializable {
 
             // Tools
             Tools tools = new Tools(applicationData,
-                    null,
                     this.executorService,
                     this.dataSource,
                     this.entityManagerFactory,
