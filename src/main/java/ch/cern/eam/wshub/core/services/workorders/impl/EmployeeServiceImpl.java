@@ -7,17 +7,6 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.Employee;
-import net.datastream.schemas.mp_fields.CLASSID_Type;
-import net.datastream.schemas.mp_fields.Employee_Type;
-import net.datastream.schemas.mp_fields.StandardUserDefinedFields;
-import net.datastream.schemas.mp_functions.mp7037_001.MP7037_GetEmployee_001;
-import net.datastream.schemas.mp_functions.mp7038_001.MP7038_AddEmployee_001;
-import net.datastream.schemas.mp_functions.mp7039_001.MP7039_SyncEmployee_001;
-import net.datastream.schemas.mp_functions.mp7040_001.MP7040_DeleteEmployee_001;
-import net.datastream.schemas.mp_results.mp7037_001.MP7037_GetEmployee_001_Result;
-import net.datastream.schemas.mp_results.mp7038_001.MP7038_AddEmployee_001_Result;
-import net.datastream.schemas.mp_results.mp7039_001.MP7039_SyncEmployee_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import ch.cern.eam.wshub.core.repositories.EmployeeRepository;
 import java.util.List;
 import java.util.Optional;
@@ -26,20 +15,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private Tools tools;
 
-    private InforWebServicesPT inforws;
-
     private ApplicationData applicationData;
 
     private EmployeeRepository employeeRepository;
 
-    public EmployeeServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public EmployeeServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public EmployeeServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(ApplicationData applicationData, Tools tools, EmployeeRepository employeeRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.employeeRepository = employeeRepository;
     }
 
@@ -68,75 +53,5 @@ public class EmployeeServiceImpl implements EmployeeService {
     public String deleteEmployee(InforContext context, String employeeCode) throws InforException {
         employeeRepository.deleteById(employeeCode);
         return employeeCode;
-    }
-
-    private void populateInforObject(net.datastream.schemas.mp_entities.employee_001.Employee inforEmployee, Employee employee, InforContext context) throws InforException {
-        if (employee.getCode() != null) {
-            if (inforEmployee.getEMPLOYEEID() == null) {
-                inforEmployee.setEMPLOYEEID(new Employee_Type());
-                inforEmployee.getEMPLOYEEID().setEMPLOYEECODE(employee.getCode());
-                inforEmployee.getEMPLOYEEID().setORGANIZATIONID(tools.getOrganization(context));
-            }
-        }
-        if (employee.getDescription() != null) {
-            if (inforEmployee.getEMPLOYEEID() == null) {
-                inforEmployee.setEMPLOYEEID(new Employee_Type());
-            }
-            inforEmployee.getEMPLOYEEID().setDESCRIPTION(employee.getDescription());
-        }
-        if (employee.getPhone() != null) {
-            inforEmployee.setPHONE(employee.getPhone());
-        }
-        if (employee.getMobilePhone() != null) {
-            inforEmployee.setMOBILEPHONENUMBER(employee.getMobilePhone());
-        }
-        if (employee.getAddress() != null) {
-            inforEmployee.setADDRESS(employee.getAddress());
-        }
-        if (employee.getClazz() != null) {
-            inforEmployee.setCLASSID(new CLASSID_Type());
-            inforEmployee.getCLASSID().setCLASSCODE(employee.getClazz());
-            inforEmployee.getCLASSID().setORGANIZATIONID(tools.getOrganization(context));
-        }
-        if (employee.getMRC() != null) {
-            inforEmployee.setDEPARTMENTCODE(employee.getMRC());
-        }
-        // email has to be a proper email
-        if (employee.getEmail() != null) {
-            inforEmployee.setEMAIL(employee.getEmail());
-        }
-        if (employee.getUserCode() != null) {
-            inforEmployee.setUSERCODE(employee.getUserCode());
-        }
-        if (employee.getTrade() != null) {
-            inforEmployee.setTRADECODE(employee.getTrade());
-        }
-        if (inforEmployee.getStandardUserDefinedFields() == null) {
-            inforEmployee.setStandardUserDefinedFields(new StandardUserDefinedFields());
-        }
-        if (employee.getSupervisor() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFNUM01(tools.getDataTypeTools().encodeQuantity(employee.getSupervisor(), "Supervisor"));
-        }
-        if (employee.getPersonID() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFNUM02(tools.getDataTypeTools().encodeQuantity(employee.getPersonID(), "PersonID"));
-        }
-        if (employee.getDepartment() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFCHAR02(employee.getDepartment());
-        }
-        if (employee.getGroup() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFCHAR03(employee.getGroup());
-        }
-        if (employee.getSection() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFCHAR04(employee.getSection());
-        }
-        if (employee.getPreferredLanguage() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFCHAR05(employee.getPreferredLanguage());
-        }
-        if (employee.getAccountBlocked() != null) {
-            inforEmployee.getStandardUserDefinedFields().setUDFCHKBOX01(employee.getAccountBlocked());
-        }
-        if (employee.getOutOfService() != null) {
-            inforEmployee.setOUTOFSERVICE(employee.getOutOfService());
-        }
     }
 }

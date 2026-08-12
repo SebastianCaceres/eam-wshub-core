@@ -13,10 +13,6 @@ import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.WorkOrderRepository;
 import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
-import net.datastream.schemas.mp_fields.WOID_Type;
-import net.datastream.schemas.mp_functions.mp0024_001.MP0024_GetWorkOrder_001;
-import net.datastream.schemas.mp_results.mp0024_001.MP0024_GetWorkOrder_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import static ch.cern.eam.wshub.core.tools.Tools.extractOrganizationCode;
 import java.util.List;
 import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
@@ -24,8 +20,6 @@ import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
 public class WorkOrderServiceImpl implements WorkOrderService {
 
     private Tools tools;
-
-    private InforWebServicesPT inforws;
 
     private ApplicationData applicationData;
 
@@ -35,32 +29,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
     private WorkOrderRepository workOrderRepository;
 
-    public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, WorkOrderRepository workOrderRepository) {
+    public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, WorkOrderRepository workOrderRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.workOrderRepository = workOrderRepository;
-        this.comments = new CommentServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-        this.standardWorkOrderService = new StandardWorkOrderServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
     }
 
-    /**
-     * @deprecated Bridge method for MECServiceImpl which still uses the raw Infor
-     *             SOAP result. This will be removed once MECServiceImpl is migrated
-     *             to read directly from the JPA WorkOrder entity.
-     */
-    @Deprecated
-    public MP0024_GetWorkOrder_001_Result readWorkOrderInfor(InforContext context, String number, String organization) throws InforException {
-        MP0024_GetWorkOrder_001 getWorkOrder = new MP0024_GetWorkOrder_001();
-        getWorkOrder.setWORKORDERID(new WOID_Type());
-        getWorkOrder.getWORKORDERID().setJOBNUM(number);
-        getWorkOrder.getWORKORDERID().setORGANIZATIONID(tools.getOrganization(context, organization));
-        return tools.performInforOperation(context, inforws::getWorkOrderOp, getWorkOrder);
-    }
 
     //
     // BATCH WEB SERVICES

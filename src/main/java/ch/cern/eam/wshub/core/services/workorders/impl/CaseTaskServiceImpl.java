@@ -6,18 +6,6 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.InforCaseTask;
-import net.datastream.schemas.mp_entities.casemanagementtask_001.CaseManagementTask;
-import net.datastream.schemas.mp_entities.casemanagementtask_001.TrackingDetails;
-import net.datastream.schemas.mp_fields.*;
-import net.datastream.schemas.mp_functions.SessionType;
-import net.datastream.schemas.mp_functions.mp3655_001.MP3655_AddCaseManagementTask_001;
-import net.datastream.schemas.mp_functions.mp3656_001.MP3656_SyncCaseManagementTask_001;
-import net.datastream.schemas.mp_functions.mp3657_001.MP3657_DeleteCaseManagementTask_001;
-import net.datastream.schemas.mp_functions.mp3658_001.MP3658_GetCaseManagementTask_001;
-import net.datastream.schemas.mp_results.mp3655_001.MP3655_AddCaseManagementTask_001_Result;
-import net.datastream.schemas.mp_results.mp3656_001.MP3656_SyncCaseManagementTask_001_Result;
-import net.datastream.schemas.mp_results.mp3658_001.MP3658_GetCaseManagementTask_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import ch.cern.eam.wshub.core.repositories.InforCaseTaskRepository;
 import java.util.Optional;
 import javax.xml.ws.Holder;
@@ -26,20 +14,16 @@ public class CaseTaskServiceImpl implements CaseTaskService {
 
     private Tools tools;
 
-    private InforWebServicesPT inforws;
-
     private ApplicationData applicationData;
 
     private InforCaseTaskRepository inforCaseTaskRepository;
 
-    public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, InforCaseTaskRepository inforCaseTaskRepository) {
+    public CaseTaskServiceImpl(ApplicationData applicationData, Tools tools, InforCaseTaskRepository inforCaseTaskRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.inforCaseTaskRepository = inforCaseTaskRepository;
     }
 
@@ -64,112 +48,5 @@ public class CaseTaskServiceImpl implements CaseTaskService {
     public String deleteCaseTask(InforContext context, String caseTaskID) throws InforException {
         inforCaseTaskRepository.deleteById(caseTaskID);
         return caseTaskID;
-    }
-
-    private void initCaseTaskObject(CaseManagementTask caseTaskInfor, InforCaseTask caseTaskMT, InforContext context) throws InforException {
-        if (caseTaskInfor.getCASEID() == null) {
-            CASEID_Type caseIdType = new CASEID_Type();
-            caseIdType.setCASECODE(caseTaskMT.getCaseCode());
-            caseTaskInfor.setCASEID(caseIdType);
-        }
-        //
-        // CODE AND DESCRIPTION
-        //
-        if (caseTaskInfor.getCASEID().getORGANIZATIONID() == null) {
-            caseTaskInfor.getCASEID().setORGANIZATIONID(tools.getOrganization(context));
-        }
-        if (caseTaskInfor.getCASEMANAGEMENTTASKID() == null) {
-            caseTaskInfor.setCASEMANAGEMENTTASKID(new CASEMANAGEMENTTASKID_Type());
-            caseTaskInfor.getCASEMANAGEMENTTASKID().setCASEMANAGEMENTTASKCODE("0");
-        }
-        if (caseTaskMT.getDescription() != null) {
-            caseTaskInfor.getCASEMANAGEMENTTASKID().setDESCRIPTION(caseTaskMT.getDescription());
-        }
-        //
-        // SEQUENCE
-        //
-        if (caseTaskMT.getSequence() != null) {
-            caseTaskInfor.setSEQUENCE(caseTaskMT.getSequence());
-        }
-        //
-        // ESTIMATED COSTS
-        //
-        if (caseTaskMT.getEstimatedCosts() != null) {
-            caseTaskInfor.setESTIMATEDCOSTS(tools.getDataTypeTools().encodeAmount(caseTaskMT.getEstimatedCosts(), null));
-        }
-        //
-        // SEQUENCE
-        //
-        if (caseTaskMT.getSequence() != null) {
-            caseTaskInfor.setSEQUENCE(caseTaskMT.getSequence());
-        }
-        //
-        // STEP
-        //
-        if (caseTaskMT.getStep() != null) {
-            caseTaskInfor.setSTEP(caseTaskMT.getStep());
-        }
-        //
-        // PRIORITY
-        //
-        if (caseTaskMT.getPriority() != null) {
-            caseTaskInfor.setPRIORITY(new PRIORITY());
-            caseTaskInfor.getPRIORITY().setPRIORITYCODE(caseTaskMT.getPriority());
-        }
-        //
-        // USER DEFINED FIELDS
-        //
-        //TODO tools.getUDFTools().updateInforUserDefinedFields(caseTaskInfor.getStandardUserDefinedFields(), caseTaskMT.getUserDefinedFields());
-        //
-        // TRACKING DETAILS
-        //
-        if (caseTaskMT.getAssignedTo() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setASSIGNEDTO(new PERSONID_Type());
-            caseTaskInfor.getTrackingDetails().getASSIGNEDTO().setPERSONCODE(caseTaskMT.getAssignedTo());
-        }
-        if (caseTaskMT.getStartDate() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setSTARTDATE(tools.getDataTypeTools().encodeInforDate(caseTaskMT.getStartDate(), "Start Date"));
-        }
-        if (caseTaskMT.getCompletedDate() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setCOMPLETEDDATE(tools.getDataTypeTools().encodeInforDate(caseTaskMT.getCompletedDate(), "Completed Date"));
-        }
-        if (caseTaskMT.getScheduledStartDate() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setSCHEDULEDSTARTDATE(tools.getDataTypeTools().encodeInforDate(caseTaskMT.getScheduledStartDate(), "Scheduling Start Date"));
-        }
-        if (caseTaskMT.getPlannedDuration() != null && caseTaskMT.getPlannedDurationUnit() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            if (caseTaskInfor.getTrackingDetails().getPLANNEDDURATION() == null) {
-                caseTaskInfor.getTrackingDetails().setPLANNEDDURATION(new PLANNEDDURATION_Type());
-                caseTaskInfor.getTrackingDetails().getPLANNEDDURATION().setPLANNEDDURATIONUOM(new PLANNEDDURATIONUOM());
-                caseTaskInfor.getTrackingDetails().getPLANNEDDURATION().getPLANNEDDURATIONUOM().setPLANNEDDURATIONUOMCODE(caseTaskMT.getPlannedDurationUnit());
-                caseTaskInfor.getTrackingDetails().getPLANNEDDURATION().setPLANNEDDURATIONVALUE(tools.getDataTypeTools().encodeQuantity(caseTaskMT.getPlannedDuration(), "Planned Duration"));
-            }
-        }
-        if (caseTaskMT.getRequestedStartDate() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setREQUESTEDSTART(tools.getDataTypeTools().encodeInforDate(caseTaskMT.getRequestedStartDate(), "Requested Start Date"));
-        }
-        if (caseTaskMT.getRequestedEndDate() != null) {
-            if (caseTaskInfor.getTrackingDetails() == null) {
-                caseTaskInfor.setTrackingDetails(new TrackingDetails());
-            }
-            caseTaskInfor.getTrackingDetails().setREQUESTEDEND(tools.getDataTypeTools().encodeInforDate(caseTaskMT.getRequestedEndDate(), "Requested End Date"));
-        }
     }
 }

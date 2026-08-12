@@ -12,7 +12,6 @@ import ch.cern.eam.wshub.core.services.grids.entities.GridRequest;
 import ch.cern.eam.wshub.core.services.grids.entities.GridRequestFilter;
 import ch.cern.eam.wshub.core.services.grids.entities.GridRequestResult;
 import ch.cern.eam.wshub.core.services.grids.impl.GridsServiceImpl;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import static ch.cern.eam.wshub.core.tools.GridTools.extractSingleResult;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
 
@@ -25,14 +24,12 @@ public class FieldDescriptionTools {
 
 	private Tools tools;
 	private ApplicationData applicationData;
-	private InforWebServicesPT inforws;
 	private GridsService gridsService;
 
-	public FieldDescriptionTools(Tools tools, ApplicationData applicationData, InforWebServicesPT inforws) {
+	public FieldDescriptionTools(Tools tools, ApplicationData applicationData) {
 		this.tools = tools;
 		this.applicationData = applicationData;
-		this.inforws = inforws;
-		gridsService = new GridsServiceImpl(applicationData, tools, inforws);
+		gridsService = new GridsServiceImpl(applicationData, tools);
 
 	}
 

@@ -13,7 +13,6 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import static ch.cern.eam.wshub.core.tools.GridTools.convertGridResultToMap;
 import static ch.cern.eam.wshub.core.tools.GridTools.extractSingleResult;
 
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,15 +21,13 @@ public class EquipmentTools {
 
     public static final Map<String, String> equimentSystemTypesCache = new ConcurrentHashMap<>();
     private Tools tools;
-    private InforWebServicesPT inforws;
     private ApplicationData applicationData;
     private GridsService gridsService;
 
-    public EquipmentTools(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+    public EquipmentTools(ApplicationData applicationData, Tools tools) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
-        this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+        this.gridsService = new GridsServiceImpl(applicationData, tools);
     }
 
     public String getEquipmentSystemTypeForUserType(InforContext inforContext, String equipmentUserType) throws InforException {

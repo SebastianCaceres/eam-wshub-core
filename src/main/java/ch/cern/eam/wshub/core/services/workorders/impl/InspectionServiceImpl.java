@@ -8,150 +8,23 @@ import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.services.workorders.entities.Aspect;
 import ch.cern.eam.wshub.core.services.workorders.entities.AspectPoint;
 import ch.cern.eam.wshub.core.services.workorders.entities.Point;
-import net.datastream.schemas.mp_entities.inspectionaspect_001.InspectionAspect;
-import net.datastream.schemas.mp_entities.inspectionaspectpoint_001.InspectionAspectPoint;
-import net.datastream.schemas.mp_entities.inspectionpoint_001.InspectionPoint;
-import net.datastream.schemas.mp_entities.inspectionsforworkorder_001.InspectionsForWorkOrder;
-import net.datastream.schemas.mp_fields.*;
-import net.datastream.schemas.mp_functions.SessionType;
-import net.datastream.schemas.mp_functions.mp1017_001.MP1017_AddAspect_001;
-import net.datastream.schemas.mp_functions.mp1022_001.MP1022_AddInspectionAspect_001;
-import net.datastream.schemas.mp_functions.mp1027_001.MP1027_AddInspectionPoint_001;
-import net.datastream.schemas.mp_functions.mp1031_001.MP1031_AddInspectionAspectPoint_001;
-import net.datastream.schemas.mp_functions.mp7177_001.MP7177_AddInspectionsForWorkOrder_001;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
 
 public class InspectionServiceImpl implements InspectionService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
+    private Tools tools;
 
-	public InspectionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-	}
+    private ApplicationData applicationData;
 
-	//
-	//
-	//
-	private void addPoint(InforContext context, Point point, String pobject) throws InforException {
-		InspectionPoint inspectionPoint = new InspectionPoint();
+    public InspectionServiceImpl(ApplicationData applicationData, Tools tools) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+    }
 
-		inspectionPoint.setINSPECTIONPOINTID(new INSPECTIONPOINTID_Type());
-		inspectionPoint.getINSPECTIONPOINTID().setDESCRIPTION(point.getDesc());
-		inspectionPoint.getINSPECTIONPOINTID().setPOINTCODE(point.getCode());
-		inspectionPoint.getINSPECTIONPOINTID().setOBJTYPE("L");
-
-		inspectionPoint.getINSPECTIONPOINTID().setPOINTTYPEID(new POINTTYPEID_Type());
-		inspectionPoint.getINSPECTIONPOINTID().getPOINTTYPEID().setPOINTTYPECODE(point.getPointType());
-
-		inspectionPoint.getINSPECTIONPOINTID().setINSPECTIONOBJECTID(new OBJECT_Type());
-		inspectionPoint.getINSPECTIONPOINTID().getINSPECTIONOBJECTID().setOBJECTCODE(pobject);
-		inspectionPoint.getINSPECTIONPOINTID().getINSPECTIONOBJECTID().setORGANIZATIONID(tools.getOrganization(context));
-
-		MP1027_AddInspectionPoint_001 addInspPoint = new MP1027_AddInspectionPoint_001();
-		addInspPoint.setInspectionPoint(inspectionPoint);
-
-		tools.performInforOperation(context, inforws::addInspectionPointOp, addInspPoint);
-	}
-
-	private void addInspectionAspect(InforContext context, Aspect aspect, String aobject) throws InforException {
-		InspectionAspect inspectionAspect = new InspectionAspect();
-		inspectionAspect.setINSPECTIONASPECTID(new INSPECTIONASPECTID_Type());
-		inspectionAspect.getINSPECTIONASPECTID().setOBJTYPE("L");
-
-		inspectionAspect.getINSPECTIONASPECTID().setASPECTID(new ASPECTID_Type());
-		inspectionAspect.getINSPECTIONASPECTID().getASPECTID().setASPECTCODE(aspect.getCode());
-
-		inspectionAspect.getINSPECTIONASPECTID().setINSPECTIONOBJECTID(new OBJECT_Type());
-		inspectionAspect.getINSPECTIONASPECTID().getINSPECTIONOBJECTID().setORGANIZATIONID(tools.getOrganization(context));
-		inspectionAspect.getINSPECTIONASPECTID().getINSPECTIONOBJECTID().setOBJECTCODE(aobject);
-
-		MP1022_AddInspectionAspect_001 addInspAspect = new MP1022_AddInspectionAspect_001();
-		addInspAspect.setInspectionAspect(inspectionAspect);
-		tools.performInforOperation(context, inforws::addInspectionAspectOp, addInspAspect);
-	}
-
-	private void addAspectPoint(InforContext context, AspectPoint aspectPoint, String aobject)
-			throws InforException {
-		InspectionAspectPoint inspectionAspectPoint = new InspectionAspectPoint();
-
-		inspectionAspectPoint.setINSPECTIONASPECTPOINTID(new INSPECTIONASPECTPOINTID_Type());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().setASPECTID(new ASPECTID_Type());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getASPECTID().setASPECTCODE(aspectPoint.getAspectCode());
-
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().setINSPECTIONPOINTID(new INSPECTIONPOINTID_Type());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID()
-				.setPOINTCODE(aspectPoint.getPointCode());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID().setOBJTYPE("L");
-
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID().setPOINTTYPEID(new POINTTYPEID_Type());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID().getPOINTTYPEID()
-				.setPOINTTYPECODE(aspectPoint.getPointType());
-
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID()
-				.setINSPECTIONOBJECTID(new OBJECT_Type());
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID().getINSPECTIONOBJECTID()
-				.setORGANIZATIONID(tools.getOrganization(context));
-		inspectionAspectPoint.getINSPECTIONASPECTPOINTID().getINSPECTIONPOINTID().getINSPECTIONOBJECTID()
-				.setOBJECTCODE(aobject);
-
-		MP1031_AddInspectionAspectPoint_001 addInspAspectPoint = new MP1031_AddInspectionAspectPoint_001();
-		addInspAspectPoint.setInspectionAspectPoint(inspectionAspectPoint);
-
-		tools.performInforOperation(context, inforws::addInspectionAspectPointOp, addInspAspectPoint);
-	}
-
-	private void addWOInspections(InforContext context, AspectPoint aspectPoint, String inspobject, String woNumber, BigDecimal seqNumber) throws InforException {
-		InspectionsForWorkOrder inspectionsForWO = new InspectionsForWorkOrder();
-		//
-		inspectionsForWO.setEVENTPOINTID(new EVENTPOINTID_Type());
-		inspectionsForWO.getEVENTPOINTID().setEVENTPOINTCODE("");
-
-		inspectionsForWO.setWORKORDERID(new WOID_Type());
-		inspectionsForWO.getWORKORDERID().setJOBNUM(woNumber);
-		inspectionsForWO.getWORKORDERID().setORGANIZATIONID(tools.getOrganization(context));
-
-		inspectionsForWO.setINSPECTIONSEQUENCENUMBER(tools.getDataTypeTools().encodeQuantity(seqNumber, "Inspection Sequence Number"));
-
-		inspectionsForWO.setASPECTPOINTID(new ASPECTPOINTID_Type());
-		inspectionsForWO.getASPECTPOINTID().setEQUIPMENTID(new EQUIPMENTID_Type());
-		inspectionsForWO.getASPECTPOINTID().getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-		inspectionsForWO.getASPECTPOINTID().getEQUIPMENTID().setEQUIPMENTCODE(inspobject);
-
-		inspectionsForWO.getASPECTPOINTID().setASPECTID(new ASPECTID_Type());
-		inspectionsForWO.getASPECTPOINTID().getASPECTID().setASPECTCODE(aspectPoint.getAspectCode());
-
-		inspectionsForWO.getASPECTPOINTID().setPOINTTYPEID(new POINTTYPEID_Type());
-		inspectionsForWO.getASPECTPOINTID().getPOINTTYPEID().setPOINTTYPECODE(aspectPoint.getPointType());
-
-		inspectionsForWO.getASPECTPOINTID().setASPECTPOINTCODE(aspectPoint.getPointCode());
-		//
-		//
-		//
-		MP7177_AddInspectionsForWorkOrder_001 addInspForWO = new MP7177_AddInspectionsForWorkOrder_001();
-		addInspForWO.setInspectionsForWorkOrder(inspectionsForWO);
-
-		tools.performInforOperation(context, inforws::addInspectionsForWorkOrderOp, addInspForWO);
-	}
-
-
-	public String addAspect(InforContext context, Aspect aspect) throws InforException {
-		net.datastream.schemas.mp_entities.aspect_001.Aspect inforAspect = new net.datastream.schemas.mp_entities.aspect_001.Aspect();
-
-		inforAspect.setASPECTID(new ASPECTID_Type());
-		inforAspect.getASPECTID().setASPECTCODE(aspect.getCode());
-		inforAspect.getASPECTID().setDESCRIPTION(aspect.getDesc());
-
-		MP1017_AddAspect_001 addAspect = new MP1017_AddAspect_001();
-		addAspect.setAspect(inforAspect);
-		tools.performInforOperation(context, inforws::addAspectOp, addAspect);
-		return aspect.getCode();
-	}
-
-
+    //
+    //
+    public String addAspect(InforContext context, Aspect aspect) throws InforException {
+        return null;
+    }
 }

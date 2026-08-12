@@ -37,10 +37,16 @@ public class InforGrids implements Serializable {
 	private final Tools tools;
 	private final InforWebServicesPT inforws;
 
-	public InforGrids(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+	public InforGrids() {
+		this.applicationData = null;
+		this.tools = null;
+		this.inforws = null;
+	}
+
+	public InforGrids(ApplicationData applicationData, Tools tools) {
 		this.applicationData = applicationData;
 		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
+		this.inforws = null;
 	}
 
 	public GridRequestResult executeQuery(InforContext context, GridRequest gridRequest) throws InforException {

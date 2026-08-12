@@ -8,8 +8,6 @@ import ch.cern.eam.wshub.core.services.userdefinedscreens.entities.UDTRow;
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,27 +16,24 @@ import java.util.*;
 public class UserDefinedTableServiceImpl implements UserDefinedTableService {
 
     enum DATA_TYPE {
+
         DATE, STRING, INTEGER, DECIMAL
     }
 
     private Tools tools;
-    private InforWebServicesPT inforws;
+
     private ApplicationData applicationData;
 
-    public UserDefinedTableServiceImpl(ApplicationData applicationData, Tools tools,
-                                       InforWebServicesPT inforWebServicesToolkitClient) {
+    public UserDefinedTableServiceImpl(ApplicationData applicationData, Tools tools) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
     }
 
     @Override
-    public String createUserDefinedTableRows(InforContext context, String tableName, List<UDTRow> rows)
-            throws InforException {
+    public String createUserDefinedTableRows(InforContext context, String tableName, List<UDTRow> rows) throws InforException {
         tools.demandDatabaseConnection();
         UserDefinedTableValidator.validateOperation(tableName, rows);
         EntityManager entityManager = tools.getEntityManager();
-
         try {
             entityManager.joinTransaction();
             for (UDTRow row : rows) {
@@ -55,23 +50,19 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
     }
 
     @Override
-    public List<Map<String, Object>> readUserDefinedTableRows(InforContext context,
-                                                              String tableName, UDTRow filters, List<String> fieldsToRead) throws InforException {
+    public List<Map<String, Object>> readUserDefinedTableRows(InforContext context, String tableName, UDTRow filters, List<String> fieldsToRead) throws InforException {
         tools.demandDatabaseConnection();
         EntityManager entityManager = tools.getEntityManager();
-
         try {
             UserDefinedTableValidator.validateOperation(tableName, null, filters);
             UserDefinedTableValidator.validateKeyList(fieldsToRead, false);
             Map<String, Object> parameters = getUDTRowAsMap(filters);
-            Map<String, ?> columnTypes =
-                    UserDefinedTableQueries.getColumnTypes(tableName.toUpperCase(), entityManager);
+            Map<String, ?> columnTypes = UserDefinedTableQueries.getColumnTypes(tableName.toUpperCase(), entityManager);
             if (fieldsToRead.size() == 0) {
                 fieldsToRead = new ArrayList<>(columnTypes.keySet());
             }
             Long maxRows = applicationData.getQueryMaxNumberOfRows();
-            List<Map<String, Object>> maps = UserDefinedTableQueries.executeReadQuery(tableName.toUpperCase(),
-                    parameters, fieldsToRead, maxRows, entityManager);
+            List<Map<String, Object>> maps = UserDefinedTableQueries.executeReadQuery(tableName.toUpperCase(), parameters, fieldsToRead, maxRows, entityManager);
             return maps;
         } catch (InforException inforException) {
             throw inforException;
@@ -81,11 +72,9 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
     }
 
     @Override
-    public int updateUserDefinedTableRows(InforContext context, String tableName, UDTRow fieldsToUpdate,
-                                          UDTRow filters) throws InforException {
+    public int updateUserDefinedTableRows(InforContext context, String tableName, UDTRow fieldsToUpdate, UDTRow filters) throws InforException {
         tools.demandDatabaseConnection();
         EntityManager entityManager = tools.getEntityManager();
-
         try {
             entityManager.joinTransaction();
             UserDefinedTableValidator.validateOperation(tableName, fieldsToUpdate, filters);
@@ -98,14 +87,12 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
         } finally {
             entityManager.close();
         }
-
     }
 
     @Override
     public int deleteUserDefinedTableRows(InforContext context, String tableName, UDTRow filters) throws InforException {
         tools.demandDatabaseConnection();
         EntityManager entityManager = tools.getEntityManager();
-
         try {
             entityManager.joinTransaction();
             UserDefinedTableValidator.validateOperation(tableName, null, filters);
@@ -130,22 +117,14 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
     public UDTRow getMapAsUDTRow(String tableName, Map<String, Object> mapRow) throws InforException {
         tools.demandDatabaseConnection();
         EntityManager entityManager = tools.getEntityManager();
-
         try {
             Map<String, Class<?>> columnTypes = UserDefinedTableQueries.getColumnTypes(tableName, entityManager);
             UDTRow newRow = new UDTRow();
             for (Map.Entry<String, Object> entry : mapRow.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-
-                Optional<Map.Entry<String, Class<?>>> first = columnTypes.entrySet().stream()
-                        .filter(type -> type.getKey().equals(entry.getKey()))
-                        .findFirst();
-
-                Class<?> clazz = first.isPresent() ?
-                        first.get().getValue()
-                        : String.class;
-
+                Optional<Map.Entry<String, Class<?>>> first = columnTypes.entrySet().stream().filter(type -> type.getKey().equals(entry.getKey())).findFirst();
+                Class<?> clazz = first.isPresent() ? first.get().getValue() : String.class;
                 if (Date.class.equals(clazz)) {
                     newRow.addDate(key, value != null ? (Date) value : null);
                 }
@@ -187,17 +166,16 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
     }
 
     // HELPERS
-
     private static Map<String, Object> getDefaultInsertColumns(String username) {
         Date currentDate = new Date();
-
         Map<String, Object> mapa = new TreeMap<>();
         mapa.put("CREATEDBY", username);
         mapa.put("CREATED", currentDate);
         mapa.put("UPDATEDBY", null);
         mapa.put("UPDATED", null);
         mapa.put("UPDATECOUNT", new BigInteger("0"));
-        mapa.put("LASTSAVED", currentDate.clone()); // cloned so that editing last saved date does not alter created one
+        // cloned so that editing last saved date does not alter created one
+        mapa.put("LASTSAVED", currentDate.clone());
         return mapa;
     }
 
@@ -213,7 +191,6 @@ public class UserDefinedTableServiceImpl implements UserDefinedTableService {
         if (mapa == null) {
             return new HashMap<>();
         }
-
         // TreeMap to keep natural order (alphabetical)
         Map<String, T> map = new TreeMap<>();
         for (Map.Entry<String, T> entry : mapa.entrySet()) {

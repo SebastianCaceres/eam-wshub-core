@@ -14,18 +14,6 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.GridTools;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.schemas.mp_fields.*;
-import net.datastream.schemas.mp_functions.mp0035_001.MP0035_GetActivity_001;
-import net.datastream.schemas.mp_functions.mp0037_001.MP0037_AddActivity_001;
-import net.datastream.schemas.mp_functions.mp0038_001.MP0038_SyncActivity_001;
-import net.datastream.schemas.mp_functions.mp0039_001.MP0039_DeleteActivity_001;
-import net.datastream.schemas.mp_functions.mp0042_001.MP0042_AddLaborBooking_001;
-import net.datastream.schemas.mp_results.mp0035_001.MP0035_GetActivity_001_Result;
-import net.datastream.schemas.mp_results.mp0037_001.MP0037_AddActivity_001_Result;
-import net.datastream.schemas.mp_results.mp0038_001.MP0038_SyncActivity_001_Result;
-import net.datastream.schemas.mp_results.mp0039_001.MP0039_DeleteActivity_001_Result;
-import net.datastream.schemas.mp_results.mp0042_001.MP0042_AddLaborBooking_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +24,6 @@ import static ch.cern.eam.wshub.core.tools.DataTypeTools.isNotEmpty;
 public class LaborBookingServiceImpl implements LaborBookingService {
 
     private Tools tools;
-
-    private InforWebServicesPT inforws;
 
     private ApplicationData applicationData;
 
@@ -51,19 +37,14 @@ public class LaborBookingServiceImpl implements LaborBookingService {
 
     private ActivityRepository activityRepository;
 
-    public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null, null);
+    public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, LaborBookingRepository laborBookingRepository, ActivityRepository activityRepository) {
+    public LaborBookingServiceImpl(ApplicationData applicationData, Tools tools, LaborBookingRepository laborBookingRepository, ActivityRepository activityRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.laborBookingRepository = laborBookingRepository;
         this.activityRepository = activityRepository;
-        this.checklistService = new ChecklistServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-        this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-        this.taskPlanService = new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
     }
 
     public List<LaborBooking> readLaborBookings(InforContext context, String workOrderNumber) throws InforException {

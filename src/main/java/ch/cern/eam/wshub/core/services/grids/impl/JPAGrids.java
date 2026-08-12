@@ -10,7 +10,6 @@ import ch.cern.eam.wshub.core.services.grids.exceptions.MissingJoinerGridFilterE
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,12 +47,9 @@ public class JPAGrids implements Serializable {
 
 	private ApplicationData applicationData;
 	private Tools tools;
-	private InforWebServicesPT inforws;
-
-	public JPAGrids(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+	public JPAGrids(ApplicationData applicationData, Tools tools) {
 		this.applicationData = applicationData;
 		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
 		this.paramManager = new InstallParametersManager(tools);
 		this.gridCustomFieldHandler = new GridCustomFieldHandler(tools);
 	}

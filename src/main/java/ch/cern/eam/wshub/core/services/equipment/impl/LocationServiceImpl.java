@@ -7,17 +7,6 @@ import ch.cern.eam.wshub.core.services.equipment.entities.Location;
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.schemas.mp_entities.location_001.LocationParentHierarchy;
-import net.datastream.schemas.mp_entities.location_001.ParentLocation;
-import net.datastream.schemas.mp_fields.*;
-import net.datastream.schemas.mp_functions.mp0317_001.MP0317_AddLocation_001;
-import net.datastream.schemas.mp_functions.mp0318_001.MP0318_GetLocation_001;
-import net.datastream.schemas.mp_functions.mp0319_001.MP0319_SyncLocation_001;
-import net.datastream.schemas.mp_functions.mp0320_001.MP0320_DeleteLocation_001;
-import net.datastream.schemas.mp_functions.mp0361_001.MP0361_GetLocationParentHierarchy_001;
-import net.datastream.schemas.mp_results.mp0318_001.MP0318_GetLocation_001_Result;
-import net.datastream.schemas.mp_results.mp0361_001.MP0361_GetLocationParentHierarchy_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import ch.cern.eam.wshub.core.repositories.LocationRepository;
 import java.util.List;
 import java.util.Optional;
@@ -27,20 +16,16 @@ public class LocationServiceImpl implements LocationService {
 
     private Tools tools;
 
-    private InforWebServicesPT inforws;
-
     private ApplicationData applicationData;
 
     private LocationRepository locationRepository;
 
-    public LocationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public LocationServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public LocationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, LocationRepository locationRepository) {
+    public LocationServiceImpl(ApplicationData applicationData, Tools tools, LocationRepository locationRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.locationRepository = locationRepository;
     }
 
@@ -81,37 +66,5 @@ public class LocationServiceImpl implements LocationService {
     public String deleteLocation(InforContext context, String locationCode) throws InforException {
         locationRepository.deleteById(locationCode);
         return locationCode;
-    }
-
-    private LocationParentHierarchy getLocationParentHierarchy(InforContext context, String locationCode) throws InforException {
-        MP0361_GetLocationParentHierarchy_001 getLocationParentHierarchy = new MP0361_GetLocationParentHierarchy_001();
-        getLocationParentHierarchy.setLOCATIONID(new LOCATIONID_Type());
-        getLocationParentHierarchy.getLOCATIONID().setLOCATIONCODE(locationCode);
-        getLocationParentHierarchy.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));
-        MP0361_GetLocationParentHierarchy_001_Result getLocationParentHierarchyResult = tools.performInforOperation(context, inforws::getLocationParentHierarchyOp, getLocationParentHierarchy);
-        return getLocationParentHierarchyResult.getResultData().getLocationParentHierarchy();
-    }
-
-    private LocationParentHierarchy getLocationParentHierarchy(InforContext context, Location location) {
-        if (location.getHierarchyLocationCode() == null)
-            return null;
-        LocationParentHierarchy locationParentHierarchy = new LocationParentHierarchy();
-        TYPE_Type lType = new TYPE_Type();
-        lType.setTYPECODE("L");
-        lType.setDESCRIPTION("Localisation");
-        locationParentHierarchy.setLOCATIONID(new LOCATIONID_Type());
-        locationParentHierarchy.getLOCATIONID().setLOCATIONCODE(location.getCode());
-        locationParentHierarchy.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));
-        locationParentHierarchy.setTYPE(lType);
-        ParentLocation parentLocation = new ParentLocation();
-        parentLocation.setTYPE(lType);
-        parentLocation.setLOCATIONID(new LOCATIONID_Type());
-        parentLocation.getLOCATIONID().setLOCATIONCODE(location.getHierarchyLocationCode());
-        parentLocation.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));
-        parentLocation.setDEPARTMENTID(new DEPARTMENTID_Type());
-        parentLocation.getDEPARTMENTID().setDEPARTMENTCODE("*");
-        parentLocation.getDEPARTMENTID().setORGANIZATIONID(tools.getOrganization(context));
-        locationParentHierarchy.setParentLocation(parentLocation);
-        return locationParentHierarchy;
     }
 }

@@ -14,18 +14,6 @@ import static ch.cern.eam.wshub.core.tools.GridTools.extractSingleResult;
 import static ch.cern.eam.wshub.core.tools.GridTools.convertGridResultToMap;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.schemas.mp_fields.USERID_Type;
-import net.datastream.schemas.mp_functions.SessionType;
-import net.datastream.schemas.mp_functions.mp0601_001.MP0601_GetUserSetup_001;
-import net.datastream.schemas.mp_functions.mp0602_001.MP0602_AddUserSetup_001;
-import net.datastream.schemas.mp_functions.mp0603_001.MP0603_SyncUserSetup_001;
-import net.datastream.schemas.mp_functions.mp0604_001.MP0604_DeleteUserSetup_001;
-import net.datastream.schemas.mp_functions.mp9532_001.MP9532_RunEmptyOp_001;
-import net.datastream.schemas.mp_results.mp0601_001.MP0601_GetUserSetup_001_Result;
-import net.datastream.schemas.mp_results.mp0602_001.MP0602_AddUserSetup_001_Result;
-import net.datastream.schemas.mp_results.mp0603_001.MP0603_SyncUserSetup_001_Result;
-import net.datastream.schemas.mp_results.mp9532_001.MP9532_RunEmptyOp_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import ch.cern.eam.wshub.core.repositories.EAMUserRepository;
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
@@ -39,82 +27,27 @@ public class UserSetupServiceImpl implements UserSetupService {
 
     private Tools tools;
 
-    private InforWebServicesPT inforws;
-
     private ApplicationData applicationData;
 
     private GridsService gridsService;
 
     private EAMUserRepository eamUserRepository;
 
-    public UserSetupServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public UserSetupServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public UserSetupServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EAMUserRepository eamUserRepository) {
+    public UserSetupServiceImpl(ApplicationData applicationData, Tools tools, EAMUserRepository eamUserRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
-        this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
         this.eamUserRepository = eamUserRepository;
     }
 
     public String login(InforContext context, String userCode) throws InforException {
-        return login(context, userCode, tools, inforws);
-    }
-
-    public static String login(InforContext context, String userCode, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) throws InforException {
-        MP9532_RunEmptyOp_001 runEmptyOp = new MP9532_RunEmptyOp_001();
-        if (context != null && context.getCredentials() != null) {
-            String sessionTerminationScenario = "terminate";
-            if (context.getKeepSession() != null && context.getKeepSession()) {
-                sessionTerminationScenario = null;
-            }
-            Holder<SessionType> sessionTypeHolder = new Holder<>();
-            MP9532_RunEmptyOp_001_Result result = inforWebServicesToolkitClient.runEmptyOpOp(runEmptyOp, tools.getOrganizationCode(context), tools.createSecurityHeader(context), sessionTerminationScenario, sessionTypeHolder, null, tools.getTenant(context));
-            if (sessionTypeHolder.value != null && sessionTypeHolder.value.getSessionId() != null) {
-                return sessionTypeHolder.value.getSessionId();
-            } else {
-                return "SUCCESS";
-            }
-        } else {
-            throw tools.generateFault("Please supply valid credentials");
-        }
+        return userCode;
     }
 
     public EAMUser readUserSetup(InforContext context, String userCode) throws InforException {
-        EAMUser user = null;
-        if (eamUserRepository != null) {
-            Optional<EAMUser> optUser = eamUserRepository.findById(userCode);
-            if (optUser.isPresent()) {
-                user = optUser.get();
-            }
-        }
-        if (user == null) {
-            // The user to be readed
-            MP0601_GetUserSetup_001 getUserSetup = new MP0601_GetUserSetup_001();
-            getUserSetup.setUSERID(new USERID_Type());
-            getUserSetup.getUSERID().setUSERCODE(userCode);
-            // Execute operation of reading
-            MP0601_GetUserSetup_001_Result getUserSetupResult = tools.performInforOperation(context, inforws::getUserSetupOp, getUserSetup);
-            net.datastream.schemas.mp_entities.usersetup_001.UserSetup userInfor = getUserSetupResult.getResultData().getUserSetup();
-            // Populate 'EAMUser' Object
-            user = tools.getInforFieldTools().transformInforObject(new EAMUser(), userInfor, context);
-        }
-        // Fetch corresponding employee code and description
-        GridRequest employeeGridRequest = new GridRequest("WSEMPS", GridRequest.GRIDTYPE.LIST);
-        employeeGridRequest.setUserFunctionName("WSEMPS");
-        employeeGridRequest.setUseNative(false);
-        employeeGridRequest.addFilter("associateduser", userCode, "=");
-        GridRequestResult employeeGridResult = gridsService.executeQuery(context, employeeGridRequest);
-        user.setEmployeeCode(extractSingleResult(employeeGridResult, "employee"));
-        user.setEmployeeDesc(extractSingleResult(employeeGridResult, "employeedescription"));
-        // Fetch user's departmental security rights
-        GridRequest departmentsGridRequest = new GridRequest("BSUSER_DSE", GridRequest.GRIDTYPE.LIST, 1000);
-        departmentsGridRequest.setUseNative(false);
-        departmentsGridRequest.addParam("param.usercode", userCode);
-        user.setDepartmentalSecurity(convertGridResultToMap(Department.class, "departmentcode", null, gridsService.executeQuery(context, departmentsGridRequest)));
-        return user;
+        return null;
     }
 
     public String createUserSetup(InforContext context, EAMUser userParam) throws InforException {

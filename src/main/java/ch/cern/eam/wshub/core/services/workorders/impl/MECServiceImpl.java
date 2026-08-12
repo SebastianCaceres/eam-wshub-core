@@ -12,41 +12,38 @@ import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
 import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
 
 public class MECServiceImpl implements MECService {
+
     private Tools tools;
+
     private ApplicationData applicationData;
+
     private GridsService gridsService;
+
     private WorkOrderRepository workOrderRepository;
 
-    public MECServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public MECServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public MECServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, WorkOrderRepository workOrderRepository) {
+    public MECServiceImpl(ApplicationData applicationData, Tools tools, WorkOrderRepository workOrderRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.gridsService = new GridsServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
         this.workOrderRepository = workOrderRepository;
     }
 
     @Override
     public String addWorkOrderEquipment(InforContext context, MEC mecToAdd) throws InforException {
         MECService.validateInput(mecToAdd);
-
         WorkOrder childWorkOrder = new WorkOrder();
         childWorkOrder.setParentWO(mecToAdd.getWorkorderID());
         childWorkOrder.setEquipmentCode(mecToAdd.getEquipmentCode());
         childWorkOrder.setLocationCode(mecToAdd.getLocationID());
         childWorkOrder.setCostCode(mecToAdd.getCostCode());
-
         try {
             WorkOrder saved = workOrderRepository.save(childWorkOrder);
             return saved.getNumber();
@@ -63,7 +60,6 @@ public class MECServiceImpl implements MECService {
     @Override
     public String deleteWorkOrderMEC(InforContext context, String parentWorkorderID, String mecID) throws InforException {
         MECService.validateInput(parentWorkorderID, mecID);
-
         try {
             workOrderRepository.deleteById(extractEntityCode(mecID));
             return "OK";
@@ -75,42 +71,29 @@ public class MECServiceImpl implements MECService {
     @Override
     public List<String> getWorkOrderMecIDList(InforContext context, String workorderID) throws InforException {
         MECService.validateInput(workorderID);
-
         GridRequest gridRequest = new GridRequest(MECService.GRID_ID, GridRequest.GRIDTYPE.LIST, 50);
         gridRequest.addParam("param.workordernum", workorderID);
         gridRequest.addParam("param.organization", tools.getOrganizationCode(context));
         gridRequest.addParam("param.workorderrtype", MECService.GRID_WO_TYPE);
         gridRequest.addParam("param.tenant", tools.getTenant(context));
-
         GridRequestResult res = gridsService.executeQuery(context, gridRequest);
-
-        List<GridField> targetColumn = res.getGridFields().stream()
-                .filter(gridField -> gridField.getName().equals(MECService.MEC_ID_COLUMN_NAME))
-                .collect(Collectors.toList());
-
+        List<GridField> targetColumn = res.getGridFields().stream().filter(gridField -> gridField.getName().equals(MECService.MEC_ID_COLUMN_NAME)).collect(Collectors.toList());
         if (targetColumn.isEmpty()) {
             throw Tools.generateFault("Column with relatedWorkorderID (ID of the MEC) is not in dataspy");
         }
-
         int targetIndex = targetColumn.get(0).getOrder();
-
-        return Arrays.stream(res.getRows())
-                .map(gridRequestRow -> gridRequestRow.getCell()[targetIndex].getContent())
-                .collect(Collectors.toList());
+        return Arrays.stream(res.getRows()).map(gridRequestRow -> gridRequestRow.getCell()[targetIndex].getContent()).collect(Collectors.toList());
     }
 
     @Override
-    public WorkOrder getWorkOrderMecInfor(InforContext context, String workorderID) throws InforException{
-        return workOrderRepository.findById(extractEntityCode(workorderID))
-                .orElseThrow(() -> tools.generateFault("MEC Work order not found: " + workorderID));
+    public WorkOrder getWorkOrderMecInfor(InforContext context, String workorderID) throws InforException {
+        return workOrderRepository.findById(extractEntityCode(workorderID)).orElseThrow(() -> tools.generateFault("MEC Work order not found: " + workorderID));
     }
 
     @Override
     public String syncWorkOrderEquipment(InforContext context, MEC updatedMEC) throws InforException {
         MECService.validateInput(updatedMEC);
-
         WorkOrder originalMecInfor = this.getWorkOrderMecInfor(context, updatedMEC.getRelatedWorkorderID());
-        
         if (updatedMEC.getEquipmentCode() != null) {
             originalMecInfor.setEquipmentCode(updatedMEC.getEquipmentCode());
         }
@@ -120,7 +103,6 @@ public class MECServiceImpl implements MECService {
         if (updatedMEC.getCostCode() != null) {
             originalMecInfor.setCostCode(updatedMEC.getCostCode());
         }
-
         try {
             WorkOrder saved = workOrderRepository.save(originalMecInfor);
             return saved.getNumber();

@@ -7,29 +7,22 @@ import ch.cern.eam.wshub.core.tools.ApplicationData;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import ch.cern.eam.wshub.core.repositories.TaskPlanRepository;
-import net.datastream.schemas.mp_functions.mp0079_001.MP0079_GetTask_001;
-import net.datastream.schemas.mp_results.mp0079_001.MP0079_GetTask_001_Result;
-import net.datastream.wsdls.inforws.InforWebServicesPT;
 import java.math.BigInteger;
 
 public class TaskPlanServiceImpl implements TaskPlanService {
 
     private Tools tools;
 
-    private InforWebServicesPT inforws;
-
     private ApplicationData applicationData;
 
     private TaskPlanRepository taskPlanRepository;
 
-    public TaskPlanServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    public TaskPlanServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
-    public TaskPlanServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, TaskPlanRepository taskPlanRepository) {
+    public TaskPlanServiceImpl(ApplicationData applicationData, Tools tools, TaskPlanRepository taskPlanRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
-        this.inforws = inforWebServicesToolkitClient;
         this.taskPlanRepository = taskPlanRepository;
     }
 

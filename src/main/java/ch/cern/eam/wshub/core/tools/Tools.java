@@ -68,7 +68,7 @@ public class Tools {
 		this.customFieldsTools = new CustomFieldsTools(this, applicationData, inforws);
 		this.inforFieldTools = new InforFieldTools(customFieldsTools, this);
 		this.dataTypeTools = new DataTypeTools(this);
-		this.fieldDescriptionsTools = new FieldDescriptionTools(this, applicationData, inforws);
+		this.fieldDescriptionsTools = new FieldDescriptionTools(this, applicationData);
 		this.gridTools = new GridTools(this);
 
 		//
