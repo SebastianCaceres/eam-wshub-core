@@ -9,7 +9,11 @@ import java.util.Date;
 import java.util.Map;
 
 @Entity
-@NamedNativeQuery(name = "FINDACT", query = "select * from R5ACTIVITIES LEFT OUTER JOIN R5TASKS ON R5ACTIVITIES.ACT_TASK = R5TASKS.TSK_CODE WHERE ACT_EVENT = :workOrder ORDER BY ACT_ACT", resultClass = Activity.class)
+@NamedNativeQuery(
+    name = "FINDACT",
+    query = "SELECT a.ACT_ACT, a.ACT_NOTE, a.ACT_EVENT, a.ACT_PERSONS, a.ACT_EST, a.ACT_REM, a.ACT_START, a.ACT_MATLIST, a.ACT_TASK, a.ACT_TRADE, a.ACT_QTY, a.ACT_PERCOMPLETE, a.ACK_NOTE, t.TKP_DESC AS TSK_DESC, CAST(NULL AS VARCHAR(50)) AS TSK_REVISION FROM R5ACTIVITIES a LEFT OUTER JOIN R5TASKPLANS t ON a.ACT_TASK = t.TKP_CODE WHERE a.ACT_EVENT = :workOrder ORDER BY a.ACT_ACT",
+    resultClass = Activity.class
+)
 @Table(name = "R5ACTIVITIES")
 public class Activity  {
 

@@ -419,7 +419,12 @@ public class Tools {
 
 		String tenant = getTenant(context);
 
-		return operation.apply(argument, organization, security, sessionTerminationScenario, holder, messageConfigType, tenant);
+		try {
+			return operation.apply(argument, organization, security, sessionTerminationScenario, holder, messageConfigType, tenant);
+		} catch (Exception e) {
+			log(Level.WARNING, "SOAP web service operation failed or offline: " + e.getMessage());
+			throw generateFault(e.getMessage() != null ? e.getMessage() : "SOAP operation unavailable");
+		}
 	}
 
 	public static String getCacheKey(InforContext inforContext, String ...parts) {

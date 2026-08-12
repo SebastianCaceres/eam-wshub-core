@@ -8,7 +8,7 @@ import ch.cern.eam.wshub.core.services.entities.BatchResponse;
 import ch.cern.eam.wshub.core.services.workorders.entities.MEC;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.schemas.mp_entities.workorderequipment_001.WorkOrderEquipment;
+import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public interface MECService {
     BatchResponse<String> addWorkOrderEquipmentBatch(InforContext context, List<MEC> mecsToAdd) throws InforException;
 
     @Operation(logOperation = INFOR_OPERATION.MEC_GET_INFOR, logDataReference1 = LogDataReferenceType.RESULT)
-    WorkOrderEquipment getWorkOrderMecInfor(InforContext context, String workorderID) throws InforException;
+    WorkOrder getWorkOrderMecInfor(InforContext context, String workorderID) throws InforException;
 
     @Operation(logOperation = INFOR_OPERATION.MEC_ADD, logDataReference1 = LogDataReferenceType.RESULT)
     String addWorkOrderEquipment(InforContext context, MEC mecToAdd) throws InforException;

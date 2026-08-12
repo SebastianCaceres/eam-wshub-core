@@ -459,22 +459,27 @@ public class InforClient implements Serializable {
             InforClient.cacheMap = this.cacheMap;
 
             // Infor Web Services Client
-            Service service = Service.create(new QName("inforws"));
-            if (this.soapHandlerResolver != null) {
-                service.setHandlerResolver(soapHandlerResolver);
-            }
-
-            InforWebServicesPT inforWebServicesToolkitClient = service.getPort(InforWebServicesPT.class);
-            if (inforWebServicesToolkitClient instanceof BindingProvider) {
-                inforClient.bindingProvider = (BindingProvider) inforWebServicesToolkitClient;
-                if (applicationData.getUrl() != null) {
-                    inforClient.bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, applicationData.getUrl());
+            InforWebServicesPT inforWebServicesToolkitClient = null;
+            try {
+                Service service = Service.create(new QName("inforws"));
+                if (this.soapHandlerResolver != null) {
+                    service.setHandlerResolver(soapHandlerResolver);
                 }
-                inforClient.bindingProvider.getRequestContext().put("set-jaxb-validation-event-handler", false);
 
-                List<Handler> handlerChain = inforClient.bindingProvider.getBinding().getHandlerChain();
-                handlerChain.add(0, new AuthenticationHandler());
-                inforClient.bindingProvider.getBinding().setHandlerChain(handlerChain);
+                inforWebServicesToolkitClient = service.getPort(InforWebServicesPT.class);
+                if (inforWebServicesToolkitClient instanceof BindingProvider) {
+                    inforClient.bindingProvider = (BindingProvider) inforWebServicesToolkitClient;
+                    if (applicationData.getUrl() != null) {
+                        inforClient.bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, applicationData.getUrl());
+                    }
+                    inforClient.bindingProvider.getRequestContext().put("set-jaxb-validation-event-handler", false);
+
+                    List<Handler> handlerChain = inforClient.bindingProvider.getBinding().getHandlerChain();
+                    handlerChain.add(0, new AuthenticationHandler());
+                    inforClient.bindingProvider.getBinding().setHandlerChain(handlerChain);
+                }
+            } catch (Exception e) {
+                // SOAP proxy initialization skipped (pure JPA or offline mode)
             }
 
             if (this.executorService != null) {
@@ -536,7 +541,7 @@ public class InforClient implements Serializable {
             inforClient.userDefinedTableServices = proxy(UserDefinedTableService.class, new UserDefinedTableServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.userDefinedListService = proxy(UserDefinedListService.class, new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.routeService = proxy(RouteService.class, new RouteServiceImpl(applicationData, tools, inforWebServicesToolkitClient, routeEquipmentRepository, routeRepository), inforInterceptor, tools);
-            inforClient.mecService = proxy(MECService.class, new MECServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
+            inforClient.mecService = proxy(MECService.class, new MECServiceImpl(applicationData, tools, inforWebServicesToolkitClient, workOrderRepository), inforInterceptor, tools);
             inforClient.inforWebServicesToolkitClient = inforWebServicesToolkitClient;
             inforClient.safetyService = proxy(SafetyService.class, new SafetyServiceImpl(applicationData, tools, inforWebServicesToolkitClient), inforInterceptor, tools);
             inforClient.taskPlanService = proxy(TaskPlanService.class, new TaskPlanServiceImpl(applicationData, tools, inforWebServicesToolkitClient, taskPlanRepository), inforInterceptor, tools);
