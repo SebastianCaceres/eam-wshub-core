@@ -23,7 +23,6 @@ import net.datastream.schemas.mp_functions.mp3291_001.MP3291_ChangeEquipmentNumb
 import net.datastream.schemas.mp_functions.mp5039_001.MP5039_AddCampaignEquipment_001;
 import net.datastream.schemas.mp_results.mp3016_001.MP3016_GetDepreciation_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import javax.persistence.EntityManager;
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
@@ -31,347 +30,170 @@ import java.math.BigInteger;
 
 public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
-	private EquipmentDepreciationRepository equipmentDepreciationRepository;
+    private Tools tools;
 
-	public EquipmentOtherServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
-									 EquipmentDepreciationRepository equipmentDepreciationRepository) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-		this.equipmentDepreciationRepository = equipmentDepreciationRepository;
-	}
+    private InforWebServicesPT inforws;
 
-	public String createEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
-		if (equipmentDepreciationRepository != null) {
-			try {
-				EquipmentDepreciation saved = equipmentDepreciationRepository.save(equipmentDepreciation);
-				return saved.getEquipmentCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		MP3015_GetDepreciationDefault_001 getdepdef = new MP3015_GetDepreciationDefault_001();
+    private ApplicationData applicationData;
 
-		getdepdef.setEQUIPMENTID(new EQUIPMENTID_Type());
-		getdepdef.getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-		getdepdef.getEQUIPMENTID().setEQUIPMENTCODE(equipmentDepreciation.getEquipmentCode());
+    private EquipmentDepreciationRepository equipmentDepreciationRepository;
 
-		getdepdef.setDEPRECIATIONCATEGORYID(new DEPRECIATIONCATEGORYID_Type());
-		if (equipmentDepreciation.getDepreciationCategory() != null) {
-			getdepdef.getDEPRECIATIONCATEGORYID()
-					.setDEPRECIATIONCATEGORYCODE(equipmentDepreciation.getDepreciationCategory().trim());
-		} else {
-			getdepdef.getDEPRECIATIONCATEGORYID().setDEPRECIATIONCATEGORYCODE("C");
-		}
+    public EquipmentOtherServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentDepreciationRepository equipmentDepreciationRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.inforws = inforWebServicesToolkitClient;
+        this.equipmentDepreciationRepository = equipmentDepreciationRepository;
+    }
 
-		if (equipmentDepreciation.getDepreciationType() != null) {
-			getdepdef.setEQUIPMENTDEPTYPE(equipmentDepreciation.getDepreciationType().toUpperCase().trim());
-		} else {
-			getdepdef.setEQUIPMENTDEPTYPE("*");
-		}
+    public String createEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
+        EquipmentDepreciation saved = equipmentDepreciationRepository.save(equipmentDepreciation);
+        return saved.getEquipmentCode();
+        // DEPRECIATION TYPE
+        // Possible types: select * from r5descriptions where des_entity =
+    }
 
-		getdepdef.setFROMDATE(tools.getDataTypeTools().formatDate(equipmentDepreciation.getFromDate(), "From Date"));
+    @Override
+    public EquipmentDepreciation readEquipmentDepreciation(InforContext context, String equipmentCode) throws InforException {
+        if (equipmentDepreciationRepository != null) {
+            java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(equipmentCode.trim().toUpperCase());
+            if (!results.isEmpty()) {
+                return results.get(0);
+            }
+        }
+        // SOAP fallback: MP3016 requires a DEPRECIATIONPK; fetch it via EntityManager first
+        EntityManager em = tools.getEntityManager();
+        try {
+            EquipmentDepreciation found = em.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class).setParameter("equipmentCode", equipmentCode.trim().toUpperCase()).getSingleResult();
+            MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
+            getDepreciation.setDEPRECIATIONPK(tools.getDataTypeTools().encodeQuantity(found.getDepreciationPK(), "Depreciation PK"));
+            MP3016_GetDepreciation_001_Result result = tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
+            return tools.getInforFieldTools().transformInforObject(new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
+        } catch (Exception e) {
+            throw tools.generateFault("Couldn't fetch depreciation for equipment " + equipmentCode + ": " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
 
-		DepreciationDefault depreciationDefault =
-			tools.performInforOperation(context, inforws::getDepreciationDefaultOp, getdepdef)
-				.getResultData().getDepreciationDefault();
+    public String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
+        //
+        // GET THE DEPRECIATION VALUE FIRST
+        //
+        if (equipmentDepreciation.getDepreciationPK() == null) {
+            if (equipmentDepreciation.getEquipmentCode() == null) {
+                throw tools.generateFault("Equipment Code is mandatory field");
+            }
+            if (equipmentDepreciationRepository != null) {
+                java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(equipmentDepreciation.getEquipmentCode().trim().toUpperCase());
+                if (!results.isEmpty()) {
+                    equipmentDepreciation.setDepreciationPK(results.get(0).getDepreciationPK());
+                } else {
+                    throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
+                }
+            } else {
+                EntityManager em = tools.getEntityManager();
+                try {
+                    equipmentDepreciation.setDepreciationPK(em.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class).setParameter("equipmentCode", equipmentDepreciation.getEquipmentCode().trim().toUpperCase()).getSingleResult().getDepreciationPK());
+                } catch (Exception e) {
+                    throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
+                } finally {
+                    em.close();
+                }
+            }
+        }
+        MP3016_GetDepreciation_001 getdep = new MP3016_GetDepreciation_001();
+        getdep.setDEPRECIATIONPK(tools.getDataTypeTools().encodeQuantity(equipmentDepreciation.getDepreciationPK(), "Depreciation PK"));
+        MP3016_GetDepreciation_001_Result result = tools.performInforOperation(context, inforws::getDepreciationOp, getdep);
+        //
+        // UPDATE DEPRECIATION
+        //
+        Depreciation depreciation = tools.getInforFieldTools().transformWSHubObject(result.getResultData().getDepreciation(), equipmentDepreciation, context);
+        // ORIGINAL VALUE
+        if (equipmentDepreciation.getOriginalValue() != null) {
+            depreciation.setORIGINALVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getOriginalValue(), "Original Value"));
+        }
+        // RESIDUAL VALUE
+        if (equipmentDepreciation.getResidualValue() != null) {
+            depreciation.setRESIDUALVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getResidualValue(), "Residual Value"));
+        }
+        // ESTIMATED USEFUL LIFE
+        if (equipmentDepreciation.getEstimatedUsefulLifeUOM() != null) {
+            depreciation.getRemainingUsefulLife().setUOMID(new UOMID_Type());
+            depreciation.getRemainingUsefulLife().getUOMID().setUOMCODE(equipmentDepreciation.getEstimatedUsefulLifeUOM().toUpperCase());
+            BigDecimal amount = tools.getDataTypeTools().decodeAmount(depreciation.getRemainingUsefulLife().getESTIMATEDLIFE());
+            depreciation.getRemainingUsefulLife().setESTIMATEDLIFE(tools.getDataTypeTools().encodeAmount(amount, "Estiamted Life Time"));
+        }
+        if (equipmentDepreciation.getEstimatedUsefulLife() != null) {
+            depreciation.getRemainingUsefulLife().setESTIMATEDLIFE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getEstimatedUsefulLife(), "Estiamted Life Time"));
+        }
+        // DEPRECIATION METHOD
+        if (equipmentDepreciation.getDepreciationMethod() != null) {
+            depreciation.setDEPRECIATIONMETHOD(equipmentDepreciation.getDepreciationMethod());
+        }
+        // DEPRECIATION TYPE
+        if (equipmentDepreciation.getDepreciationType() != null) {
+            depreciation.setEQUIPMENTDEPTYPE(equipmentDepreciation.getDepreciationType().toUpperCase());
+        }
+        // DEPRECIATION CATEGORY
+        if (equipmentDepreciation.getDepreciationCategory() != null) {
+            depreciation.setDEPRECIATIONCATEGORYID(new DEPRECIATIONCATEGORYID_Type());
+            depreciation.getDEPRECIATIONCATEGORYID().setDEPRECIATIONCATEGORYCODE(equipmentDepreciation.getDepreciationCategory());
+        }
+        // FROM DATE
+        if (equipmentDepreciation.getFromDate() != null) {
+            depreciation.setFROMDATE(tools.getDataTypeTools().formatDate(equipmentDepreciation.getFromDate(), "From Date"));
+        }
+        // CHANGE VALUE
+        if (equipmentDepreciation.getChangeValue() != null) {
+            depreciation.setCHANGEVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeValue(), "Change Value"));
+        }
+        // CHANGE LIFE
+        if (equipmentDepreciation.getChangeLife() != null) {
+            depreciation.setCHANGELIFE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeLife(), "Change Life"));
+        }
+        // CHANGE ESTIMATED LIFETIME OUTPUT
+        if (equipmentDepreciation.getChangeEstimatedLifetimeOutput() != null) {
+            depreciation.setCHANGEESTLIFETIMEOUTPUT(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeEstimatedLifetimeOutput(), "Change Estimated Lifetime Output"));
+        }
+        MP3018_SyncDepreciation_001 syncdep = new MP3018_SyncDepreciation_001();
+        syncdep.setDepreciation(depreciation);
+        tools.performInforOperation(context, inforws::syncDepreciationOp, syncdep);
+        return "OK";
+    }
 
-		Depreciation depreciation = tools.getInforFieldTools().transformWSHubObject(new Depreciation(), equipmentDepreciation, context);
+    public String updateEquipmentCode(InforContext context, String equipmentCode, String equipmentNewCode, String equipmentType) throws InforException {
+        MP3291_ChangeEquipmentNumber_001 changeeqpnum = new MP3291_ChangeEquipmentNumber_001();
+        changeeqpnum.setChangeEquipmentNumber(new ChangeEquipmentNumber());
+        //
+        changeeqpnum.getChangeEquipmentNumber().setCURRENTEQUIPMENTID(new EQUIPMENTID_Type());
+        changeeqpnum.getChangeEquipmentNumber().getCURRENTEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
+        changeeqpnum.getChangeEquipmentNumber().getCURRENTEQUIPMENTID().setEQUIPMENTCODE(equipmentCode);
+        //
+        changeeqpnum.getChangeEquipmentNumber().setNEWEQUIPMENTID(new EQUIPMENTID_Type());
+        changeeqpnum.getChangeEquipmentNumber().getNEWEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
+        changeeqpnum.getChangeEquipmentNumber().getNEWEQUIPMENTID().setEQUIPMENTCODE(equipmentNewCode);
+        tools.performInforOperation(context, inforws::changeEquipmentNumberOp, changeeqpnum);
+        return "OK";
+    }
 
-		// DEPRECIATION PK
-		depreciation.setDEPRECIATIONPK(tools.getDataTypeTools().encodeQuantity(BigDecimal.ZERO, "Depreciation PK"));
-
-		// ORIGINAL VALUE
-		if (equipmentDepreciation.getOriginalValue() != null) {
-			depreciation.setORIGINALVALUE(
-					tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getOriginalValue(), "Original Value"));
-		} else {
-			depreciation.setORIGINALVALUE(depreciationDefault.getORIGINALVALUE());
-		}
-
-		// RESIDUAL VALUE
-		if (equipmentDepreciation.getResidualValue() != null) {
-			depreciation.setRESIDUALVALUE(
-					tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getResidualValue(), "Residual Value"));
-		} else {
-			depreciation.setRESIDUALVALUE(depreciationDefault.getRESIDUALVALUE());
-		}
-
-		// ESTIMATED USEFUL LIFE
-		if (equipmentDepreciation.getEstimatedUsefulLife() != null) {
-			depreciation.setRemainingUsefulLife(new RemainingUsefulLife());
-			if (equipmentDepreciation.getEstimatedUsefulLifeUOM() != null
-					&& !equipmentDepreciation.getEstimatedUsefulLifeUOM().trim().equals("")) {
-				depreciation.getRemainingUsefulLife().setUOMID(new UOMID_Type());
-				depreciation.getRemainingUsefulLife().getUOMID()
-						.setUOMCODE(equipmentDepreciation.getEstimatedUsefulLifeUOM().trim());
-			} else {
-				depreciation.getRemainingUsefulLife().setUOMID(new UOMID_Type());
-				depreciation.getRemainingUsefulLife().getUOMID().setUOMCODE("Y");
-			}
-			depreciation.getRemainingUsefulLife().setESTIMATEDLIFE(
-					tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getEstimatedUsefulLife(), "Estimated Useful Life"));
-		} else {
-			depreciation.setRemainingUsefulLife(new RemainingUsefulLife());
-			depreciation.getRemainingUsefulLife()
-					.setESTIMATEDLIFE(depreciationDefault.getRemainingUsefulLife().getESTIMATEDLIFE());
-			depreciation.getRemainingUsefulLife().setUOMID(depreciationDefault.getRemainingUsefulLife().getUOMID());
-		}
-
-		// DEPRECIATION METHOD
-		if (equipmentDepreciation.getDepreciationMethod() != null) {
-			depreciation.setDEPRECIATIONMETHOD(equipmentDepreciation.getDepreciationMethod().trim());
-		}
-
-		// DEPRECIATION ID
-		if (equipmentDepreciation.getEquipmentCode() != null) {
-			// depreciation.seteq
-			depreciation.setEQUIPMENTID(new EQUIPMENTID_Type());
-			depreciation.getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-			depreciation.getEQUIPMENTID().setEQUIPMENTCODE(equipmentDepreciation.getEquipmentCode().trim());
-		}
-
-		// DEPRECIATION TYPE
-		// Possible types: select * from r5descriptions where des_entity =
-		// 'UCOD' AND DES_TYPE = 'DETP';
-		if (equipmentDepreciation.getDepreciationType() != null) {
-			depreciation.setEQUIPMENTDEPTYPE(equipmentDepreciation.getDepreciationType().toUpperCase().trim());
-		} else {
-			depreciation.setEQUIPMENTDEPTYPE("*");
-		}
-
-		// DEPRECIATION CATEGORY
-		if (equipmentDepreciation.getDepreciationCategory() != null) {
-			depreciation.setDEPRECIATIONCATEGORYID(new DEPRECIATIONCATEGORYID_Type());
-			depreciation.getDEPRECIATIONCATEGORYID()
-					.setDEPRECIATIONCATEGORYCODE(equipmentDepreciation.getDepreciationCategory().trim());
-		} else {
-			depreciation.setDEPRECIATIONCATEGORYID(new DEPRECIATIONCATEGORYID_Type());
-			depreciation.getDEPRECIATIONCATEGORYID().setDEPRECIATIONCATEGORYCODE("C");
-		}
-
-		// FROM DATE
-		if (equipmentDepreciation.getFromDate() != null) {
-			depreciation.setFROMDATE(tools.getDataTypeTools().formatDate(equipmentDepreciation.getFromDate().trim(), "From Date"));
-		} else {
-			depreciation.setFROMDATE(depreciationDefault.getFROMDATE());
-		}
-
-		// CHANGE VALUE
-		if (equipmentDepreciation.getChangeValue() != null) {
-			depreciation.setCHANGEVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeValue(), "Change Value"));
-		}
-
-		// CHANGE LIFE
-		if (equipmentDepreciation.getChangeLife() != null) {
-			depreciation.setCHANGELIFE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeLife(), "Change Life"));
-		}
-
-		// CHANGE ESTIMATED LIFETIME OUTPUT
-		if (equipmentDepreciation.getChangeEstimatedLifetimeOutput() != null) {
-			depreciation.setCHANGEESTLIFETIMEOUTPUT(tools.getDataTypeTools().encodeAmount(
-					equipmentDepreciation.getChangeEstimatedLifetimeOutput(), "Change Estimated Lifetime Output"));
-		}
-
-		// ADD DEPRECIATION
-		MP3017_AddDepreciation_001 adddep = new MP3017_AddDepreciation_001();
-		adddep.setDepreciation(depreciation);
-		tools.performInforOperation(context, inforws::addDepreciationOp, adddep);
-
-		return "OK";
-	}
-
-	@Override
-	public EquipmentDepreciation readEquipmentDepreciation(InforContext context, String equipmentCode) throws InforException {
-		if (equipmentDepreciationRepository != null) {
-			java.util.List<EquipmentDepreciation> results =
-				equipmentDepreciationRepository.findByEquipmentCode(equipmentCode.trim().toUpperCase());
-			if (!results.isEmpty()) {
-				return results.get(0);
-			}
-		}
-		// SOAP fallback: MP3016 requires a DEPRECIATIONPK; fetch it via EntityManager first
-		EntityManager em = tools.getEntityManager();
-		try {
-			EquipmentDepreciation found = em
-				.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class)
-				.setParameter("equipmentCode", equipmentCode.trim().toUpperCase())
-				.getSingleResult();
-			MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
-			getDepreciation.setDEPRECIATIONPK(
-				tools.getDataTypeTools().encodeQuantity(found.getDepreciationPK(), "Depreciation PK"));
-			MP3016_GetDepreciation_001_Result result =
-				tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
-			return tools.getInforFieldTools().transformInforObject(
-				new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
-		} catch (Exception e) {
-			throw tools.generateFault("Couldn't fetch depreciation for equipment " + equipmentCode + ": " + e.getMessage());
-		} finally {
-			em.close();
-		}
-	}
-
-	public String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {
-		//
-		// GET THE DEPRECIATION VALUE FIRST
-		//
-		if (equipmentDepreciation.getDepreciationPK() == null) {
-
-			if (equipmentDepreciation.getEquipmentCode() == null) {
-				throw tools.generateFault("Equipment Code is mandatory field");
-			}
-
-			if (equipmentDepreciationRepository != null) {
-				java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(
-					equipmentDepreciation.getEquipmentCode().trim().toUpperCase());
-				if (!results.isEmpty()) {
-					equipmentDepreciation.setDepreciationPK(results.get(0).getDepreciationPK());
-				} else {
-					throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
-				}
-			} else {
-				EntityManager em = tools.getEntityManager();
-				try {
-					equipmentDepreciation.setDepreciationPK(em
-							.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class)
-							.setParameter("equipmentCode", equipmentDepreciation.getEquipmentCode().trim().toUpperCase())
-							.getSingleResult().getDepreciationPK());
-				} catch (Exception e) {
-					throw tools.generateFault("Couldn't fetch depreciation record for this equipment.");
-				} finally {
-					em.close();
-				}
-			}
-		}
-
-		MP3016_GetDepreciation_001 getdep = new MP3016_GetDepreciation_001();
-		getdep.setDEPRECIATIONPK(tools.getDataTypeTools().encodeQuantity(equipmentDepreciation.getDepreciationPK(), "Depreciation PK"));
-
-		MP3016_GetDepreciation_001_Result result =
-			tools.performInforOperation(context, inforws::getDepreciationOp, getdep);
-		//
-		// UPDATE DEPRECIATION
-		//
-		Depreciation depreciation = tools.getInforFieldTools().transformWSHubObject(result.getResultData().getDepreciation(), equipmentDepreciation, context);
-
-		// ORIGINAL VALUE
-		if (equipmentDepreciation.getOriginalValue() != null) {
-			depreciation
-					.setORIGINALVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getOriginalValue(), "Original Value"));
-		}
-
-		// RESIDUAL VALUE
-		if (equipmentDepreciation.getResidualValue() != null) {
-			depreciation
-					.setRESIDUALVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getResidualValue(), "Residual Value"));
-		}
-
-		// ESTIMATED USEFUL LIFE
-		if (equipmentDepreciation.getEstimatedUsefulLifeUOM() != null) {
-			depreciation.getRemainingUsefulLife().setUOMID(new UOMID_Type());
-			depreciation.getRemainingUsefulLife().getUOMID()
-					.setUOMCODE(equipmentDepreciation.getEstimatedUsefulLifeUOM().toUpperCase());
-			BigDecimal amount = tools.getDataTypeTools().decodeAmount(depreciation.getRemainingUsefulLife().getESTIMATEDLIFE());
-			depreciation.getRemainingUsefulLife().setESTIMATEDLIFE(tools.getDataTypeTools().encodeAmount(amount, "Estiamted Life Time"));
-		}
-
-		if (equipmentDepreciation.getEstimatedUsefulLife() != null) {
-			depreciation.getRemainingUsefulLife().setESTIMATEDLIFE(
-					tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getEstimatedUsefulLife(), "Estiamted Life Time"));
-		}
-
-		// DEPRECIATION METHOD
-		if (equipmentDepreciation.getDepreciationMethod() != null) {
-			depreciation.setDEPRECIATIONMETHOD(equipmentDepreciation.getDepreciationMethod());
-		}
-
-		// DEPRECIATION TYPE
-		if (equipmentDepreciation.getDepreciationType() != null) {
-			depreciation.setEQUIPMENTDEPTYPE(equipmentDepreciation.getDepreciationType().toUpperCase());
-		}
-
-		// DEPRECIATION CATEGORY
-		if (equipmentDepreciation.getDepreciationCategory() != null) {
-			depreciation.setDEPRECIATIONCATEGORYID(new DEPRECIATIONCATEGORYID_Type());
-			depreciation.getDEPRECIATIONCATEGORYID()
-					.setDEPRECIATIONCATEGORYCODE(equipmentDepreciation.getDepreciationCategory());
-		}
-
-		// FROM DATE
-		if (equipmentDepreciation.getFromDate() != null) {
-			depreciation.setFROMDATE(tools.getDataTypeTools().formatDate(equipmentDepreciation.getFromDate(), "From Date"));
-		}
-
-		// CHANGE VALUE
-		if (equipmentDepreciation.getChangeValue() != null) {
-			depreciation.setCHANGEVALUE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeValue(), "Change Value"));
-		}
-
-		// CHANGE LIFE
-		if (equipmentDepreciation.getChangeLife() != null) {
-			depreciation.setCHANGELIFE(tools.getDataTypeTools().encodeAmount(equipmentDepreciation.getChangeLife(), "Change Life"));
-		}
-
-		// CHANGE ESTIMATED LIFETIME OUTPUT
-		if (equipmentDepreciation.getChangeEstimatedLifetimeOutput() != null) {
-			depreciation.setCHANGEESTLIFETIMEOUTPUT(tools.getDataTypeTools().encodeAmount(
-					equipmentDepreciation.getChangeEstimatedLifetimeOutput(), "Change Estimated Lifetime Output"));
-		}
-
-		MP3018_SyncDepreciation_001 syncdep = new MP3018_SyncDepreciation_001();
-		syncdep.setDepreciation(depreciation);
-		tools.performInforOperation(context, inforws::syncDepreciationOp, syncdep);
-
-		return "OK";
-	}
-
-	public String updateEquipmentCode(InforContext context, String equipmentCode, String equipmentNewCode, String equipmentType) throws InforException {
-
-		MP3291_ChangeEquipmentNumber_001 changeeqpnum = new MP3291_ChangeEquipmentNumber_001();
-		changeeqpnum.setChangeEquipmentNumber(new ChangeEquipmentNumber());
-		//
-		changeeqpnum.getChangeEquipmentNumber().setCURRENTEQUIPMENTID(new EQUIPMENTID_Type());
-		changeeqpnum.getChangeEquipmentNumber().getCURRENTEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-		changeeqpnum.getChangeEquipmentNumber().getCURRENTEQUIPMENTID().setEQUIPMENTCODE(equipmentCode);
-
-		//
-		changeeqpnum.getChangeEquipmentNumber().setNEWEQUIPMENTID(new EQUIPMENTID_Type());
-		changeeqpnum.getChangeEquipmentNumber().getNEWEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-		changeeqpnum.getChangeEquipmentNumber().getNEWEQUIPMENTID().setEQUIPMENTCODE(equipmentNewCode);
-
-		tools.performInforOperation(context, inforws::changeEquipmentNumberOp, changeeqpnum);
-
-		return "OK";
-	}
-
-	public String createEquipmentCampaign(InforContext context, EquipmentCampaign equipmentCampaign) throws InforException {
-		CampaignEquipment campaignEquipment = new CampaignEquipment();
-		campaignEquipment.setCAMPAIGNEQUIPMENTID(new CAMPAIGNEQUIPMENTID_Type());
-		//
-		// CAMPAIGN ID
-		//
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().setCAMPAIGNID(new CAMPAIGNID_Type());
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().getCAMPAIGNID().setCAMPAIGNCODE(equipmentCampaign.getCampaign());
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().getCAMPAIGNID().setORGANIZATIONID(tools.getOrganization(context));
-		//
-		//
-		//
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().setEQUIPMENTID(new EQUIPMENTID_Type());
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().getEQUIPMENTID().setEQUIPMENTCODE(equipmentCampaign.getEquipment());
-		campaignEquipment.getCAMPAIGNEQUIPMENTID().getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
-
-		MP5039_AddCampaignEquipment_001 addCampaignEquipment = new MP5039_AddCampaignEquipment_001();
-
-		addCampaignEquipment.setCampaignEquipment(campaignEquipment);
-
-		tools.performInforOperation(context, inforws::addCampaignEquipmentOp, addCampaignEquipment);
-
-		return null;
-	}
-
-
-
+    public String createEquipmentCampaign(InforContext context, EquipmentCampaign equipmentCampaign) throws InforException {
+        CampaignEquipment campaignEquipment = new CampaignEquipment();
+        campaignEquipment.setCAMPAIGNEQUIPMENTID(new CAMPAIGNEQUIPMENTID_Type());
+        //
+        // CAMPAIGN ID
+        //
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().setCAMPAIGNID(new CAMPAIGNID_Type());
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().getCAMPAIGNID().setCAMPAIGNCODE(equipmentCampaign.getCampaign());
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().getCAMPAIGNID().setORGANIZATIONID(tools.getOrganization(context));
+        //
+        //
+        //
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().setEQUIPMENTID(new EQUIPMENTID_Type());
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().getEQUIPMENTID().setEQUIPMENTCODE(equipmentCampaign.getEquipment());
+        campaignEquipment.getCAMPAIGNEQUIPMENTID().getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
+        MP5039_AddCampaignEquipment_001 addCampaignEquipment = new MP5039_AddCampaignEquipment_001();
+        addCampaignEquipment.setCampaignEquipment(campaignEquipment);
+        tools.performInforOperation(context, inforws::addCampaignEquipmentOp, addCampaignEquipment);
+        return null;
+    }
 }

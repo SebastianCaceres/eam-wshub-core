@@ -23,253 +23,169 @@ import net.datastream.schemas.mp_results.mp0307_001.MP0307_GetPositionEquipment_
 import net.datastream.schemas.mp_results.mp0310_001.MP0310_GetPositionEquipmentDefault_001_Result;
 import net.datastream.schemas.mp_results.mp0328_002.MP0328_GetPositionParentHierarchy_002_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import java.util.HashMap;
 import java.util.List;
-
 import ch.cern.eam.wshub.core.repositories.EquipmentRepository;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.*;
 import static ch.cern.eam.wshub.core.services.equipment.impl.EquipmentHierarchyTools.readHierarchyType;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
 
 public class PositionServiceImpl implements PositionService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
-	private UserDefinedListService userDefinedListService;
-	private EquipmentRepository equipmentRepository;
+    private Tools tools;
 
-	public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-		this(applicationData, tools, inforWebServicesToolkitClient, null);
-	}
+    private InforWebServicesPT inforws;
 
-	public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-		this.equipmentRepository = equipmentRepository;
-	}
+    private ApplicationData applicationData;
 
-	public String createPosition(InforContext context, Equipment positionParam) throws InforException {
-		if (equipmentRepository != null) {
-			try {
-				positionParam.setSystemTypeCode("P");
-				Equipment saved = equipmentRepository.save(positionParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		PositionEquipment positionEquipment = new PositionEquipment();
-		//
-		positionEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-			context,
-			toCodeString(positionEquipment.getCLASSID()),
-			positionEquipment.getUSERDEFINEDAREA(),
-			positionParam.getClassCode(),
-			"OBJ"));
+    private UserDefinedListService userDefinedListService;
 
-		//
-		initializePositionObject(context, positionEquipment, positionParam);
-		tools.getInforFieldTools().transformWSHubObject(positionEquipment, positionParam, context);
-		//
-		MP0306_AddPositionEquipment_001 addPosition = new MP0306_AddPositionEquipment_001();
-		addPosition.setPositionEquipment(positionEquipment);
-		MP0306_AddPositionEquipment_001_Result result =
-			tools.performInforOperation(context, inforws::addPositionEquipmentOp, addPosition);
-		String equipmentCode = result.getResultData().getPOSITIONID().getEQUIPMENTCODE();
-		userDefinedListService.writeUDLToEntityCopyFrom(context, positionParam, new EntityId("OBJ", equipmentCode));
-		return equipmentCode;
-	}
+    private EquipmentRepository equipmentRepository;
 
-	public String deletePosition(InforContext context, String positionCode, String organization) throws InforException {
-		if (equipmentRepository != null && positionCode != null) {
-			try {
-				equipmentRepository.deleteById(positionCode);
-				return positionCode;
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
+    public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
 
-		MP0309_DeletePositionEquipment_001 deletePosition = new MP0309_DeletePositionEquipment_001();
-		deletePosition.setPOSITIONID(new EQUIPMENTID_Type());
-		deletePosition.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		deletePosition.getPOSITIONID().setEQUIPMENTCODE(positionCode);
+    public PositionServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.inforws = inforWebServicesToolkitClient;
+        this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+        this.equipmentRepository = equipmentRepository;
+    }
 
-		tools.performInforOperation(context, inforws::deletePositionEquipmentOp, deletePosition);
-		userDefinedListService.deleteUDLFromEntity(context, new EntityId("OBJ", positionCode));
-		return positionCode;
-	}
+    public String createPosition(InforContext context, Equipment positionParam) throws InforException {
+        positionParam.setSystemTypeCode("P");
+        Equipment saved = equipmentRepository.save(positionParam);
+        return saved.getCode();
+    }
 
-	private PositionParentHierarchy readInforPositionParentHierarchy(InforContext context, String positionCode, String organization) throws InforException {
+    public String deletePosition(InforContext context, String positionCode, String organization) throws InforException {
+        equipmentRepository.deleteById(positionCode);
+        return positionCode;
+    }
 
-		MP0328_GetPositionParentHierarchy_002 getpositionph = new MP0328_GetPositionParentHierarchy_002();
-		getpositionph.setPOSITIONID(new EQUIPMENTID_Type());
-		getpositionph.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		getpositionph.getPOSITIONID().setEQUIPMENTCODE(positionCode);
+    private PositionParentHierarchy readInforPositionParentHierarchy(InforContext context, String positionCode, String organization) throws InforException {
+        MP0328_GetPositionParentHierarchy_002 getpositionph = new MP0328_GetPositionParentHierarchy_002();
+        getpositionph.setPOSITIONID(new EQUIPMENTID_Type());
+        getpositionph.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, organization));
+        getpositionph.getPOSITIONID().setEQUIPMENTCODE(positionCode);
+        MP0328_GetPositionParentHierarchy_002_Result result = tools.performInforOperation(context, inforws::getPositionParentHierarchyOp, getpositionph);
+        return result.getResultData().getPositionParentHierarchy();
+    }
 
-		MP0328_GetPositionParentHierarchy_002_Result result =
-			tools.performInforOperation(context, inforws::getPositionParentHierarchyOp, getpositionph);
+    public Equipment readPositionDefault(InforContext context, String organization) throws InforException {
+        if (equipmentRepository != null && organization != null) {
+            java.util.Optional opt = equipmentRepository.findById(organization);
+            if (opt.isPresent())
+                return (Equipment) opt.get();
+        }
+        MP0310_GetPositionEquipmentDefault_001 getPositionEquipmentDefault_001 = new MP0310_GetPositionEquipmentDefault_001();
+        getPositionEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context, organization));
+        MP0310_GetPositionEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getPositionEquipmentDefaultOp, getPositionEquipmentDefault_001);
+        Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getPositionEquipment(), context);
+        equipment.setUserDefinedList(new HashMap<>());
+        return equipment;
+    }
 
-		return result.getResultData().getPositionParentHierarchy();
-	}
+    public Equipment readPosition(InforContext context, String positionCode, String organization) throws InforException {
+        if (equipmentRepository != null && positionCode != null) {
+            Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(positionCode, "P");
+            if (equipment.isPresent()) {
+                return equipment.get();
+            }
+        }
+        PositionEquipment positionEquipment = readInforPosition(context, positionCode, organization);
+        Equipment position = tools.getInforFieldTools().transformInforObject(new Equipment(), positionEquipment, context);
+        position.setSystemTypeCode("P");
+        // HIERARCHY
+        if (positionEquipment.getPositionParentHierarchy().getLOCATIONID() != null) {
+            position.setHierarchyLocationCode(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getLOCATIONCODE());
+            position.setHierarchyLocationDesc(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getDESCRIPTION());
+        }
+        position.setHierarchyAssetDependent(positionEquipment.getPositionParentHierarchy().getAssetDependency() != null);
+        position.setHierarchyPositionDependent(positionEquipment.getPositionParentHierarchy().getPositionDependency() != null);
+        position.setHierarchyPrimarySystemDependent(positionEquipment.getPositionParentHierarchy().getPrimarySystemDependency() != null);
+        tools.processRunnables(() -> {
+            if (tools.isDatabaseConnectionConfigured())
+                userDefinedListService.readUDLToEntity(context, position, new EntityId("OBJ", positionCode));
+        }, () -> position.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", position.getStatusCode())));
+        return position;
+    }
 
-	public Equipment readPositionDefault(InforContext context, String organization) throws InforException {
+    private PositionEquipment readInforPosition(InforContext context, String positionCode, String organization) throws InforException {
+        MP0307_GetPositionEquipment_001 getPosition = new MP0307_GetPositionEquipment_001();
+        getPosition.setPOSITIONID(new EQUIPMENTID_Type());
+        getPosition.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, organization));
+        getPosition.getPOSITIONID().setEQUIPMENTCODE(positionCode);
+        MP0307_GetPositionEquipment_001_Result getAssetResult = tools.performInforOperation(context, inforws::getPositionEquipmentOp, getPosition);
+        getAssetResult.getResultData().getPositionEquipment().setPositionParentHierarchy(readInforPositionParentHierarchy(context, positionCode, organization));
+        return getAssetResult.getResultData().getPositionEquipment();
+    }
 
-		MP0310_GetPositionEquipmentDefault_001 getPositionEquipmentDefault_001 = new MP0310_GetPositionEquipmentDefault_001();
-		getPositionEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context , organization));
+    public String updatePosition(InforContext context, Equipment positionParam) throws InforException {
+        positionParam.setSystemTypeCode("P");
+        Equipment saved = equipmentRepository.save(positionParam);
+        return saved.getCode();
+        //
+        //
+    }
 
-		MP0310_GetPositionEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getPositionEquipmentDefaultOp, getPositionEquipmentDefault_001);
+    private void initializePositionObject(InforContext context, PositionEquipment positionInfor, Equipment positionParam) throws InforException {
+        // == null means Position creation
+        if (positionInfor.getPOSITIONID() == null) {
+            positionInfor.setPOSITIONID(new EQUIPMENTID_Type());
+            positionInfor.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, positionParam.getOrganization()));
+            positionInfor.getPOSITIONID().setEQUIPMENTCODE(positionParam.getCode().toUpperCase().trim());
+        }
+        if (positionParam.getDescription() != null) {
+            positionInfor.getPOSITIONID().setDESCRIPTION(positionParam.getDescription());
+        }
+        // HIERARCHY
+        if (positionParam.getHierarchyAssetCode() != null || positionParam.getHierarchyPositionCode() != null || positionParam.getHierarchyPrimarySystemCode() != null || positionParam.getHierarchyLocationCode() != null) {
+            initializePositionHierarchy(positionInfor, positionParam, context);
+        }
+    }
 
-		Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getPositionEquipment(), context);
-		equipment.setUserDefinedList(new HashMap<>());
-		return equipment;
-	}
-
-	public Equipment readPosition(InforContext context, String positionCode, String organization) throws InforException {
-		if (equipmentRepository != null && positionCode != null) {
-			Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(positionCode, "P");
-			if (equipment.isPresent()) {
-				return equipment.get();
-			}
-		}
-
-		PositionEquipment positionEquipment = readInforPosition(context, positionCode, organization);
-		Equipment position = tools.getInforFieldTools().transformInforObject(new Equipment(), positionEquipment, context);
-		position.setSystemTypeCode("P");
-
-		// HIERARCHY
-		if (positionEquipment.getPositionParentHierarchy().getLOCATIONID() != null) {
-			position.setHierarchyLocationCode(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getLOCATIONCODE());
-			position.setHierarchyLocationDesc(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getDESCRIPTION());
-		}
-		position.setHierarchyAssetDependent(positionEquipment.getPositionParentHierarchy().getAssetDependency() != null);
-		position.setHierarchyPositionDependent(positionEquipment.getPositionParentHierarchy().getPositionDependency() != null);
-		position.setHierarchyPrimarySystemDependent(positionEquipment.getPositionParentHierarchy().getPrimarySystemDependency() != null);
-
-		tools.processRunnables(
-				() -> { if(tools.isDatabaseConnectionConfigured()) userDefinedListService.readUDLToEntity(context, position, new EntityId("OBJ", positionCode)); },
-				() -> position.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", position.getStatusCode()))
-		);
-
-		return position;
-	}
-
-	private PositionEquipment readInforPosition(InforContext context, String positionCode, String organization) throws InforException {
-		MP0307_GetPositionEquipment_001 getPosition = new MP0307_GetPositionEquipment_001();
-		getPosition.setPOSITIONID(new EQUIPMENTID_Type());
-		getPosition.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		getPosition.getPOSITIONID().setEQUIPMENTCODE(positionCode);
-		MP0307_GetPositionEquipment_001_Result getAssetResult = tools.performInforOperation(context, inforws::getPositionEquipmentOp, getPosition);
-		getAssetResult.getResultData().getPositionEquipment().setPositionParentHierarchy(readInforPositionParentHierarchy(context, positionCode, organization));
-
-		return getAssetResult.getResultData().getPositionEquipment();
-	}
-
-	public String updatePosition(InforContext context, Equipment positionParam) throws InforException {
-		if (equipmentRepository != null) {
-			try {
-				positionParam.setSystemTypeCode("P");
-				Equipment saved = equipmentRepository.save(positionParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		// Read position
-		PositionEquipment positionEquipment = readInforPosition(context, positionParam.getCode(), positionParam.getOrganization());
-		//
-		//
-		//
-		positionEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-			context,
-			toCodeString(positionEquipment.getCLASSID()),
-			positionEquipment.getUSERDEFINEDAREA(),
-			positionParam.getClassCode(),
-			"OBJ"));
-
-		initializePositionObject(context, positionEquipment, positionParam);
-		tools.getInforFieldTools().transformWSHubObject(positionEquipment, positionParam, context);
-		// Update it
-		MP0308_SyncPositionEquipment_001 syncPosition = new MP0308_SyncPositionEquipment_001();
-		syncPosition.setPositionEquipment(positionEquipment);
-		tools.performInforOperation(context, inforws::syncPositionEquipmentOp, syncPosition);
-		userDefinedListService.writeUDLToEntity(context, positionParam, new EntityId("OBJ", positionParam.getCode()));
-
-		return positionParam.getCode();
-	}
-
-	private void initializePositionObject(InforContext context, PositionEquipment positionInfor, Equipment positionParam) throws InforException {
-		// == null means Position creation
-		if (positionInfor.getPOSITIONID() == null) {
-			positionInfor.setPOSITIONID(new EQUIPMENTID_Type());
-			positionInfor.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, positionParam.getOrganization()));
-			positionInfor.getPOSITIONID().setEQUIPMENTCODE(positionParam.getCode().toUpperCase().trim());
-		}
-
-		if (positionParam.getDescription() != null) {
-			positionInfor.getPOSITIONID().setDESCRIPTION(positionParam.getDescription());
-		}
-
-		// HIERARCHY
-		if (positionParam.getHierarchyAssetCode() != null
-				|| positionParam.getHierarchyPositionCode() != null
-				|| positionParam.getHierarchyPrimarySystemCode() != null
-				|| positionParam.getHierarchyLocationCode() != null) {
-			initializePositionHierarchy(positionInfor, positionParam, context);
-		}
-	}
-
-	private void initializePositionHierarchy(PositionEquipment positionInfor, Equipment positionParam, InforContext context) {
-		PositionParentHierarchy hierarchy = new PositionParentHierarchy();
-
-		hierarchy.setPOSITIONID(new EQUIPMENTID_Type());
-		hierarchy.getPOSITIONID().setEQUIPMENTCODE(positionParam.getCode());
-		hierarchy.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, positionParam.getOrganization()));
-		hierarchy.setTYPE(new TYPE_Type());
-		hierarchy.getTYPE().setTYPECODE("A");
-
-		// Fetch all possible parent types that are present in only one object that indicates the current hierarchy type
-		ASSETPARENT_Type assetParent = readAssetParent(positionInfor.getPositionParentHierarchy());
-		POSITIONPARENT_Type positionParent = readPositionParent(positionInfor.getPositionParentHierarchy());
-		SYSTEMPARENT_Type primarySystemParent = readPrimarySystemParent(positionInfor.getPositionParentHierarchy());
-		LOCATIONPARENT_Type locationParent = readLocationParent(positionInfor.getPositionParentHierarchy());
-		List<SYSTEMPARENT_Type> systemParents = readSystemsParent(positionInfor.getPositionParentHierarchy());
-		HIERARCHY_TYPE currentHierarchyType = readHierarchyType(positionInfor.getPositionParentHierarchy());
-
-		// Incorporate user changes into the parent types
-		assetParent = createAssetParent(tools.getOrganizationCode(context, positionParam.getHierarchyAssetOrg()), positionParam.getHierarchyAssetCode(), positionParam.getHierarchyAssetCostRollUp(), assetParent);
-		positionParent = createPositionParent(tools.getOrganizationCode(context, positionParam.getHierarchyPositionOrg()), positionParam.getHierarchyPositionCode(), positionParam.getHierarchyPositionCostRollUp(), positionParent);
-		primarySystemParent = createPrimarySystemParent(tools.getOrganizationCode(context, positionParam.getHierarchyPrimarySystemOrg()), positionParam.getHierarchyPrimarySystemCode(), positionParam.getHierarchyPrimarySystemCostRollUp(), primarySystemParent);
-		locationParent = createLocationParent(tools.getOrganizationCode(context), positionParam.getHierarchyLocationCode(), locationParent);
-
-		// Init new hierarchy
-		switch (getNewHierarchyType(positionParam, currentHierarchyType)) {
-			case ASSET_DEP:
-				hierarchy.setAssetDependency(createAssetDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
-				break;
-			case POSITION_DEP:
-				hierarchy.setPositionDependency(createPositionDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
-				break;
-			case PRIM_SYSTEM_DEP:
-				hierarchy.setPrimarySystemDependency(createPrimarySystemDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
-				break;
-			case LOCATION_DEP:
-				hierarchy.setLocationDependency(createLocationDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents, locationParent));
-				break;
-			default:
-				hierarchy.setNonDependentParents(createNonDependentParentsForPosition(assetParent, positionParent, primarySystemParent, systemParents));
-		}
-
-		positionInfor.setPositionParentHierarchy(hierarchy);
-	}
-
+    private void initializePositionHierarchy(PositionEquipment positionInfor, Equipment positionParam, InforContext context) {
+        PositionParentHierarchy hierarchy = new PositionParentHierarchy();
+        hierarchy.setPOSITIONID(new EQUIPMENTID_Type());
+        hierarchy.getPOSITIONID().setEQUIPMENTCODE(positionParam.getCode());
+        hierarchy.getPOSITIONID().setORGANIZATIONID(tools.getOrganization(context, positionParam.getOrganization()));
+        hierarchy.setTYPE(new TYPE_Type());
+        hierarchy.getTYPE().setTYPECODE("A");
+        // Fetch all possible parent types that are present in only one object that indicates the current hierarchy type
+        ASSETPARENT_Type assetParent = readAssetParent(positionInfor.getPositionParentHierarchy());
+        POSITIONPARENT_Type positionParent = readPositionParent(positionInfor.getPositionParentHierarchy());
+        SYSTEMPARENT_Type primarySystemParent = readPrimarySystemParent(positionInfor.getPositionParentHierarchy());
+        LOCATIONPARENT_Type locationParent = readLocationParent(positionInfor.getPositionParentHierarchy());
+        List<SYSTEMPARENT_Type> systemParents = readSystemsParent(positionInfor.getPositionParentHierarchy());
+        HIERARCHY_TYPE currentHierarchyType = readHierarchyType(positionInfor.getPositionParentHierarchy());
+        // Incorporate user changes into the parent types
+        assetParent = createAssetParent(tools.getOrganizationCode(context, positionParam.getHierarchyAssetOrg()), positionParam.getHierarchyAssetCode(), positionParam.getHierarchyAssetCostRollUp(), assetParent);
+        positionParent = createPositionParent(tools.getOrganizationCode(context, positionParam.getHierarchyPositionOrg()), positionParam.getHierarchyPositionCode(), positionParam.getHierarchyPositionCostRollUp(), positionParent);
+        primarySystemParent = createPrimarySystemParent(tools.getOrganizationCode(context, positionParam.getHierarchyPrimarySystemOrg()), positionParam.getHierarchyPrimarySystemCode(), positionParam.getHierarchyPrimarySystemCostRollUp(), primarySystemParent);
+        locationParent = createLocationParent(tools.getOrganizationCode(context), positionParam.getHierarchyLocationCode(), locationParent);
+        // Init new hierarchy
+        switch(getNewHierarchyType(positionParam, currentHierarchyType)) {
+            case ASSET_DEP:
+                hierarchy.setAssetDependency(createAssetDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
+                break;
+            case POSITION_DEP:
+                hierarchy.setPositionDependency(createPositionDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
+                break;
+            case PRIM_SYSTEM_DEP:
+                hierarchy.setPrimarySystemDependency(createPrimarySystemDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents));
+                break;
+            case LOCATION_DEP:
+                hierarchy.setLocationDependency(createLocationDependencyForPosition(assetParent, positionParent, primarySystemParent, systemParents, locationParent));
+                break;
+            default:
+                hierarchy.setNonDependentParents(createNonDependentParentsForPosition(assetParent, positionParent, primarySystemParent, systemParents));
+        }
+        positionInfor.setPositionParentHierarchy(hierarchy);
+    }
 }

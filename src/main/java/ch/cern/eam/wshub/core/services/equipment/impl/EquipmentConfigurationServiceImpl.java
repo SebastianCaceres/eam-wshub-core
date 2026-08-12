@@ -10,7 +10,7 @@ import ch.cern.eam.wshub.core.tools.DataTypeTools;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
 import net.datastream.schemas.mp_entities.equipmentconfiguration_001.EquipmentConfiguration;
-import net.datastream.schemas.mp_entities.equipmentconfigurationdefault_001.EquipmentConfigurationDefault;
+import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentConfigurationDefault;
 import net.datastream.schemas.mp_fields.EQUIPMENTCONFIGURATIONID_Type;
 import net.datastream.schemas.mp_functions.mp3224_001.MP3224_GetEquipmentConfigurationDefault_001;
 import net.datastream.schemas.mp_functions.mp3225_001.MP3225_AddEquipmentConfiguration_001;
@@ -43,23 +43,23 @@ public class EquipmentConfigurationServiceImpl implements EquipmentConfiguration
     public String createEquipmentConfiguration(InforContext context, EquipmentConfigurationEntity equipmentConfiguration) throws InforException {
         //Apply defaults
         final EquipmentConfigurationDefault equipmentConfigurationDefault = readEquipmentDefaultConfiguration(context);
-        if (equipmentConfiguration.getRevisionNum() == null && equipmentConfigurationDefault.getREVISIONNUM() != null) {
-            equipmentConfiguration.setRevisionNum(equipmentConfigurationDefault.getREVISIONNUM().getVALUE());
+        if (equipmentConfiguration.getRevisionNum() == null && equipmentConfigurationDefault.getRevisionNum() != null) {
+            equipmentConfiguration.setRevisionNum(equipmentConfigurationDefault.getRevisionNum());
         }
-        if (equipmentConfiguration.getEquipmentConfigStatusCode() == null && equipmentConfigurationDefault.getEQUIPMENTCONFIGSTATUS() != null) {
-            equipmentConfiguration.setEquipmentConfigStatusCode(equipmentConfigurationDefault.getEQUIPMENTCONFIGSTATUS().getSTATUSCODE());
+        if (equipmentConfiguration.getEquipmentConfigStatusCode() == null && equipmentConfigurationDefault.getEquipmentConfigStatusCode() != null) {
+            equipmentConfiguration.setEquipmentConfigStatusCode(equipmentConfigurationDefault.getEquipmentConfigStatusCode());
         }
-        if (equipmentConfiguration.getEquipmentStatusCode() == null && equipmentConfigurationDefault.getSTATUS() != null) {
-            equipmentConfiguration.setEquipmentStatusCode(equipmentConfigurationDefault.getSTATUS().getSTATUSCODE());
+        if (equipmentConfiguration.getEquipmentStatusCode() == null && equipmentConfigurationDefault.getEquipmentStatusCode() != null) {
+            equipmentConfiguration.setEquipmentStatusCode(equipmentConfigurationDefault.getEquipmentStatusCode());
         }
-        if (equipmentConfiguration.getEquipmentTypeCode() == null && equipmentConfigurationDefault.getTYPE() != null) {
-            equipmentConfiguration.setEquipmentTypeCode(equipmentConfigurationDefault.getTYPE().getTYPECODE());
+        if (equipmentConfiguration.getEquipmentTypeCode() == null && equipmentConfigurationDefault.getEquipmentTypeCode() != null) {
+            equipmentConfiguration.setEquipmentTypeCode(equipmentConfigurationDefault.getEquipmentTypeCode());
         }
-        if (equipmentConfiguration.getOrganizationCode() == null && equipmentConfigurationDefault.getORGANIZATIONID() != null) {
-            equipmentConfiguration.setOrganizationCode(equipmentConfigurationDefault.getORGANIZATIONID().getORGANIZATIONCODE());
+        if (equipmentConfiguration.getOrganizationCode() == null && equipmentConfigurationDefault.getOrganizationCode() != null) {
+            equipmentConfiguration.setOrganizationCode(equipmentConfigurationDefault.getOrganizationCode());
         }
-        if (equipmentConfiguration.getAutoNumber() == null && equipmentConfigurationDefault.getAUTONUMBER() != null) {
-            equipmentConfiguration.setAutoNumber(DataTypeTools.decodeBoolean(equipmentConfigurationDefault.getAUTONUMBER()));
+        if (equipmentConfiguration.getAutoNumber() == null && equipmentConfigurationDefault.getAutoNumber() != null) {
+            equipmentConfiguration.setAutoNumber(equipmentConfigurationDefault.getAutoNumber());
         }
 
         EquipmentConfiguration equipmentConfigurationFinal = tools.getInforFieldTools().transformWSHubObject(new EquipmentConfiguration(), equipmentConfiguration, context);
@@ -109,7 +109,17 @@ public class EquipmentConfigurationServiceImpl implements EquipmentConfiguration
         MP3224_GetEquipmentConfigurationDefault_001 readEquipmentDefaultConfiguration = new MP3224_GetEquipmentConfigurationDefault_001();
         readEquipmentDefaultConfiguration.setORGANIZATIONID(tools.getOrganization(context));
         final MP3224_GetEquipmentConfigurationDefault_001_Result mp3224_getEquipmentConfigurationDefault_001_result = tools.performInforOperation(context, inforws::getEquipmentConfigurationDefaultOp, readEquipmentDefaultConfiguration);
-        return mp3224_getEquipmentConfigurationDefault_001_result.getResultData().getEquipmentConfigurationDefault();
+        net.datastream.schemas.mp_entities.equipmentconfigurationdefault_001.EquipmentConfigurationDefault soapDefault = mp3224_getEquipmentConfigurationDefault_001_result.getResultData().getEquipmentConfigurationDefault();
+        EquipmentConfigurationDefault configDefault = new EquipmentConfigurationDefault();
+        if (soapDefault != null) {
+            if (soapDefault.getREVISIONNUM() != null) configDefault.setRevisionNum(soapDefault.getREVISIONNUM().getVALUE());
+            if (soapDefault.getEQUIPMENTCONFIGSTATUS() != null) configDefault.setEquipmentConfigStatusCode(soapDefault.getEQUIPMENTCONFIGSTATUS().getSTATUSCODE());
+            if (soapDefault.getSTATUS() != null) configDefault.setEquipmentStatusCode(soapDefault.getSTATUS().getSTATUSCODE());
+            if (soapDefault.getTYPE() != null) configDefault.setEquipmentTypeCode(soapDefault.getTYPE().getTYPECODE());
+            if (soapDefault.getORGANIZATIONID() != null) configDefault.setOrganizationCode(soapDefault.getORGANIZATIONID().getORGANIZATIONCODE());
+            configDefault.setAutoNumber(DataTypeTools.decodeBoolean(soapDefault.getAUTONUMBER()));
+        }
+        return configDefault;
     }
 
     @Override

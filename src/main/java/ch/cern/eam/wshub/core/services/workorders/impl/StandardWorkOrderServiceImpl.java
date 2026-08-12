@@ -20,18 +20,18 @@ import net.datastream.schemas.mp_results.mp0023_001.MP0023_AddWorkOrder_001_Resu
 import net.datastream.schemas.mp_results.mp7079_001.MP7079_AddStandardWorkOrder_001_Result;
 import net.datastream.schemas.mp_results.mp7082_001.MP7082_GetStandardWorkOrder_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import javax.xml.ws.Holder;
-
 import ch.cern.eam.wshub.core.repositories.StandardWorkOrderRepository;
-
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 
 public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
 
     private Tools tools;
+
     private InforWebServicesPT inforws;
+
     private ApplicationData applicationData;
+
     private StandardWorkOrderRepository standardWorkOrderRepository;
 
     public StandardWorkOrderServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
@@ -60,54 +60,28 @@ public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
         // Fetch WO
         //
         MP7082_GetStandardWorkOrder_001 getStandardWorkOrder = new MP7082_GetStandardWorkOrder_001();
-
         getStandardWorkOrder.setSTANDARDWO(new STDWOID_Type());
         getStandardWorkOrder.getSTANDARDWO().setORGANIZATIONID(tools.getOrganization(context));
         getStandardWorkOrder.getSTANDARDWO().setSTDWOCODE(number);
-
-        MP7082_GetStandardWorkOrder_001_Result result =
-            tools.performInforOperation(context, inforws::getStandardWorkOrderOp, getStandardWorkOrder);
-
+        MP7082_GetStandardWorkOrder_001_Result result = tools.performInforOperation(context, inforws::getStandardWorkOrderOp, getStandardWorkOrder);
         return result.getResultData().getStandardWorkOrder();
     }
 
-
     public String createStandardWorkOrder(InforContext context, StandardWorkOrder standardWorkOrder) throws InforException {
-
-        MP7079_AddStandardWorkOrder_001 addStandardWorkOrder = new MP7079_AddStandardWorkOrder_001();
-        addStandardWorkOrder.setStandardWorkOrder(new net.datastream.schemas.mp_entities.standardworkorder_001.StandardWorkOrder());
-
-        tools.getInforFieldTools().transformWSHubObject(addStandardWorkOrder.getStandardWorkOrder(), standardWorkOrder, context);
-
-        MP7079_AddStandardWorkOrder_001_Result result =
-            tools.performInforOperation(context, inforws::addStandardWorkOrderOp, addStandardWorkOrder);
-
-        return result.getResultData().getSTANDARDWO().getSTDWOCODE();
+        StandardWorkOrder saved = standardWorkOrderRepository.save(standardWorkOrder);
+        return saved.getCode();
     }
 
     public String updateStandardWorkOrder(InforContext context, StandardWorkOrder standardWorkOrder) throws InforException {
-        net.datastream.schemas.mp_entities.standardworkorder_001.StandardWorkOrder inforStandardWorkOrder = readStandardWorkOrderInfor(context, standardWorkOrder.getCode());
-
+        StandardWorkOrder saved = standardWorkOrderRepository.save(standardWorkOrder);
+        return saved.getCode();
         // Check Custom fields. If they change, or now we have them
-//        inforStandardWorkOrder.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-//            context,
-//            toCodeString(inforStandardWorkOrder.getCLASSID()),
-//            inforStandardWorkOrder.getUSERDEFINEDAREA(),
-//            standardWorkOrder.getClassCode(),
-//            "STWO"));
-
-        tools.getInforFieldTools().transformWSHubObject(inforStandardWorkOrder, standardWorkOrder, context);
-
+        //        inforStandardWorkOrder.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
+        //            context,
+        //            toCodeString(inforStandardWorkOrder.getCLASSID()),
+        //            inforStandardWorkOrder.getUSERDEFINEDAREA(),
+        //            standardWorkOrder.getClassCode(),
         //
         // CALL INFOR WEB SERVICE
-        //
-        MP7080_SyncStandardWorkOrder_001 syncStandardWorkOrder = new MP7080_SyncStandardWorkOrder_001();
-        syncStandardWorkOrder.setStandardWorkOrder(inforStandardWorkOrder);
-
-        tools.performInforOperation(context, inforws::syncStandardWorkOrderOp, syncStandardWorkOrder);
-
-        return inforStandardWorkOrder.getSTANDARDWO().getSTDWOCODE();
     }
-
-
 }

@@ -25,7 +25,7 @@ import net.datastream.schemas.mp_functions.mp7156_001.MP7156_DeleteRouteEquipmen
 import net.datastream.schemas.mp_functions.mp7336_001.MP7336_GetWOEquipLinearDetails_001;
 import net.datastream.schemas.mp_functions.mp7593_001.MP7593_AddWorkOrderAdditionalCosts_001;
 import net.datastream.schemas.mp_results.mp0044_001.MP0044_AddMeterReading_001_Result;
-import net.datastream.schemas.mp_results.mp7336_001.AdditionalWOEquipDetails;
+import ch.cern.eam.wshub.core.services.workorders.entities.AdditionalWOEquipDetails;
 import net.datastream.schemas.mp_results.mp7336_001.MP7336_GetWOEquipLinearDetails_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 
@@ -325,9 +325,13 @@ public class WorkOrderMiscServiceImpl implements WorkOrderMiscService {
 		op.getEQUIPMENTID().setEQUIPMENTCODE(eqCode);
 		op.getEQUIPMENTID().setORGANIZATIONID(tools.getOrganization(context));
 		op.setORGANIZATIONID(tools.getOrganization(context));
-		final MP7336_GetWOEquipLinearDetails_001_Result additionalWOEquipDetails =
+		final MP7336_GetWOEquipLinearDetails_001_Result result =
 				tools.performInforOperation(context, inforws::getWOEquipLinearDetailsOp, op);
-		return additionalWOEquipDetails.getResultData().getAdditionalWOEquipDetails();
+		net.datastream.schemas.mp_results.mp7336_001.AdditionalWOEquipDetails soapDetails = result.getResultData().getAdditionalWOEquipDetails();
+		if (soapDetails != null) {
+			return tools.getInforFieldTools().transformInforObject(new AdditionalWOEquipDetails(), soapDetails, context);
+		}
+		return new AdditionalWOEquipDetails();
 	}
 
 }

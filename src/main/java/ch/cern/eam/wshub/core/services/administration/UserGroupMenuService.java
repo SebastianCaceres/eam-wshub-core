@@ -11,8 +11,6 @@ import ch.cern.eam.wshub.core.services.administration.impl.UserGroupMenuServiceI
 import ch.cern.eam.wshub.core.services.entities.BatchResponse;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.tools.Tools;
-import net.datastream.schemas.mp_fields.EXTMENUSHIERARCHYREQUEST_Type;
-
 import java.util.List;
 
 

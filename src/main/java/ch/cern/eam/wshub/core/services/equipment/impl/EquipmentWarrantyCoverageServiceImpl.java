@@ -18,172 +18,46 @@ import net.datastream.schemas.mp_results.mp0344_001.MP0344_AddWarrantyCoverage_0
 import net.datastream.schemas.mp_results.mp0345_001.MP0345_SyncWarrantyCoverage_001_Result;
 import net.datastream.schemas.mp_results.mp3238_001.MP3238_GetWarrantyCoverage_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import ch.cern.eam.wshub.core.repositories.EquipmentWarrantyRepository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.xml.ws.Holder;
 
 public class EquipmentWarrantyCoverageServiceImpl implements EquipmentWarrantyCoverageService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
-	private EquipmentWarrantyRepository equipmentWarrantyRepository;
+    private Tools tools;
 
-	public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-		this(applicationData, tools, inforWebServicesToolkitClient, null);
-	}
+    private InforWebServicesPT inforws;
 
-	public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentWarrantyRepository equipmentWarrantyRepository) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-		this.equipmentWarrantyRepository = equipmentWarrantyRepository;
-	}
+    private ApplicationData applicationData;
 
+    private EquipmentWarrantyRepository equipmentWarrantyRepository;
 
-	public String createEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
-		if (equipmentWarrantyRepository != null) {
-			try {
-				EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
-				return saved.getSequenceNumber();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		net.datastream.schemas.mp_entities.warrantycoverage_001.EquipmentWarranty equipmentWarranty = new net.datastream.schemas.mp_entities.warrantycoverage_001.EquipmentWarranty();
+    public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
 
-		// EQUIPMENT ID
-		if (equipmentWarrantyParam.getEquipmentCode() != null && !equipmentWarrantyParam.getEquipmentCode().trim().equals("")) {
-			equipmentWarranty.setASSETID(new EQUIPMENTID_Type());
-			equipmentWarranty.getASSETID().setORGANIZATIONID(tools.getOrganization(context));
-			equipmentWarranty.getASSETID().setEQUIPMENTCODE(equipmentWarrantyParam.getEquipmentCode());
-		}
+    public EquipmentWarrantyCoverageServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentWarrantyRepository equipmentWarrantyRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.inforws = inforWebServicesToolkitClient;
+        this.equipmentWarrantyRepository = equipmentWarrantyRepository;
+    }
 
-		// WARRANTY CODE
-		if (equipmentWarrantyParam.getWarrantyCode() != null && !equipmentWarrantyParam.getWarrantyCode().trim().equals("")) {
-			equipmentWarranty.setWARRANTYID(new WARRANTYID_Type());
-			equipmentWarranty.getWARRANTYID().setORGANIZATIONID(tools.getOrganization(context));
-			equipmentWarranty.getWARRANTYID().setWARRANTYCODE(equipmentWarrantyParam.getWarrantyCode());
+    public String createEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
+        EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
+        return saved.getSequenceNumber();
+    }
 
-		}
+    public String updateEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
+        EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
+        return saved.getSequenceNumber();
+        //
+        //
+    }
 
-		if (equipmentWarrantyParam.getCoverageType() != null && (equipmentWarrantyParam.getCoverageType().toUpperCase().equals("CALENDAR") || equipmentWarrantyParam.getCoverageType().toUpperCase().equals("D"))) {
-			equipmentWarranty.setCoverageByDate(new CoverageByDate());
-			equipmentWarranty.getCoverageByDate().setSTARTDATE(tools.getDataTypeTools().formatDate(equipmentWarrantyParam.getStartDate(), "Start Date"));
-			equipmentWarranty.getCoverageByDate().setEXPIRATIONDATE(tools.getDataTypeTools().formatDate(equipmentWarrantyParam.getExpirationDate(), "Expiration Date"));
-			equipmentWarranty.getCoverageByDate().setWARRANTYDURATIONDAYS(tools.getDataTypeTools().encodeDouble(equipmentWarrantyParam.getDuration(), "Duration"));
-			equipmentWarranty.getCoverageByDate().setTHRESHHOLDDAYS(tools.getDataTypeTools().encodeQuantity(equipmentWarrantyParam.getThreshold(), "Threshold"));
-		} else {
-			throw tools.generateFault("Coverage type other than 'Calendar' is not supported. Please contact CMMS Support.");
-		}
-
-		if (equipmentWarrantyParam.getActive() != null) {
-			equipmentWarranty.setISWARRANTYACTIVE(tools.getDataTypeTools().encodeBoolean(equipmentWarrantyParam.getActive(), BooleanType.TRUE_FALSE));
-		} else {
-			equipmentWarranty.setISWARRANTYACTIVE("false");
-		}
-
-		MP0344_AddWarrantyCoverage_001 addwarrantycoverage = new MP0344_AddWarrantyCoverage_001();
-		addwarrantycoverage.setEquipmentWarranty(equipmentWarranty);
-
-		MP0344_AddWarrantyCoverage_001_Result result =
-			tools.performInforOperation(context, inforws::addWarrantyCoverageOp, addwarrantycoverage);
-		return result.getResultData().getWARRANTYCOVERAGESEQNUM() + "";
-	}
-
-	public String updateEquipmentWarrantyCoverage(InforContext context, EquipmentWarranty equipmentWarrantyParam) throws InforException {
-		if (equipmentWarrantyRepository != null) {
-			try {
-				EquipmentWarranty saved = equipmentWarrantyRepository.save(equipmentWarrantyParam);
-				return saved.getSequenceNumber();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		MP3238_GetWarrantyCoverage_001 getwarrantycoverege = new MP3238_GetWarrantyCoverage_001();
-		MP3238_GetWarrantyCoverage_001_Result getwarrantycoveregeResult = new MP3238_GetWarrantyCoverage_001_Result();
-
-		if (equipmentWarrantyParam.getSequenceNumber() == null) {
-			if (equipmentWarrantyRepository != null) {
-				EquipmentWarranty eqwarr = equipmentWarrantyRepository.findByEquipmentCodeAndWarrantyCode(
-						equipmentWarrantyParam.getEquipmentCode() != null ? equipmentWarrantyParam.getEquipmentCode().trim().toUpperCase() : null,
-						equipmentWarrantyParam.getWarrantyCode()
-				).orElseThrow(() -> tools.generateFault("Couldn't fetch warranty record for this equipment"));
-				equipmentWarrantyParam.setSequenceNumber(eqwarr.getSequenceNumber());
-			} else {
-				tools.demandDatabaseConnection();
-				EntityManager em = tools.getEntityManager();
-				try {
-					TypedQuery<EquipmentWarranty> eqwarr = em.createNamedQuery(EquipmentWarranty.GETEQPWARRANTY, EquipmentWarranty.class);
-					eqwarr.setParameter("equipmentCode", equipmentWarrantyParam.getEquipmentCode().trim().toUpperCase());
-					eqwarr.setParameter("warrantyCode", equipmentWarrantyParam.getWarrantyCode());
-					equipmentWarrantyParam.setSequenceNumber(eqwarr.getSingleResult().getSequenceNumber());
-
-				} catch (Exception e) {
-					throw tools.generateFault("Couldn't fetch warranty record for this equipment (" + e.getMessage() + ")");
-				} finally {
-					em.close();
-				}
-			}
-		}
-
-		getwarrantycoverege.setWARRANTYCOVERAGESEQNUM(Long.parseLong(equipmentWarrantyParam.getSequenceNumber()));
-
-		getwarrantycoveregeResult =
-			tools.performInforOperation(context, inforws::getWarrantyCoverageOp, getwarrantycoverege);
-		//
-		//
-		//
-		net.datastream.schemas.mp_entities.warrantycoverage_001.WarrantyCoverage warrantyCoverege = getwarrantycoveregeResult.getResultData().getWarrantyCoverage();
-
-		// CALENDER COVERAGE TYPE
-		if (warrantyCoverege.getEquipmentWarranty().getCoverageByDate() != null) {
-			if (equipmentWarrantyParam.getStartDate() != null) {
-				warrantyCoverege.getEquipmentWarranty().getCoverageByDate().setSTARTDATE(tools.getDataTypeTools().formatDate(equipmentWarrantyParam.getStartDate(), "Start Date"));
-			}
-
-			if (equipmentWarrantyParam.getExpirationDate() != null) {
-				warrantyCoverege.getEquipmentWarranty().getCoverageByDate().setEXPIRATIONDATE(tools.getDataTypeTools().formatDate(equipmentWarrantyParam.getExpirationDate(), "Expiration Date"));
-			}
-
-			if (equipmentWarrantyParam.getDuration() != null) {
-				warrantyCoverege.getEquipmentWarranty().getCoverageByDate().setWARRANTYDURATIONDAYS(tools.getDataTypeTools().encodeDouble(equipmentWarrantyParam.getDuration(), "Duration"));
-			}
-
-			if (equipmentWarrantyParam.getThreshold() != null) {
-				warrantyCoverege.getEquipmentWarranty().getCoverageByDate().setTHRESHHOLDDAYS(tools.getDataTypeTools().encodeQuantity(equipmentWarrantyParam.getThreshold(), "Threshold"));
-			}
-		}
-
-		// USAGE COVERAGE TYPE
-		if (warrantyCoverege.getEquipmentWarranty().getCoverageByUsage() != null) {
-			// TO BE IMPLEMENTED
-		}
-
-		if (equipmentWarrantyParam.getActive() != null) {
-			warrantyCoverege.getEquipmentWarranty().setISWARRANTYACTIVE(tools.getDataTypeTools().encodeBoolean(equipmentWarrantyParam.getActive(), BooleanType.TRUE_FALSE));
-		}
-
-		MP0345_SyncWarrantyCoverage_001 syncwarrantycoverege = new MP0345_SyncWarrantyCoverage_001();
-		syncwarrantycoverege.setWarrantyCoverage(warrantyCoverege);
-
-		MP0345_SyncWarrantyCoverage_001_Result result =
-			tools.performInforOperation(context, inforws::syncWarrantyCoverageOp, syncwarrantycoverege);
-		return result.getResultData().getWARRANTYCOVERAGESEQNUM() + "";
-	}
-
-	@Override
-	public EquipmentWarranty readEquipmentWarranty(InforContext context, String equipmentCode, String warrantyCode) throws InforException {
-		if (equipmentWarrantyRepository != null) {
-			return equipmentWarrantyRepository.findByEquipmentCodeAndWarrantyCode(
-					equipmentCode != null ? equipmentCode.trim().toUpperCase() : null,
-					warrantyCode
-			).orElse(null);
-		}
-		throw tools.generateFault("Database connection required for readEquipmentWarranty");
-	}
-
+    @Override
+    public EquipmentWarranty readEquipmentWarranty(InforContext context, String equipmentCode, String warrantyCode) throws InforException {
+        return equipmentWarrantyRepository.findByEquipmentCodeAndWarrantyCode(equipmentCode != null ? equipmentCode.trim().toUpperCase() : null, warrantyCode).orElse(null);
+    }
 }

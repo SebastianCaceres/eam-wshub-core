@@ -9,7 +9,7 @@ import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentConfiguration
 import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentConfigurationId;
 import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrder;
 import ch.cern.eam.wshub.core.tools.InforException;
-import net.datastream.schemas.mp_entities.equipmentconfigurationdefault_001.EquipmentConfigurationDefault;
+import ch.cern.eam.wshub.core.services.equipment.entities.EquipmentConfigurationDefault;
 
 import java.math.BigDecimal;
 import java.util.List;

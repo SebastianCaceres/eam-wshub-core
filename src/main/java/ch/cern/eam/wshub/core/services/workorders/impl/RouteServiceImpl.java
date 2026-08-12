@@ -19,18 +19,20 @@ import ch.cern.eam.wshub.core.services.workorders.RouteService;
 public class RouteServiceImpl implements RouteService {
 
     private Tools tools;
+
     private InforWebServicesPT inforws;
+
     private ApplicationData applicationData;
+
     private RouteEquipmentRepository routeEquipmentRepository;
+
     private RouteRepository routeRepository;
 
-    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
-                            RouteEquipmentRepository routeEquipmentRepository) {
+    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, RouteEquipmentRepository routeEquipmentRepository) {
         this(applicationData, tools, inforWebServicesToolkitClient, routeEquipmentRepository, null);
     }
 
-    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient,
-                            RouteEquipmentRepository routeEquipmentRepository, RouteRepository routeRepository) {
+    public RouteServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, RouteEquipmentRepository routeEquipmentRepository, RouteRepository routeRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
@@ -48,29 +50,12 @@ public class RouteServiceImpl implements RouteService {
         MP7064_GetWorkRoute_001 getWorkRoute = new MP7064_GetWorkRoute_001();
         getWorkRoute.setROUTEID(new ROUTE_Type());
         getWorkRoute.getROUTEID().setROUTECODE(routeCode);
-
         MP7064_GetWorkRoute_001_Result result = tools.performInforOperation(inforContext, inforws::getWorkRouteOp, getWorkRoute);
         return tools.getInforFieldTools().transformInforObject(new Route(), result.getResultData().getWorkRoute(), inforContext);
     }
 
     public String createRoute(InforContext inforContext, Route route) throws InforException {
-        if (routeRepository != null) {
-            try {
-                Route saved = routeRepository.save(route);
-                return saved.getCode();
-            } catch (Exception e) {
-                // Fallback to SOAP
-            }
-        }
-
-        WorkRoute workRoute = new WorkRoute();
-        tools.getInforFieldTools().transformWSHubObject(workRoute, route, inforContext);
-
-        MP7063_AddWorkRoute_001 addWorkRoute = new MP7063_AddWorkRoute_001();
-        addWorkRoute.setWorkRoute(workRoute);
-
-        MP7063_AddWorkRoute_001_Result result = tools.performInforOperation(inforContext, inforws::addWorkRouteOp, addWorkRoute);
-        return result.getResultData().getROUTEID().getROUTECODE();
+        Route saved = routeRepository.save(route);
+        return saved.getCode();
     }
-
 }

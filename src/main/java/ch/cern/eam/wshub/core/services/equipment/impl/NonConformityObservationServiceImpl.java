@@ -25,9 +25,13 @@ import net.datastream.wsdls.inforws.InforWebServicesPT;
 public class NonConformityObservationServiceImpl implements NonConformityObservationService {
 
     private ApplicationData applicationData;
+
     private Tools tools;
+
     private InforWebServicesPT inforws;
+
     private NonconformityService nonconformityService;
+
     private FindingRepository findingRepository;
 
     public NonConformityObservationServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
@@ -46,22 +50,16 @@ public class NonConformityObservationServiceImpl implements NonConformityObserva
     public String createNonConformityObservation(InforContext context, NonConformityObservation nonConformityObservation) throws InforException {
         if (nonConformityObservation.getJobNum() == null) {
             MP3442_AddNonconformityObservation_001 addNonconformityObservation = new MP3442_AddNonconformityObservation_001();
-            NonconformityObservation nonconformityObservation =  tools.getInforFieldTools().transformWSHubObject(
-                    createDefaultNonConformityObservation(), nonConformityObservation, context);
-
-
+            NonconformityObservation nonconformityObservation = tools.getInforFieldTools().transformWSHubObject(createDefaultNonConformityObservation(), nonConformityObservation, context);
             addNonconformityObservation.setNonconformityObservation(nonconformityObservation);
             MP3442_AddNonconformityObservation_001_Result result = tools.performInforOperation(context, inforws::addNonconformityObservationOp, addNonconformityObservation);
             return result.getResultData().getNONCONFORMITYOBSERVATIONID().getOBSERVATIONPK();
-
         }
         MP3402_CreateNonconformityObservation_001 addNonconformityObservation = new MP3402_CreateNonconformityObservation_001();
-        addNonconformityObservation =  tools.getInforFieldTools().transformWSHubObject(
-                addNonconformityObservation, nonConformityObservation, context);
+        addNonconformityObservation = tools.getInforFieldTools().transformWSHubObject(addNonconformityObservation, nonConformityObservation, context);
         MP3402_CreateNonconformityObservation_001_Result result = tools.performInforOperation(context, inforws::createNonconformityObservationOp, addNonconformityObservation);
         return result.getResultData().getNONCONFORMITYOBSERVATIONID().getOBSERVATIONPK();
     }
-
 
     @Override
     public NonConformityObservation readNonConformityObservation(InforContext context, String nonconformityObsPk) throws InforException {
@@ -74,48 +72,32 @@ public class NonConformityObservationServiceImpl implements NonConformityObserva
                 return obs;
             }
         }
-
-        NonconformityObservation nonconformityObservation =
-                readNonconformityObservationInfor(context, nonconformityObsPk);
-
+        NonconformityObservation nonconformityObservation = readNonconformityObservationInfor(context, nonconformityObsPk);
         return tools.getInforFieldTools().transformInforObject(new NonConformityObservation(), nonconformityObservation, context);
     }
-
 
     @Override
     public String updateNonConformityObservation(InforContext context, NonConformityObservation nonConformityObservation) throws InforException {
         MP3443_SyncNonconformityObservation_001 syncNonconformityObservation = new MP3443_SyncNonconformityObservation_001();
-
         NonconformityObservation prev = readNonconformityObservationInfor(context, nonConformityObservation.getObservationPk());
         tools.getInforFieldTools().transformWSHubObject(prev, nonConformityObservation, context);
         syncNonconformityObservation.setNonconformityObservation(prev);
-
         MP3443_SyncNonconformityObservation_001_Result result = tools.performInforOperation(context, inforws::syncNonconformityObservationOp, syncNonconformityObservation);
-        return  result.getResultData().getNONCONFORMITYOBSERVATIONID().getOBSERVATIONPK();
-
+        return result.getResultData().getNONCONFORMITYOBSERVATIONID().getOBSERVATIONPK();
     }
 
     @Override
     public String deleteNonConformityObservation(InforContext context, String number) throws InforException {
-        MP3444_DeleteNonconformityObservation_001 deleteNonconformityObservation = new MP3444_DeleteNonconformityObservation_001();
-        NONCONFORMITYOBSERVATIONID_Type idType = new NONCONFORMITYOBSERVATIONID_Type();
-        idType.setOBSERVATIONPK(number);
-        deleteNonconformityObservation.setNONCONFORMITYOBSERVATIONID(idType);
-        MP3444_DeleteNonconformityObservation_001_Result result = tools.performInforOperation(context, inforws::deleteNonconformityObservationOp, deleteNonconformityObservation);
-        return result.getResultData().getNONCONFORMITYOBSERVATIONID().getOBSERVATIONPK();
-
+        findingRepository.deleteById(number);
+        return number;
     }
-    private NonconformityObservation readNonconformityObservationInfor(
-            InforContext context, String nonconformityCode) throws InforException {
+
+    private NonconformityObservation readNonconformityObservationInfor(InforContext context, String nonconformityCode) throws InforException {
         MP3445_GetNonconformityObservation_001 getNonconformityObservation = new MP3445_GetNonconformityObservation_001();
         NONCONFORMITYOBSERVATIONID_Type idType = new NONCONFORMITYOBSERVATIONID_Type();
         idType.setOBSERVATIONPK(nonconformityCode);
-
         getNonconformityObservation.setNONCONFORMITYOBSERVATIONID(idType);
-
-        MP3445_GetNonconformityObservation_001_Result result =
-                tools.performInforOperation(context, inforws::getNonconformityObservationOp, getNonconformityObservation);
-
+        MP3445_GetNonconformityObservation_001_Result result = tools.performInforOperation(context, inforws::getNonconformityObservationOp, getNonconformityObservation);
         return result.getResultData().getNonconformityObservation();
     }
 
@@ -123,10 +105,7 @@ public class NonConformityObservationServiceImpl implements NonConformityObserva
         NonconformityObservation defaultObject = new NonconformityObservation();
         NONCONFORMITYOBSERVATIONID_Type idType = new NONCONFORMITYOBSERVATIONID_Type();
         idType.setOBSERVATIONPK("0");
-
         defaultObject.setNONCONFORMITYOBSERVATIONID(idType);
         return defaultObject;
     }
-
 }
-

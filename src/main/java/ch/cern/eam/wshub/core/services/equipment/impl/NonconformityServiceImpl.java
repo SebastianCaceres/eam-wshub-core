@@ -19,17 +19,18 @@ import net.datastream.schemas.mp_results.mp3397_001.MP3397_AddNonconformity_001_
 import net.datastream.schemas.mp_results.mp3398_001.MP3398_SyncNonconformity_001_Result;
 import net.datastream.schemas.mp_results.mp3400_001.MP3400_GetNonconformity_001_Result;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import ch.cern.eam.wshub.core.repositories.NonConformityRepository;
 import java.util.Optional;
-
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
 
 public class NonconformityServiceImpl implements NonconformityService {
 
     private ApplicationData applicationData;
+
     private Tools tools;
+
     private InforWebServicesPT inforws;
+
     private NonConformityRepository nonConformityRepository;
 
     public NonconformityServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
@@ -45,46 +46,26 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public NonConformity readNonconformityDefault(InforContext context, String organization) throws InforException {
+        if (nonConformityRepository != null && organization != null) {
+            java.util.Optional opt = nonConformityRepository.findById(organization);
+            if (opt.isPresent())
+                return (NonConformity) opt.get();
+        }
         MP3396_GetNonconformityDefault_001 getNonconformityDefault = new MP3396_GetNonconformityDefault_001();
-
         if (isEmpty(organization)) {
             getNonconformityDefault.setORGANIZATIONID(tools.getOrganization(context));
         } else {
             getNonconformityDefault.setORGANIZATIONID(new ORGANIZATIONID_Type());
             getNonconformityDefault.getORGANIZATIONID().setORGANIZATIONCODE(organization);
         }
-
-        MP3396_GetNonconformityDefault_001_Result result =
-                tools.performInforOperation(context, inforws::getNonconformityDefaultOp, getNonconformityDefault);
-
-        return tools.getInforFieldTools().transformInforObject(
-                new NonConformity(), result.getResultData().getNonconformityDefault(), context
-        );
+        MP3396_GetNonconformityDefault_001_Result result = tools.performInforOperation(context, inforws::getNonconformityDefaultOp, getNonconformityDefault);
+        return tools.getInforFieldTools().transformInforObject(new NonConformity(), result.getResultData().getNonconformityDefault(), context);
     }
 
     @Override
     public String createNonconformity(InforContext context, NonConformity nonconformityParam) throws InforException {
-        if (nonConformityRepository != null) {
-            try {
-                NonConformity saved = nonConformityRepository.save(nonconformityParam);
-                return saved.getCode();
-            } catch (Exception e) {
-                // Fallback to SOAP
-            }
-        }
-
-        net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
-                new net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity();
-
-        tools.getInforFieldTools().transformWSHubObject(nonconformity, nonconformityParam, context);
-
-        MP3397_AddNonconformity_001 addNonconformity = new MP3397_AddNonconformity_001();
-        addNonconformity.setNonconformity(nonconformity);
-
-        MP3397_AddNonconformity_001_Result result =
-                tools.performInforOperation(context, inforws::addNonconformityOp, addNonconformity);
-
-        return result.getResultData().getNONCONFORMITYID().getSTANDARDENTITYCODE();
+        NonConformity saved = nonConformityRepository.save(nonconformityParam);
+        return saved.getCode();
     }
 
     @Override
@@ -96,62 +77,29 @@ public class NonconformityServiceImpl implements NonconformityService {
                 return nonConformity.get();
             }
         }
-
-        net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
-                readNonconformityInfor(context, nonconformityCode);
-
+        net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity = readNonconformityInfor(context, nonconformityCode);
         return tools.getInforFieldTools().transformInforObject(new NonConformity(), nonconformity, context);
     }
 
-    private net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity readNonconformityInfor(
-            InforContext context, String nonconformityCode) throws InforException {
+    private net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity readNonconformityInfor(InforContext context, String nonconformityCode) throws InforException {
         MP3400_GetNonconformity_001 getNonconformity = new MP3400_GetNonconformity_001();
-        EntityOrganizationCodePair entityOrganizationCodePair= Tools.extractEntityOrganizationCodePair(nonconformityCode);
+        EntityOrganizationCodePair entityOrganizationCodePair = Tools.extractEntityOrganizationCodePair(nonconformityCode);
         getNonconformity.setNONCONFORMITYID(new STANDARDENTITYID_Type());
         getNonconformity.getNONCONFORMITYID().setSTANDARDENTITYCODE(entityOrganizationCodePair.getEntityCode());
         getNonconformity.getNONCONFORMITYID().setORGANIZATIONID(tools.getOrganization(context, entityOrganizationCodePair.getOrganizationCode()));
-
-        MP3400_GetNonconformity_001_Result result =
-                tools.performInforOperation(context, inforws::getNonconformityOp, getNonconformity);
-
+        MP3400_GetNonconformity_001_Result result = tools.performInforOperation(context, inforws::getNonconformityOp, getNonconformity);
         return result.getResultData().getNonconformity();
     }
 
     @Override
     public String updateNonconformity(InforContext context, NonConformity nonconformityParam) throws InforException {
-        if (nonConformityRepository != null) {
-            try {
-                NonConformity saved = nonConformityRepository.save(nonconformityParam);
-                return saved.getCode();
-            } catch (Exception e) {
-                // Fallback to SOAP
-            }
-        }
-
-        net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity =
-                readNonconformityInfor(context, nonconformityParam.getCode());
-
-        tools.getInforFieldTools().transformWSHubObject(nonconformity, nonconformityParam, context);
-
-        MP3398_SyncNonconformity_001 syncNonconformity = new MP3398_SyncNonconformity_001();
-        syncNonconformity.setNonconformity(nonconformity);
-
-        MP3398_SyncNonconformity_001_Result syncResult =
-                tools.performInforOperation(context, inforws::syncNonconformityOp, syncNonconformity);
-
-        return syncResult.getResultData().getNONCONFORMITYID().getSTANDARDENTITYCODE();
+        NonConformity saved = nonConformityRepository.save(nonconformityParam);
+        return saved.getCode();
     }
 
     @Override
     public String deleteNonconformity(InforContext context, String nonconformityCode) throws InforException {
-        MP3399_DeleteNonconformity_001 deleteNonconformity = new MP3399_DeleteNonconformity_001();
-
-        deleteNonconformity.setNONCONFORMITYID(new STANDARDENTITYID_Type());
-        deleteNonconformity.getNONCONFORMITYID().setSTANDARDENTITYCODE(nonconformityCode);
-        deleteNonconformity.getNONCONFORMITYID().setORGANIZATIONID(tools.getOrganization(context));
-
-        tools.performInforOperation(context, inforws::deleteNonconformityOp, deleteNonconformity);
-
+        nonConformityRepository.deleteById(nonconformityCode);
         return nonconformityCode;
     }
 }

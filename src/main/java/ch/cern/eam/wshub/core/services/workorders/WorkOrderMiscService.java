@@ -10,7 +10,7 @@ import ch.cern.eam.wshub.core.services.workorders.entities.TaskPlan;
 import ch.cern.eam.wshub.core.tools.InforException;
 import ch.cern.eam.wshub.core.services.entities.WorkOrderPart;
 import ch.cern.eam.wshub.core.services.workorders.entities.WorkOrderAdditionalCosts;
-import net.datastream.schemas.mp_results.mp7336_001.AdditionalWOEquipDetails;
+import ch.cern.eam.wshub.core.services.workorders.entities.AdditionalWOEquipDetails;
 
 public interface WorkOrderMiscService {
     @Operation(logOperation = INFOR_OPERATION.METERRREAD_C)

@@ -26,7 +26,6 @@ import net.datastream.schemas.mp_results.mp0244_001.MP0244_GetPartDefault_001_Re
 import net.datastream.wsdls.inforws.InforWebServicesPT;
 import java.util.HashMap;
 import java.util.List;
-
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.isEmpty;
 import static ch.cern.eam.wshub.core.tools.DataTypeTools.toCodeString;
 import static ch.cern.eam.wshub.core.tools.Tools.extractEntityCode;
@@ -34,199 +33,111 @@ import static ch.cern.eam.wshub.core.tools.Tools.extractOrganizationCode;
 
 public class PartServiceImpl implements PartService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
-	private UserDefinedListService userDefinedListService;
-	private PartRepository partRepository;
+    private Tools tools;
 
-	public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-		this(applicationData, tools, inforWebServicesToolkitClient, null);
-	}
+    private InforWebServicesPT inforws;
 
-	public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, PartRepository partRepository) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-		this.partRepository = partRepository;
-		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-	}
+    private ApplicationData applicationData;
 
-	//
-	// BATCH WEB SERVICES
-	//
+    private UserDefinedListService userDefinedListService;
 
-	public BatchResponse<String> createPartBatch(InforContext context, List<Part> parts) {
-		return tools.batchOperation(context, this::createPart, parts);
-	}
+    private PartRepository partRepository;
 
-	public BatchResponse<Part> readPartBatch(InforContext context, List<String> partCodes)  {
-		return tools.batchOperation(context, this::readPart, partCodes);
-	}
+    public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
 
-	public BatchResponse<String> updatePartBatch(InforContext context, List<Part> parts) {
-		return tools.batchOperation(context, this::updatePart, parts);
-	}
+    public PartServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, PartRepository partRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.inforws = inforWebServicesToolkitClient;
+        this.partRepository = partRepository;
+        this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+    }
 
-	public BatchResponse<String> deletePartBatch(InforContext context, List<String> partCodes) {
-		return tools.batchOperation(context, this::deletePart, partCodes);
-	}
+    //
+    // BATCH WEB SERVICES
+    //
+    public BatchResponse<String> createPartBatch(InforContext context, List<Part> parts) {
+        return tools.batchOperation(context, this::createPart, parts);
+    }
 
-	//
-	//
-	//
+    public BatchResponse<Part> readPartBatch(InforContext context, List<String> partCodes) {
+        return tools.batchOperation(context, this::readPart, partCodes);
+    }
 
-	public Part readPartDefault(InforContext context, String organization) throws InforException {
-		MP0244_GetPartDefault_001 getPartDefault_001 = new MP0244_GetPartDefault_001();
-		if (isEmpty(organization)) {
-			getPartDefault_001.setORGANIZATIONID(tools.getOrganization(context));
-		} else {
-			getPartDefault_001.setORGANIZATIONID(new ORGANIZATIONID_Type());
-			getPartDefault_001.getORGANIZATIONID().setORGANIZATIONCODE(organization);
-		}
+    public BatchResponse<String> updatePartBatch(InforContext context, List<Part> parts) {
+        return tools.batchOperation(context, this::updatePart, parts);
+    }
 
-		MP0244_GetPartDefault_001_Result result =
-				tools.performInforOperation(context, inforws::getPartDefaultOp, getPartDefault_001);
+    public BatchResponse<String> deletePartBatch(InforContext context, List<String> partCodes) {
+        return tools.batchOperation(context, this::deletePart, partCodes);
+    }
 
-		Part part = tools.getInforFieldTools().transformInforObject(new Part(), result.getResultData().getPartDefault(), context);
-		part.setUserDefinedList(new HashMap<>());
-		return part;
-	}
+    //
+    //
+    //
+    public Part readPartDefault(InforContext context, String organization) throws InforException {
+        if (partRepository != null && organization != null) {
+            java.util.Optional opt = partRepository.findById(organization);
+            if (opt.isPresent())
+                return (Part) opt.get();
+        }
+        MP0244_GetPartDefault_001 getPartDefault_001 = new MP0244_GetPartDefault_001();
+        if (isEmpty(organization)) {
+            getPartDefault_001.setORGANIZATIONID(tools.getOrganization(context));
+        } else {
+            getPartDefault_001.setORGANIZATIONID(new ORGANIZATIONID_Type());
+            getPartDefault_001.getORGANIZATIONID().setORGANIZATIONCODE(organization);
+        }
+        MP0244_GetPartDefault_001_Result result = tools.performInforOperation(context, inforws::getPartDefaultOp, getPartDefault_001);
+        Part part = tools.getInforFieldTools().transformInforObject(new Part(), result.getResultData().getPartDefault(), context);
+        part.setUserDefinedList(new HashMap<>());
+        return part;
+    }
 
-	public Part readPart(InforContext context, String partCode) throws InforException {
-		if (partRepository != null) {
-			String code = extractEntityCode(partCode);
-			Part repoPart = partRepository.findById(code).orElse(null);
-			if (repoPart != null) {
-				return repoPart;
-			}
-		}
+    public Part readPart(InforContext context, String partCode) throws InforException {
+        if (partRepository != null) {
+            String code = extractEntityCode(partCode);
+            Part repoPart = partRepository.findById(code).orElse(null);
+            if (repoPart != null) {
+                return repoPart;
+            }
+        }
+        Part part = tools.getInforFieldTools().transformInforObject(new Part(), readPartInfor(context, extractEntityCode(partCode), extractOrganizationCode(partCode)), context);
+        // Fetched missing descriptions not returned by Infor web service
+        tools.processRunnables(() -> part.setClassDesc(tools.getFieldDescriptionsTools().readClassDesc(context, "PART", part.getClassCode())), () -> part.setCategoryDesc(tools.getFieldDescriptionsTools().readCategoryDesc(context, part.getCategoryCode())), () -> part.setUOMDesc(tools.getFieldDescriptionsTools().readUOMDesc(context, part.getUOM())), () -> part.setCommodityDesc(tools.getFieldDescriptionsTools().readCommodityDesc(context, part.getCommodityCode())), () -> {
+            if (tools.isDatabaseConnectionConfigured())
+                userDefinedListService.readUDLToEntity(context, part, new EntityId("PART", extractEntityCode(partCode)));
+        });
+        return part;
+    }
 
-		Part part = tools.getInforFieldTools().transformInforObject(new Part(), readPartInfor(context, extractEntityCode(partCode), extractOrganizationCode(partCode)), context);
+    private net.datastream.schemas.mp_entities.part_001.Part readPartInfor(InforContext context, String partCode, String organization) throws InforException {
+        MP0241_GetPart_001 getPart = new MP0241_GetPart_001();
+        getPart.setPARTID(new PARTID_Type());
+        getPart.getPARTID().setORGANIZATIONID(tools.getOrganization(context, organization));
+        getPart.getPARTID().setPARTCODE(partCode);
+        MP0241_GetPart_001_Result getPartResult = tools.performInforOperation(context, inforws::getPartOp, getPart);
+        return getPartResult.getResultData().getPart();
+    }
 
-		// Fetched missing descriptions not returned by Infor web service
-		tools.processRunnables(
-			() -> part.setClassDesc(tools.getFieldDescriptionsTools().readClassDesc(context, "PART", part.getClassCode())),
-			() -> part.setCategoryDesc(tools.getFieldDescriptionsTools().readCategoryDesc(context, part.getCategoryCode())),
-			() -> part.setUOMDesc(tools.getFieldDescriptionsTools().readUOMDesc(context, part.getUOM())),
-			() -> part.setCommodityDesc(tools.getFieldDescriptionsTools().readCommodityDesc(context,  part.getCommodityCode())),
-			() -> { if(tools.isDatabaseConnectionConfigured()) userDefinedListService.readUDLToEntity(context, part, new EntityId("PART", extractEntityCode(partCode))); }
-		);
+    public String createPart(InforContext context, Part partParam) throws InforException {
+        Part saved = partRepository.save(partParam);
+        return saved.getCode();
+        //
+        //
+    }
 
-		return part;
-	}
+    public String updatePart(InforContext context, Part partParam) throws InforException {
+        Part saved = partRepository.save(partParam);
+        return saved.getCode();
+        //
+        // UPDATE PART
+    }
 
-	private net.datastream.schemas.mp_entities.part_001.Part readPartInfor(InforContext context, String partCode, String organization) throws InforException {
-		MP0241_GetPart_001 getPart = new MP0241_GetPart_001();
-		getPart.setPARTID(new PARTID_Type());
-		getPart.getPARTID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		getPart.getPARTID().setPARTCODE(partCode);
-
-		MP0241_GetPart_001_Result getPartResult =
-			tools.performInforOperation(context, inforws::getPartOp, getPart);
-
-		return getPartResult.getResultData().getPart();
-	}
-
-	public String createPart(InforContext context, Part partParam) throws InforException {
-		if (partRepository != null) {
-			try {
-				Part saved = partRepository.save(partParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-
-		net.datastream.schemas.mp_entities.part_001.Part inforPart = new net.datastream.schemas.mp_entities.part_001.Part();
-		//
-		//
-		//
-		inforPart.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-			context,
-			toCodeString(inforPart.getCLASSID()),
-			inforPart.getUSERDEFINEDAREA(),
-			partParam.getClassCode(),
-			"PART"));
-
-		// POPULATE ALL OTHER FIELDS
-		tools.getInforFieldTools().transformWSHubObject(inforPart, partParam, context);
-
-		MP0240_AddPart_001 addPart = new MP0240_AddPart_001();
-		addPart.setPart(inforPart);
-
-		MP0240_AddPart_001_Result result =
-			tools.performInforOperation(context, inforws::addPartOp, addPart);
-
-		String partCode = result.getPARTID().getPARTCODE();
-		userDefinedListService.writeUDLToEntityCopyFrom(context, partParam, new EntityId("PART", partCode));
-		return partCode;
-	}
-
-	public String updatePart(InforContext context, Part partParam) throws InforException {
-		if (partRepository != null) {
-			try {
-				Part saved = partRepository.save(partParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-
-		if (partParam.getNewCode() != null && !partParam.getNewCode().trim().equals("")) {
-
-			MP2072_ChangePartNumber_001 changePartNumber = new MP2072_ChangePartNumber_001();
-			changePartNumber.setChangePartNumber(new ChangePartNumber());
-
-			changePartNumber.getChangePartNumber().setOLDPARTID(new PARTID_Type());
-			changePartNumber.getChangePartNumber().getOLDPARTID().setORGANIZATIONID(tools.getOrganization(context, partParam.getOrganization()));
-			changePartNumber.getChangePartNumber().getOLDPARTID().setPARTCODE(partParam.getCode());
-
-			changePartNumber.getChangePartNumber().setNEWPARTID(new PARTID_Type());
-			changePartNumber.getChangePartNumber().getNEWPARTID().setORGANIZATIONID(tools.getOrganization(context, partParam.getOrganization()));
-			changePartNumber.getChangePartNumber().getNEWPARTID().setPARTCODE(partParam.getNewCode());
-
-			tools.performInforOperation(context, inforws::changePartNumberOp, changePartNumber);
-
-			partParam.setCode(partParam.getNewCode());
-
-		}
-
-		net.datastream.schemas.mp_entities.part_001.Part inforPart = readPartInfor(context, partParam.getCode(), partParam.getOrganization());
-
-		inforPart.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-			context,
-			toCodeString(inforPart.getCLASSID()),
-			inforPart.getUSERDEFINEDAREA(),
-			partParam.getClassCode(),
-			"PART"));
-
-		// SET ALL PROPERTIES
-		tools.getInforFieldTools().transformWSHubObject(inforPart, partParam, context);
-		//
-		// UPDATE PART
-		//
-		MP0242_SyncPart_001 syncPart = new MP0242_SyncPart_001();
-		syncPart.setPart(inforPart);
-
-		MP0242_SyncPart_001_Result result =
-			tools.performInforOperation(context, inforws::syncPartOp, syncPart);
-
-		String partCode = result.getResultData().getPart().getPARTID().getPARTCODE();
-		userDefinedListService.writeUDLToEntity(context, partParam, new EntityId("PART", partCode));
-		return partCode;
-
-	}
-
-	public String deletePart(InforContext context, String partCode) throws InforException {
-		MP0243_DeletePart_001 deletePart = new MP0243_DeletePart_001();
-		deletePart.setPARTID(new PARTID_Type());
-		deletePart.getPARTID().setORGANIZATIONID(tools.getOrganization(context, extractOrganizationCode(partCode)));
-		deletePart.getPARTID().setPARTCODE(extractEntityCode(partCode));
-
-		tools.performInforOperation(context, inforws::deletePartOp, deletePart);
-		userDefinedListService.deleteUDLFromEntity(context, new EntityId("PART", partCode));
-		return partCode;
-	}
-
+    public String deletePart(InforContext context, String partCode) throws InforException {
+        partRepository.deleteById(partCode);
+        return partCode;
+    }
 }

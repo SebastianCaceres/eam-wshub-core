@@ -31,201 +31,128 @@ import static ch.cern.eam.wshub.core.tools.DataTypeTools.*;
 
 public class SystemServiceImpl implements SystemService {
 
-	private Tools tools;
-	private InforWebServicesPT inforws;
-	private ApplicationData applicationData;
-	private UserDefinedListService userDefinedListService;
-	private EquipmentRepository equipmentRepository;
+    private Tools tools;
 
-	public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
-		this(applicationData, tools, inforWebServicesToolkitClient, null);
-	}
+    private InforWebServicesPT inforws;
 
-	public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
-		this.applicationData = applicationData;
-		this.tools = tools;
-		this.inforws = inforWebServicesToolkitClient;
-		this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
-		this.equipmentRepository = equipmentRepository;
-	}
+    private ApplicationData applicationData;
 
-	public Equipment readSystemDefault(InforContext context, String organization) throws InforException {
+    private UserDefinedListService userDefinedListService;
 
-		MP0315_GetSystemEquipmentDefault_001 getSystemEquipmentDefault_001 = new MP0315_GetSystemEquipmentDefault_001();
-		getSystemEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context , organization));
+    private EquipmentRepository equipmentRepository;
 
-		MP0315_GetSystemEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getSystemEquipmentDefaultOp, getSystemEquipmentDefault_001);
+    public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient) {
+        this(applicationData, tools, inforWebServicesToolkitClient, null);
+    }
 
-		Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getSystemEquipment(), context);
-		equipment.setUserDefinedList(new HashMap<>());
-		return equipment;
-	}
+    public SystemServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, EquipmentRepository equipmentRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.inforws = inforWebServicesToolkitClient;
+        this.userDefinedListService = new UserDefinedListServiceImpl(applicationData, tools, inforWebServicesToolkitClient);
+        this.equipmentRepository = equipmentRepository;
+    }
 
-	private SystemParentHierarchy readHierarchyInfor(InforContext context, String systemCode, String organization) throws InforException {
-		MP0329_GetSystemParentHierarchy_001 getsystemh = new MP0329_GetSystemParentHierarchy_001();
-		getsystemh.setSYSTEMID(new EQUIPMENTID_Type());
-		getsystemh.getSYSTEMID().setEQUIPMENTCODE(systemCode);
-		getsystemh.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		MP0329_GetSystemParentHierarchy_001_Result result = tools.performInforOperation(context, inforws::getSystemParentHierarchyOp, getsystemh);
-		return result.getResultData().getSystemParentHierarchy();
-	}
+    public Equipment readSystemDefault(InforContext context, String organization) throws InforException {
+        if (equipmentRepository != null && organization != null) {
+            java.util.Optional opt = equipmentRepository.findById(organization);
+            if (opt.isPresent())
+                return (Equipment) opt.get();
+        }
+        MP0315_GetSystemEquipmentDefault_001 getSystemEquipmentDefault_001 = new MP0315_GetSystemEquipmentDefault_001();
+        getSystemEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context, organization));
+        MP0315_GetSystemEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getSystemEquipmentDefaultOp, getSystemEquipmentDefault_001);
+        Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getSystemEquipment(), context);
+        equipment.setUserDefinedList(new HashMap<>());
+        return equipment;
+    }
 
-	public Equipment readSystem(InforContext context, String systemCode, String organization) throws InforException {
-		if (equipmentRepository != null && systemCode != null) {
-			Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(systemCode, "S");
-			if (equipment.isPresent()) {
-				return equipment.get();
-			}
-		}
+    private SystemParentHierarchy readHierarchyInfor(InforContext context, String systemCode, String organization) throws InforException {
+        MP0329_GetSystemParentHierarchy_001 getsystemh = new MP0329_GetSystemParentHierarchy_001();
+        getsystemh.setSYSTEMID(new EQUIPMENTID_Type());
+        getsystemh.getSYSTEMID().setEQUIPMENTCODE(systemCode);
+        getsystemh.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, organization));
+        MP0329_GetSystemParentHierarchy_001_Result result = tools.performInforOperation(context, inforws::getSystemParentHierarchyOp, getsystemh);
+        return result.getResultData().getSystemParentHierarchy();
+    }
 
-		SystemEquipment systemEquipment = readSystemInfor(context, systemCode, organization);
+    public Equipment readSystem(InforContext context, String systemCode, String organization) throws InforException {
+        if (equipmentRepository != null && systemCode != null) {
+            Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(systemCode, "S");
+            if (equipment.isPresent()) {
+                return equipment.get();
+            }
+        }
+        SystemEquipment systemEquipment = readSystemInfor(context, systemCode, organization);
+        Equipment system = tools.getInforFieldTools().transformInforObject(new Equipment(), systemEquipment, context);
+        system.setSystemTypeCode("S");
+        // HIERARCHY
+        if (systemEquipment.getSystemParentHierarchy().getLOCATIONID() != null) {
+            system.setHierarchyLocationCode(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getLOCATIONCODE());
+            system.setHierarchyLocationDesc(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getDESCRIPTION());
+        }
+        system.setHierarchyPrimarySystemDependent(systemEquipment.getSystemParentHierarchy().getDEPENDENTPRIMARYSYSTEM() != null);
+        tools.processRunnables(() -> {
+            if (tools.isDatabaseConnectionConfigured())
+                userDefinedListService.readUDLToEntity(context, system, new EntityId("OBJ", systemCode));
+        }, () -> system.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", system.getStatusCode())));
+        return system;
+    }
 
-		Equipment system = tools.getInforFieldTools().transformInforObject(new Equipment(), systemEquipment, context);
-		system.setSystemTypeCode("S");
+    public SystemEquipment readSystemInfor(InforContext context, String systemCode, String organization) throws InforException {
+        MP0312_GetSystemEquipment_001 getSystem = new MP0312_GetSystemEquipment_001();
+        getSystem.setSYSTEMID(new EQUIPMENTID_Type());
+        getSystem.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, organization));
+        getSystem.getSYSTEMID().setEQUIPMENTCODE(systemCode);
+        MP0312_GetSystemEquipment_001_Result getAssetResult = tools.performInforOperation(context, inforws::getSystemEquipmentOp, getSystem);
+        getAssetResult.getResultData().getSystemEquipment().setSystemParentHierarchy(readHierarchyInfor(context, systemCode, organization));
+        return getAssetResult.getResultData().getSystemEquipment();
+    }
 
-		// HIERARCHY
-		if (systemEquipment.getSystemParentHierarchy().getLOCATIONID() != null) {
-			system.setHierarchyLocationCode(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getLOCATIONCODE());
-			system.setHierarchyLocationDesc(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getDESCRIPTION());
-		}
-		system.setHierarchyPrimarySystemDependent(systemEquipment.getSystemParentHierarchy().getDEPENDENTPRIMARYSYSTEM() != null);
+    public String updateSystem(InforContext context, Equipment systemParam) throws InforException {
+        systemParam.setSystemTypeCode("S");
+        Equipment saved = equipmentRepository.save(systemParam);
+        return saved.getCode();
+    }
 
-		tools.processRunnables(
-				() -> { if(tools.isDatabaseConnectionConfigured()) userDefinedListService.readUDLToEntity(context, system, new EntityId("OBJ", systemCode)); },
-				() -> system.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", system.getStatusCode()))
-		);
+    public String createSystem(InforContext context, Equipment systemParam) throws InforException {
+        systemParam.setSystemTypeCode("S");
+        Equipment saved = equipmentRepository.save(systemParam);
+        return saved.getCode();
+    }
 
-		return system;
-	}
+    public String deleteSystem(InforContext context, String systemCode, String organization) throws InforException {
+        equipmentRepository.deleteById(systemCode);
+        return systemCode;
+    }
 
-	public SystemEquipment readSystemInfor(InforContext context, String systemCode, String organization) throws InforException {
-		MP0312_GetSystemEquipment_001 getSystem = new MP0312_GetSystemEquipment_001();
-		getSystem.setSYSTEMID(new EQUIPMENTID_Type());
-		getSystem.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		getSystem.getSYSTEMID().setEQUIPMENTCODE(systemCode);
-		MP0312_GetSystemEquipment_001_Result getAssetResult =
-			tools.performInforOperation(context, inforws::getSystemEquipmentOp, getSystem);
-		getAssetResult.getResultData().getSystemEquipment().setSystemParentHierarchy(readHierarchyInfor(context, systemCode, organization));
-		return getAssetResult.getResultData().getSystemEquipment();
-	}
+    private void initializeSystemObject(SystemEquipment systemInfor, Equipment systemParam, InforContext context) throws InforException {
+        if (systemInfor.getSYSTEMID() == null) {
+            systemInfor.setSYSTEMID(new EQUIPMENTID_Type());
+            systemInfor.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, systemParam.getOrganization()));
+            systemInfor.getSYSTEMID().setEQUIPMENTCODE(systemParam.getCode());
+        }
+        if (systemParam.getDescription() != null) {
+            systemInfor.getSYSTEMID().setDESCRIPTION(systemParam.getDescription());
+        }
+        // HIERARCHY
+        if (systemParam.getHierarchyLocationCode() != null || systemParam.getHierarchyPrimarySystemCode() != null) {
+            if (systemInfor.getSystemParentHierarchy() == null) {
+                systemInfor.setSystemParentHierarchy(new SystemParentHierarchy());
+            }
+            populateSystemHierarchy(context, systemParam, systemInfor);
+        }
+    }
 
-	public String updateSystem(InforContext context, Equipment systemParam) throws InforException {
-		if (equipmentRepository != null) {
-			try {
-				systemParam.setSystemTypeCode("S");
-				Equipment saved = equipmentRepository.save(systemParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-
-			SystemEquipment systemEquipment = readSystemInfor(context, systemParam.getCode(), systemParam.getOrganization());
-			//
-			systemEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-				context,
-				toCodeString(systemEquipment.getCLASSID()),
-				systemEquipment.getUSERDEFINEDAREA(),
-				systemParam.getClassCode(),
-				"OBJ"));
-
-			initializeSystemObject(systemEquipment, systemParam, context);
-			tools.getInforFieldTools().transformWSHubObject(systemEquipment, systemParam, context);
-
-			MP0313_SyncSystemEquipment_001 syncPosition = new MP0313_SyncSystemEquipment_001();
-			syncPosition.setSystemEquipment(systemEquipment);
-			tools.performInforOperation(context, inforws::syncSystemEquipmentOp, syncPosition);
-			userDefinedListService.writeUDLToEntity(context,
-				systemParam, new EntityId("OBJ", systemParam.getCode()));
-			return systemParam.getCode();
-
-	}
-
-	public String createSystem(InforContext context, Equipment systemParam) throws InforException {
-		if (equipmentRepository != null) {
-			try {
-				systemParam.setSystemTypeCode("S");
-				Equipment saved = equipmentRepository.save(systemParam);
-				return saved.getCode();
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-		SystemEquipment systemEquipment = new SystemEquipment();
-		//
-		systemEquipment.setUSERDEFINEDAREA(tools.getCustomFieldsTools().getInforCustomFields(
-			context,
-			toCodeString(systemEquipment.getCLASSID()),
-			systemEquipment.getUSERDEFINEDAREA(),
-			systemParam.getClassCode(),
-			"OBJ"));
-
-		//
-		initializeSystemObject(systemEquipment, systemParam, context);
-		tools.getInforFieldTools().transformWSHubObject(systemEquipment, systemParam, context);
-		//
-		MP0311_AddSystemEquipment_001 addPosition = new MP0311_AddSystemEquipment_001();
-		addPosition.setSystemEquipment(systemEquipment);
-		MP0311_AddSystemEquipment_001_Result result =
-			tools.performInforOperation(context, inforws::addSystemEquipmentOp, addPosition);
-		String systemCode = result.getResultData().getSYSTEMID().getEQUIPMENTCODE();
-		userDefinedListService.writeUDLToEntityCopyFrom(context,
-			systemParam, new EntityId("OBJ", systemCode));
-		return systemCode;
-	}
-
-	public String deleteSystem(InforContext context, String systemCode, String organization) throws InforException {
-		if (equipmentRepository != null && systemCode != null) {
-			try {
-				equipmentRepository.deleteById(systemCode);
-				return systemCode;
-			} catch (Exception e) {
-				// Fallback to SOAP
-			}
-		}
-
-		MP0314_DeleteSystemEquipment_001 deleteSystem = new MP0314_DeleteSystemEquipment_001();
-		deleteSystem.setSYSTEMID(new EQUIPMENTID_Type());
-		deleteSystem.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, organization));
-		deleteSystem.getSYSTEMID().setEQUIPMENTCODE(systemCode);
-
-		tools.performInforOperation(context, inforws::deleteSystemEquipmentOp, deleteSystem);
-		userDefinedListService.deleteUDLFromEntity(context, new EntityId("OBJ", systemCode));
-		return systemCode;
-	}
-
-	private void initializeSystemObject(SystemEquipment systemInfor, Equipment systemParam, InforContext context) throws InforException {
-		if (systemInfor.getSYSTEMID() == null) {
-			systemInfor.setSYSTEMID(new EQUIPMENTID_Type());
-			systemInfor.getSYSTEMID().setORGANIZATIONID(tools.getOrganization(context, systemParam.getOrganization()));
-			systemInfor.getSYSTEMID().setEQUIPMENTCODE(systemParam.getCode());
-		}
-
-		if (systemParam.getDescription() != null) {
-			systemInfor.getSYSTEMID().setDESCRIPTION(systemParam.getDescription());
-		}
-
-		// HIERARCHY
-		if (systemParam.getHierarchyLocationCode() != null || systemParam.getHierarchyPrimarySystemCode() != null) {
-			if (systemInfor.getSystemParentHierarchy() == null) {
-				systemInfor.setSystemParentHierarchy(new SystemParentHierarchy());
-			}
-			populateSystemHierarchy(context, systemParam, systemInfor);
-		}
-
-	}
-
-	private void populateSystemHierarchy(InforContext context, Equipment systemParam, SystemEquipment systemInfor) {
-		SystemParentHierarchy systemParentHierarchy = systemInfor.getSystemParentHierarchy();
-
-		if (systemParam.getHierarchyPrimarySystemDependent() != null && systemParam.getHierarchyPrimarySystemDependent() && !"".equals(systemParam.getHierarchyPrimarySystemCode()) ||
-			systemParam.getHierarchyPrimarySystemDependent() == null && systemParentHierarchy.getDEPENDENTPRIMARYSYSTEM() != null && !"".equals(systemParam.getHierarchyPrimarySystemCode())) {
-			systemParentHierarchy.setDEPENDENTLOCATION(null);
-			systemParentHierarchy.setDEPENDENTPRIMARYSYSTEM(createPrimarySystemParent(tools.getOrganizationCode(context, systemParam.getHierarchyPrimarySystemOrg()), systemParam.getHierarchyPrimarySystemCode(), systemParam.getHierarchyPrimarySystemCostRollUp(), systemParentHierarchy.getDEPENDENTPRIMARYSYSTEM()));
-		} else {
-			systemParentHierarchy.setDEPENDENTPRIMARYSYSTEM(null);
-			systemParentHierarchy.setDEPENDENTLOCATION(createLocationParent(tools.getOrganizationCode(context), systemParam.getHierarchyLocationCode(), systemParentHierarchy.getDEPENDENTLOCATION()));
-			systemParentHierarchy.setNONDEPENDENTPRIMARYSYSTEM(createPrimarySystemParent(tools.getOrganizationCode(context, systemParam.getHierarchyPrimarySystemOrg()), systemParam.getHierarchyPrimarySystemCode(), systemParam.getHierarchyPrimarySystemCostRollUp(), systemParentHierarchy.getNONDEPENDENTPRIMARYSYSTEM()));
-		}
-	}
+    private void populateSystemHierarchy(InforContext context, Equipment systemParam, SystemEquipment systemInfor) {
+        SystemParentHierarchy systemParentHierarchy = systemInfor.getSystemParentHierarchy();
+        if (systemParam.getHierarchyPrimarySystemDependent() != null && systemParam.getHierarchyPrimarySystemDependent() && !"".equals(systemParam.getHierarchyPrimarySystemCode()) || systemParam.getHierarchyPrimarySystemDependent() == null && systemParentHierarchy.getDEPENDENTPRIMARYSYSTEM() != null && !"".equals(systemParam.getHierarchyPrimarySystemCode())) {
+            systemParentHierarchy.setDEPENDENTLOCATION(null);
+            systemParentHierarchy.setDEPENDENTPRIMARYSYSTEM(createPrimarySystemParent(tools.getOrganizationCode(context, systemParam.getHierarchyPrimarySystemOrg()), systemParam.getHierarchyPrimarySystemCode(), systemParam.getHierarchyPrimarySystemCostRollUp(), systemParentHierarchy.getDEPENDENTPRIMARYSYSTEM()));
+        } else {
+            systemParentHierarchy.setDEPENDENTPRIMARYSYSTEM(null);
+            systemParentHierarchy.setDEPENDENTLOCATION(createLocationParent(tools.getOrganizationCode(context), systemParam.getHierarchyLocationCode(), systemParentHierarchy.getDEPENDENTLOCATION()));
+            systemParentHierarchy.setNONDEPENDENTPRIMARYSYSTEM(createPrimarySystemParent(tools.getOrganizationCode(context, systemParam.getHierarchyPrimarySystemOrg()), systemParam.getHierarchyPrimarySystemCode(), systemParam.getHierarchyPrimarySystemCostRollUp(), systemParentHierarchy.getNONDEPENDENTPRIMARYSYSTEM()));
+        }
+    }
 }
