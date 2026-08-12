@@ -64,24 +64,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     public Location readLocation(InforContext context, String locationCode) throws InforException {
-        if (locationRepository != null && locationCode != null) {
-            Optional<Location> location = locationRepository.findById(locationCode);
-            if (location.isPresent()) {
-                return location.get();
-            }
-        }
-        MP0318_GetLocation_001 getLocation = new MP0318_GetLocation_001();
-        getLocation.setLOCATIONID(new LOCATIONID_Type());
-        getLocation.getLOCATIONID().setORGANIZATIONID(tools.getOrganization(context));
-        getLocation.getLOCATIONID().setLOCATIONCODE(locationCode);
-        MP0318_GetLocation_001_Result getLocationResult = new MP0318_GetLocation_001_Result();
-        getLocationResult = tools.performInforOperation(context, inforws::getLocationOp, getLocation);
-        net.datastream.schemas.mp_entities.location_001.Location locationInfor = getLocationResult.getResultData().getLocation();
-        Location location = tools.getInforFieldTools().transformInforObject(new Location(), locationInfor, context);
-        if (locationInfor.getParentLocationID() != null) {
-            location.setHierarchyLocationCode(locationInfor.getParentLocationID().getLOCATIONCODE());
-        }
-        return location;
+        return locationRepository.findById(locationCode).orElse(null);
     }
 
     public String createLocation(InforContext context, Location locationParam) throws InforException {

@@ -41,17 +41,7 @@ public class RouteServiceImpl implements RouteService {
     }
 
     public Route readRoute(InforContext inforContext, String routeCode) throws InforException {
-        if (routeRepository != null) {
-            Route route = routeRepository.findById(routeCode).orElse(null);
-            if (route != null) {
-                return route;
-            }
-        }
-        MP7064_GetWorkRoute_001 getWorkRoute = new MP7064_GetWorkRoute_001();
-        getWorkRoute.setROUTEID(new ROUTE_Type());
-        getWorkRoute.getROUTEID().setROUTECODE(routeCode);
-        MP7064_GetWorkRoute_001_Result result = tools.performInforOperation(inforContext, inforws::getWorkRouteOp, getWorkRoute);
-        return tools.getInforFieldTools().transformInforObject(new Route(), result.getResultData().getWorkRoute(), inforContext);
+        return routeRepository.findById(routeCode).orElse(null);
     }
 
     public String createRoute(InforContext inforContext, Route route) throws InforException {

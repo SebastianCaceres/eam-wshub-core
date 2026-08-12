@@ -54,25 +54,8 @@ public class EquipmentOtherServiceImpl implements EquipmentOtherService {
 
     @Override
     public EquipmentDepreciation readEquipmentDepreciation(InforContext context, String equipmentCode) throws InforException {
-        if (equipmentDepreciationRepository != null) {
-            java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(equipmentCode.trim().toUpperCase());
-            if (!results.isEmpty()) {
-                return results.get(0);
-            }
-        }
-        // SOAP fallback: MP3016 requires a DEPRECIATIONPK; fetch it via EntityManager first
-        EntityManager em = tools.getEntityManager();
-        try {
-            EquipmentDepreciation found = em.createNamedQuery(EquipmentDepreciation.GETDEPRECIATION, EquipmentDepreciation.class).setParameter("equipmentCode", equipmentCode.trim().toUpperCase()).getSingleResult();
-            MP3016_GetDepreciation_001 getDepreciation = new MP3016_GetDepreciation_001();
-            getDepreciation.setDEPRECIATIONPK(tools.getDataTypeTools().encodeQuantity(found.getDepreciationPK(), "Depreciation PK"));
-            MP3016_GetDepreciation_001_Result result = tools.performInforOperation(context, inforws::getDepreciationOp, getDepreciation);
-            return tools.getInforFieldTools().transformInforObject(new EquipmentDepreciation(), result.getResultData().getDepreciation(), context);
-        } catch (Exception e) {
-            throw tools.generateFault("Couldn't fetch depreciation for equipment " + equipmentCode + ": " + e.getMessage());
-        } finally {
-            em.close();
-        }
+        java.util.List<EquipmentDepreciation> results = equipmentDepreciationRepository.findByEquipmentCode(equipmentCode.trim().toUpperCase());
+        return !results.isEmpty() ? results.get(0) : null;
     }
 
     public String updateEquipmentDepreciation(InforContext context, EquipmentDepreciation equipmentDepreciation) throws InforException {

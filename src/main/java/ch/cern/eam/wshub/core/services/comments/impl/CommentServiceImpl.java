@@ -111,13 +111,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public Comment[] readComments(InforContext context, String entityCode, String entityKeyCode, String typeCode) throws InforException {
-        if (commentRepository != null) {
-            List<Comment> comments = commentRepository.findByEntityCodeAndEntityKeyCode(entityCode, extractEntityCode(entityKeyCode));
-            if (comments != null && !comments.isEmpty()) {
-                return comments.toArray(new Comment[0]);
-            }
-        }
-        return readCommentsInfor(context, entityCode, extractEntityCode(entityKeyCode), typeCode, tools.getOrganizationCode(context, extractOrganizationCode(entityKeyCode))).stream().map(this::convertToComment).toArray(Comment[]::new);
+        List<Comment> comments = commentRepository.findByEntityCodeAndEntityKeyCode(entityCode, extractEntityCode(entityKeyCode));
+        return comments != null ? comments.toArray(new Comment[0]) : new Comment[0];
     }
 
     public String updateComment(InforContext context, Comment comment) throws InforException {

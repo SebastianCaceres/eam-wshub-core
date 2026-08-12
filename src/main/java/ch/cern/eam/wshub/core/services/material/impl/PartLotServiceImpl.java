@@ -47,14 +47,7 @@ public class PartLotServiceImpl implements PartLotService {
 
     @Override
     public Lot readLot(InforContext context, String lotPk) throws InforException {
-        if (lotRepository != null && lotPk != null) {
-            Optional<Lot> lot = lotRepository.findById(lotPk);
-            if (lot.isPresent()) {
-                return lot.get();
-            }
-        }
-        net.datastream.schemas.mp_entities.lot_001.Lot lot = readLotInfor(context, lotPk);
-        return tools.getInforFieldTools().transformInforObject(new Lot(), lot, context);
+        return lotRepository.findById(lotPk).orElse(null);
     }
 
     @Override

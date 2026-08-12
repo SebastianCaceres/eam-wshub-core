@@ -22,23 +22,21 @@ import net.datastream.schemas.mp_functions.mp2244_001.MP2244_GetPhysicalInventor
 import net.datastream.schemas.mp_results.mp1217_001.MP1217_AddInventoryTransaction_001_Result;
 import net.datastream.schemas.mp_results.mp1220_001.ResultData;
 import net.datastream.wsdls.inforws.InforWebServicesPT;
-
 import java.math.BigInteger;
 
 public class PhysicalInventoryServiceImpl implements PhysicalInventoryService {
 
     private Tools tools;
+
     private InforWebServicesPT inforws;
+
     private ApplicationData applicationData;
+
     private PhysicalInventoryRepository physicalInventoryRepository;
+
     private PhysicalInventoryRowRepository physicalInventoryRowRepository;
 
-    public PhysicalInventoryServiceImpl(
-            ApplicationData applicationData,
-            Tools tools,
-            InforWebServicesPT inforWebServicesToolkitClient,
-            PhysicalInventoryRepository physicalInventoryRepository,
-            PhysicalInventoryRowRepository physicalInventoryRowRepository) {
+    public PhysicalInventoryServiceImpl(ApplicationData applicationData, Tools tools, InforWebServicesPT inforWebServicesToolkitClient, PhysicalInventoryRepository physicalInventoryRepository, PhysicalInventoryRowRepository physicalInventoryRowRepository) {
         this.applicationData = applicationData;
         this.tools = tools;
         this.inforws = inforWebServicesToolkitClient;
@@ -47,142 +45,75 @@ public class PhysicalInventoryServiceImpl implements PhysicalInventoryService {
     }
 
     @Override
-    public PhysicalInventory createPhysicalInventory(InforContext context, PhysicalInventory physicalInventory)
-            throws InforException {
+    public PhysicalInventory createPhysicalInventory(InforContext context, PhysicalInventory physicalInventory) throws InforException {
         InventoryTransaction inventoryTransaction = new InventoryTransaction();
-
         inventoryTransaction.setTRANSACTIONID(new TRANSACTIONID_Type());
         inventoryTransaction.getTRANSACTIONID().setTRANSACTIONCODE("0");
-
         tools.getInforFieldTools().transformWSHubObject(inventoryTransaction, physicalInventory, context);
-
         MP1217_AddInventoryTransaction_001 addInventoryTransaction = new MP1217_AddInventoryTransaction_001();
         addInventoryTransaction.setInventoryTransaction(inventoryTransaction);
-
-        MP1217_AddInventoryTransaction_001_Result result =
-            tools.performInforOperation(context, inforws::addInventoryTransactionOp, addInventoryTransaction);
-
-        return tools.getInforFieldTools()
-            .transformInforObject(new PhysicalInventory(), result.getResultData().getInventoryTransaction(), context);
+        MP1217_AddInventoryTransaction_001_Result result = tools.performInforOperation(context, inforws::addInventoryTransactionOp, addInventoryTransaction);
+        return tools.getInforFieldTools().transformInforObject(new PhysicalInventory(), result.getResultData().getInventoryTransaction(), context);
     }
 
     @Override
     public PhysicalInventory readPhysicalInventory(InforContext context, String code) throws InforException {
-        if (physicalInventoryRepository != null) {
-            PhysicalInventory pi = physicalInventoryRepository.findById(code).orElse(null);
-            if (pi != null) return pi;
-        }
-        ResultData resultData = getInventoryResultData(context, code);
-        PhysicalInventory physicalInventory = tools.getInforFieldTools().transformInforObject(
-            new PhysicalInventory(),
-            resultData.getInventoryTransaction(), context);
-
-        if (resultData.getCREATEDBY() != null) {
-            physicalInventory.setCreatedBy(resultData.getCREATEDBY().getUSERCODE());
-        }
-
-        if (resultData.getCREATEDDATE() != null) {
-            physicalInventory.setCreatedDate(tools.getDataTypeTools().decodeInforDate(resultData.getCREATEDDATE()));
-        }
-
-        return physicalInventory;
+        return physicalInventoryRepository.findById(code).orElse(null);
     }
 
     @Override
-    public PhysicalInventory updatePhysicalInventory(InforContext context, PhysicalInventory physicalInventory)
-            throws InforException {
-        InventoryTransaction inventoryTransaction = getInventoryResultData(context, physicalInventory.getCode())
-            .getInventoryTransaction();
+    public PhysicalInventory updatePhysicalInventory(InforContext context, PhysicalInventory physicalInventory) throws InforException {
+        InventoryTransaction inventoryTransaction = getInventoryResultData(context, physicalInventory.getCode()).getInventoryTransaction();
         tools.getInforFieldTools().transformWSHubObject(inventoryTransaction, physicalInventory, context);
-
-        MP1218_SyncInventoryTransaction_001 syncInventoryTransaction =
-            new MP1218_SyncInventoryTransaction_001();
+        MP1218_SyncInventoryTransaction_001 syncInventoryTransaction = new MP1218_SyncInventoryTransaction_001();
         syncInventoryTransaction.setInventoryTransaction(inventoryTransaction);
-
-        InventoryTransaction result =
-            tools.performInforOperation(context, inforws::syncInventoryTransactionOp, syncInventoryTransaction)
-                .getResultData().getInventoryTransaction();
-
+        InventoryTransaction result = tools.performInforOperation(context, inforws::syncInventoryTransactionOp, syncInventoryTransaction).getResultData().getInventoryTransaction();
         return tools.getInforFieldTools().transformInforObject(new PhysicalInventory(), result, context);
     }
 
     private ResultData getInventoryResultData(InforContext context, String code) throws InforException {
-        MP1220_GetInventoryTransaction_001 getInventoryTransaction =
-            new MP1220_GetInventoryTransaction_001();
+        MP1220_GetInventoryTransaction_001 getInventoryTransaction = new MP1220_GetInventoryTransaction_001();
         getInventoryTransaction.setTRANSACTIONID(new TRANSACTIONID_Type());
         getInventoryTransaction.getTRANSACTIONID().setTRANSACTIONCODE(code);
         getInventoryTransaction.getTRANSACTIONID().setORGANIZATIONID(tools.getOrganization(context));
-
-        return tools.performInforOperation(context, inforws::getInventoryTransactionOp, getInventoryTransaction)
-            .getResultData();
+        return tools.performInforOperation(context, inforws::getInventoryTransactionOp, getInventoryTransaction).getResultData();
     }
 
     @Override
     public PhysicalInventoryRow readPhysicalInventoryLine(InforContext context, PhysicalInventoryRow row) throws InforException {
-        if (physicalInventoryRowRepository != null) {
-            java.util.List<PhysicalInventoryRow> rows =
-                physicalInventoryRowRepository.findByPhysicalInventoryCode(row.getPhysicalInventoryCode());
-            java.util.Optional<PhysicalInventoryRow> match = rows.stream()
-                .filter(r -> r.getLineNumber().equals(row.getLineNumber()))
-                .findFirst();
-            if (match.isPresent()) return match.get();
-        }
-        return tools.getInforFieldTools().transformInforObject(
-            new PhysicalInventoryRow(),
-            getLine(context, row.getPhysicalInventoryCode(), row.getLineNumber()), context);
+        java.util.List<PhysicalInventoryRow> rows = physicalInventoryRowRepository.findByPhysicalInventoryCode(row.getPhysicalInventoryCode());
+        return rows.stream().filter(r -> r.getLineNumber().equals(row.getLineNumber())).findFirst().orElse(null);
     }
 
     @Override
-    public PhysicalInventoryRow updatePhysicalInventoryLine(InforContext context, PhysicalInventoryRow row)
-            throws InforException {
+    public PhysicalInventoryRow updatePhysicalInventoryLine(InforContext context, PhysicalInventoryRow row) throws InforException {
         PhysicalInventoryLine physicalInventoryLine = getLine(context, row.getPhysicalInventoryCode(), row.getLineNumber());
-
         tools.getInforFieldTools().transformWSHubObject(physicalInventoryLine, row, context);
-
-        physicalInventoryLine.setPHYSICALQUANTITY(
-                tools.getDataTypeTools().encodeQuantity(row.getPhysicalQuantity(), "Physical Quantity"));
-
-        MP1294_SyncPhysicalInventoryLine_001 syncPhysicalInventoryLine =
-            new MP1294_SyncPhysicalInventoryLine_001();
-
+        physicalInventoryLine.setPHYSICALQUANTITY(tools.getDataTypeTools().encodeQuantity(row.getPhysicalQuantity(), "Physical Quantity"));
+        MP1294_SyncPhysicalInventoryLine_001 syncPhysicalInventoryLine = new MP1294_SyncPhysicalInventoryLine_001();
         syncPhysicalInventoryLine.setPhysicalInventoryLine(physicalInventoryLine);
-
-        PhysicalInventoryLine result = tools.performInforOperation(context, inforws::syncPhysicalInventoryLineOp, syncPhysicalInventoryLine)
-            .getResultData().getPhysicalInventoryLine();
-
+        PhysicalInventoryLine result = tools.performInforOperation(context, inforws::syncPhysicalInventoryLineOp, syncPhysicalInventoryLine).getResultData().getPhysicalInventoryLine();
         return tools.getInforFieldTools().transformInforObject(new PhysicalInventoryRow(), result, context);
     }
 
-    private PhysicalInventoryLine getLine(InforContext context, String code, BigInteger lineNumber)
-            throws InforException {
+    private PhysicalInventoryLine getLine(InforContext context, String code, BigInteger lineNumber) throws InforException {
         TRANSACTIONLINEID transactionLineId = new TRANSACTIONLINEID();
         transactionLineId.setTRANSACTIONID(new TRANSACTIONID_Type());
         transactionLineId.getTRANSACTIONID().setTRANSACTIONCODE(code);
         transactionLineId.getTRANSACTIONID().setORGANIZATIONID(tools.getOrganization(context));
         transactionLineId.setTRANSACTIONLINENUM(tools.getDataTypeTools().convertBigIntegerToLong(lineNumber));
-
-        MP2244_GetPhysicalInventoryLine_001 getPhysicalInventoryLine =
-                new MP2244_GetPhysicalInventoryLine_001();
+        MP2244_GetPhysicalInventoryLine_001 getPhysicalInventoryLine = new MP2244_GetPhysicalInventoryLine_001();
         getPhysicalInventoryLine.setTRANSACTIONLINEID(transactionLineId);
-
-        return tools.performInforOperation(context, inforws::getPhysicalInventoryLineOp, getPhysicalInventoryLine)
-            .getResultData().getPhysicalInventoryLine();
+        return tools.performInforOperation(context, inforws::getPhysicalInventoryLineOp, getPhysicalInventoryLine).getResultData().getPhysicalInventoryLine();
     }
 
     @Override
     public PhysicalInventory readDefaultPhysicalInventory(InforContext context, String storeCode) throws InforException {
-        MP1219_GetInventoryTransactionDefault_001 getInventoryTransactionDefault =
-                new MP1219_GetInventoryTransactionDefault_001();
-
+        MP1219_GetInventoryTransactionDefault_001 getInventoryTransactionDefault = new MP1219_GetInventoryTransactionDefault_001();
         getInventoryTransactionDefault.setSTOREID(new STOREID_Type());
         getInventoryTransactionDefault.getSTOREID().setSTORECODE(storeCode);
         getInventoryTransactionDefault.getSTOREID().setORGANIZATIONID(tools.getOrganization(context));
-
-
-        InventoryTransactionDefault inventoryTransactionDefault =
-                tools.performInforOperation(context, inforws::getInventoryTransactionDefaultOp, getInventoryTransactionDefault)
-                        .getResultData().getInventoryTransactionDefault();
-
+        InventoryTransactionDefault inventoryTransactionDefault = tools.performInforOperation(context, inforws::getInventoryTransactionDefaultOp, getInventoryTransactionDefault).getResultData().getInventoryTransactionDefault();
         return tools.getInforFieldTools().transformInforObject(new PhysicalInventory(), inventoryTransactionDefault, context);
     }
 }

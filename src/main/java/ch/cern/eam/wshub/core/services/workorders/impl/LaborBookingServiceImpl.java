@@ -67,19 +67,8 @@ public class LaborBookingServiceImpl implements LaborBookingService {
     }
 
     public List<LaborBooking> readLaborBookings(InforContext context, String workOrderNumber) throws InforException {
-        if (laborBookingRepository != null) {
-            List<LaborBooking> laborBookings = laborBookingRepository.findByWorkOrder(workOrderNumber);
-            if (laborBookings != null) {
-                return laborBookings;
-            }
-        }
-        GridRequest gridRequest = new GridRequest("WSJOBS_BOO");
-        gridRequest.setUserFunctionName("WSJOBS");
-        gridRequest.getParams().put("param.jobnum", workOrderNumber);
-        gridRequest.getParams().put("param.headeractivity", "0");
-        gridRequest.getParams().put("param.headerjob", "0");
-        gridRequest.setRowCount(500);
-        return GridTools.convertGridResultToObject(LaborBooking.class, null, gridsService.executeQuery(context, gridRequest));
+        List<LaborBooking> laborBookings = laborBookingRepository.findByWorkOrder(workOrderNumber);
+        return laborBookings != null ? laborBookings : java.util.Collections.emptyList();
     }
 
     public String createLaborBooking(InforContext context, LaborBooking laborBookingParam) throws InforException {

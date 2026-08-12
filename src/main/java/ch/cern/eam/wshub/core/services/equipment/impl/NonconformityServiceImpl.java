@@ -46,20 +46,7 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public NonConformity readNonconformityDefault(InforContext context, String organization) throws InforException {
-        if (nonConformityRepository != null && organization != null) {
-            java.util.Optional opt = nonConformityRepository.findById(organization);
-            if (opt.isPresent())
-                return (NonConformity) opt.get();
-        }
-        MP3396_GetNonconformityDefault_001 getNonconformityDefault = new MP3396_GetNonconformityDefault_001();
-        if (isEmpty(organization)) {
-            getNonconformityDefault.setORGANIZATIONID(tools.getOrganization(context));
-        } else {
-            getNonconformityDefault.setORGANIZATIONID(new ORGANIZATIONID_Type());
-            getNonconformityDefault.getORGANIZATIONID().setORGANIZATIONCODE(organization);
-        }
-        MP3396_GetNonconformityDefault_001_Result result = tools.performInforOperation(context, inforws::getNonconformityDefaultOp, getNonconformityDefault);
-        return tools.getInforFieldTools().transformInforObject(new NonConformity(), result.getResultData().getNonconformityDefault(), context);
+        return nonConformityRepository.findById(organization).orElse(null);
     }
 
     @Override
@@ -70,15 +57,8 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public NonConformity readNonconformity(InforContext context, String nonconformityCode) throws InforException {
-        if (nonConformityRepository != null && nonconformityCode != null) {
-            String code = Tools.extractEntityOrganizationCodePair(nonconformityCode).getEntityCode();
-            Optional<NonConformity> nonConformity = nonConformityRepository.findById(code);
-            if (nonConformity.isPresent()) {
-                return nonConformity.get();
-            }
-        }
-        net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity nonconformity = readNonconformityInfor(context, nonconformityCode);
-        return tools.getInforFieldTools().transformInforObject(new NonConformity(), nonconformity, context);
+        String code = Tools.extractEntityOrganizationCodePair(nonconformityCode).getEntityCode();
+        return nonConformityRepository.findById(code).orElse(null);
     }
 
     private net.datastream.schemas.mp_entities.nonconformity_001.Nonconformity readNonconformityInfor(InforContext context, String nonconformityCode) throws InforException {

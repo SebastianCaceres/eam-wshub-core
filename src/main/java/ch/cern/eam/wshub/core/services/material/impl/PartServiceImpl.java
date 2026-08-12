@@ -78,39 +78,12 @@ public class PartServiceImpl implements PartService {
     //
     //
     public Part readPartDefault(InforContext context, String organization) throws InforException {
-        if (partRepository != null && organization != null) {
-            java.util.Optional opt = partRepository.findById(organization);
-            if (opt.isPresent())
-                return (Part) opt.get();
-        }
-        MP0244_GetPartDefault_001 getPartDefault_001 = new MP0244_GetPartDefault_001();
-        if (isEmpty(organization)) {
-            getPartDefault_001.setORGANIZATIONID(tools.getOrganization(context));
-        } else {
-            getPartDefault_001.setORGANIZATIONID(new ORGANIZATIONID_Type());
-            getPartDefault_001.getORGANIZATIONID().setORGANIZATIONCODE(organization);
-        }
-        MP0244_GetPartDefault_001_Result result = tools.performInforOperation(context, inforws::getPartDefaultOp, getPartDefault_001);
-        Part part = tools.getInforFieldTools().transformInforObject(new Part(), result.getResultData().getPartDefault(), context);
-        part.setUserDefinedList(new HashMap<>());
-        return part;
+        return partRepository.findById(organization).orElse(null);
     }
 
     public Part readPart(InforContext context, String partCode) throws InforException {
-        if (partRepository != null) {
-            String code = extractEntityCode(partCode);
-            Part repoPart = partRepository.findById(code).orElse(null);
-            if (repoPart != null) {
-                return repoPart;
-            }
-        }
-        Part part = tools.getInforFieldTools().transformInforObject(new Part(), readPartInfor(context, extractEntityCode(partCode), extractOrganizationCode(partCode)), context);
-        // Fetched missing descriptions not returned by Infor web service
-        tools.processRunnables(() -> part.setClassDesc(tools.getFieldDescriptionsTools().readClassDesc(context, "PART", part.getClassCode())), () -> part.setCategoryDesc(tools.getFieldDescriptionsTools().readCategoryDesc(context, part.getCategoryCode())), () -> part.setUOMDesc(tools.getFieldDescriptionsTools().readUOMDesc(context, part.getUOM())), () -> part.setCommodityDesc(tools.getFieldDescriptionsTools().readCommodityDesc(context, part.getCommodityCode())), () -> {
-            if (tools.isDatabaseConnectionConfigured())
-                userDefinedListService.readUDLToEntity(context, part, new EntityId("PART", extractEntityCode(partCode)));
-        });
-        return part;
+        String code = extractEntityCode(partCode);
+        return partRepository.findById(code).orElse(null);
     }
 
     private net.datastream.schemas.mp_entities.part_001.Part readPartInfor(InforContext context, String partCode, String organization) throws InforException {

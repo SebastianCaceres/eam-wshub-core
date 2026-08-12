@@ -90,16 +90,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     }
 
     public WorkOrder readWorkOrderDefault(InforContext context, String number) throws InforException {
-        if (workOrderRepository != null && number != null) {
-            java.util.Optional opt = workOrderRepository.findById(number);
-            if (opt.isPresent())
-                return (WorkOrder) opt.get();
-        }
-        // Return a blank WorkOrder with sensible defaults — no SOAP needed
-        WorkOrder workOrder = new WorkOrder();
-        workOrder.setStatusCode("R");
-        workOrder.setTypeCode("PM");
-        return workOrder;
+        return workOrderRepository.findById(number).orElse(null);
     }
 
     /*
@@ -205,7 +196,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
             target.setCustomFields(source.getCustomFields());
         if (target.getUserDefinedFields() == null)
             target.setUserDefinedFields(source.getUserDefinedFields());
-        // Always new number — JPA will auto-assign or caller provides
+        // Always new number ï¿½ JPA will auto-assign or caller provides
         target.setNumber(null);
     }
 }

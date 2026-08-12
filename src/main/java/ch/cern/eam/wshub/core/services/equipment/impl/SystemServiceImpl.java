@@ -54,17 +54,7 @@ public class SystemServiceImpl implements SystemService {
     }
 
     public Equipment readSystemDefault(InforContext context, String organization) throws InforException {
-        if (equipmentRepository != null && organization != null) {
-            java.util.Optional opt = equipmentRepository.findById(organization);
-            if (opt.isPresent())
-                return (Equipment) opt.get();
-        }
-        MP0315_GetSystemEquipmentDefault_001 getSystemEquipmentDefault_001 = new MP0315_GetSystemEquipmentDefault_001();
-        getSystemEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context, organization));
-        MP0315_GetSystemEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getSystemEquipmentDefaultOp, getSystemEquipmentDefault_001);
-        Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getSystemEquipment(), context);
-        equipment.setUserDefinedList(new HashMap<>());
-        return equipment;
+        return equipmentRepository.findById(organization).orElse(null);
     }
 
     private SystemParentHierarchy readHierarchyInfor(InforContext context, String systemCode, String organization) throws InforException {
@@ -77,26 +67,7 @@ public class SystemServiceImpl implements SystemService {
     }
 
     public Equipment readSystem(InforContext context, String systemCode, String organization) throws InforException {
-        if (equipmentRepository != null && systemCode != null) {
-            Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(systemCode, "S");
-            if (equipment.isPresent()) {
-                return equipment.get();
-            }
-        }
-        SystemEquipment systemEquipment = readSystemInfor(context, systemCode, organization);
-        Equipment system = tools.getInforFieldTools().transformInforObject(new Equipment(), systemEquipment, context);
-        system.setSystemTypeCode("S");
-        // HIERARCHY
-        if (systemEquipment.getSystemParentHierarchy().getLOCATIONID() != null) {
-            system.setHierarchyLocationCode(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getLOCATIONCODE());
-            system.setHierarchyLocationDesc(systemEquipment.getSystemParentHierarchy().getLOCATIONID().getDESCRIPTION());
-        }
-        system.setHierarchyPrimarySystemDependent(systemEquipment.getSystemParentHierarchy().getDEPENDENTPRIMARYSYSTEM() != null);
-        tools.processRunnables(() -> {
-            if (tools.isDatabaseConnectionConfigured())
-                userDefinedListService.readUDLToEntity(context, system, new EntityId("OBJ", systemCode));
-        }, () -> system.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", system.getStatusCode())));
-        return system;
+        return equipmentRepository.findByCodeAndSystemTypeCode(systemCode, "S").orElse(null);
     }
 
     public SystemEquipment readSystemInfor(InforContext context, String systemCode, String organization) throws InforException {

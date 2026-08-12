@@ -54,44 +54,11 @@ public class AssetServiceImpl implements AssetService {
     }
 
     public Equipment readAssetDefault(InforContext context, String organization) throws InforException {
-        if (equipmentRepository != null && organization != null) {
-            java.util.Optional opt = equipmentRepository.findById(organization);
-            if (opt.isPresent())
-                return (Equipment) opt.get();
-        }
-        MP0305_GetAssetEquipmentDefault_001 getAssetEquipmentDefault_001 = new MP0305_GetAssetEquipmentDefault_001();
-        getAssetEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context, organization));
-        MP0305_GetAssetEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getAssetEquipmentDefaultOp, getAssetEquipmentDefault_001);
-        Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getAssetEquipment(), context);
-        equipment.setUserDefinedList(new HashMap<>());
-        return equipment;
+        return equipmentRepository.findById(organization).orElse(null);
     }
 
     public Equipment readAsset(InforContext context, String assetCode, String organization) throws InforException {
-        if (equipmentRepository != null) {
-            Equipment equipment = equipmentRepository.findById(assetCode).orElse(null);
-            if (equipment != null) {
-                return equipment;
-            }
-        }
-        AssetEquipment assetEquipment = readInforAsset(context, assetCode, organization);
-        //
-        Equipment asset = tools.getInforFieldTools().transformInforObject(new Equipment(), assetEquipment, context);
-        asset.setSystemTypeCode("A");
-        // DESCRIPTIONS
-        tools.processRunnables(() -> asset.setManufacturerDesc(tools.getFieldDescriptionsTools().readManufacturerDesc(context, asset.getManufacturerCode())), () -> asset.setBinDesc(tools.getFieldDescriptionsTools().readBinDesc(context, asset.getStoreCode(), asset.getBin())), () -> asset.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", asset.getStatusCode())), () -> {
-            if (tools.isDatabaseConnectionConfigured())
-                userDefinedListService.readUDLToEntity(context, asset, new EntityId("OBJ", assetCode));
-        });
-        // HIERARCHY
-        if (assetEquipment.getAssetParentHierarchy().getLOCATIONID() != null) {
-            asset.setHierarchyLocationCode(assetEquipment.getAssetParentHierarchy().getLOCATIONID().getLOCATIONCODE());
-            asset.setHierarchyLocationDesc(assetEquipment.getAssetParentHierarchy().getLOCATIONID().getDESCRIPTION());
-        }
-        asset.setHierarchyAssetDependent(assetEquipment.getAssetParentHierarchy().getAssetDependency() != null);
-        asset.setHierarchyPositionDependent(assetEquipment.getAssetParentHierarchy().getPositionDependency() != null);
-        asset.setHierarchyPrimarySystemDependent(assetEquipment.getAssetParentHierarchy().getPrimarySystemDependency() != null);
-        return asset;
+        return equipmentRepository.findById(assetCode).orElse(null);
     }
 
     private AssetParentHierarchy readInforAssetHierarchy(InforContext context, String assetCode, String organization) throws InforException {

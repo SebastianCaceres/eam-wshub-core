@@ -52,20 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public Employee readEmployee(InforContext context, String employeeCode) throws InforException {
-        if (employeeRepository != null) {
-            Optional<Employee> employeeOpt = employeeRepository.findById(employeeCode);
-            if (employeeOpt.isPresent()) {
-                return employeeOpt.get();
-            }
-        }
-        MP7037_GetEmployee_001 request = new MP7037_GetEmployee_001();
-        request.setEMPLOYEEID(new Employee_Type());
-        request.getEMPLOYEEID().setEMPLOYEECODE(employeeCode);
-        MP7037_GetEmployee_001_Result result = tools.performInforOperation(context, inforws::getEmployeeOp, request);
-        Employee employee = tools.getInforFieldTools().transformInforObject(new Employee(), result.getResultData().getEmployee(), context);
-        employee.setSupervisor(employee.getUserDefinedFields().getUdfnum01());
-        employee.setPersonID(employee.getUserDefinedFields().getUdfnum01());
-        return employee;
+        return employeeRepository.findById(employeeCode).orElse(null);
     }
 
     public String createEmployee(InforContext context, Employee employee) throws InforException {

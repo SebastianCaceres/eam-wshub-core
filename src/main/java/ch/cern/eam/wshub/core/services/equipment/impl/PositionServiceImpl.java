@@ -78,42 +78,11 @@ public class PositionServiceImpl implements PositionService {
     }
 
     public Equipment readPositionDefault(InforContext context, String organization) throws InforException {
-        if (equipmentRepository != null && organization != null) {
-            java.util.Optional opt = equipmentRepository.findById(organization);
-            if (opt.isPresent())
-                return (Equipment) opt.get();
-        }
-        MP0310_GetPositionEquipmentDefault_001 getPositionEquipmentDefault_001 = new MP0310_GetPositionEquipmentDefault_001();
-        getPositionEquipmentDefault_001.setORGANIZATIONID(tools.getOrganization(context, organization));
-        MP0310_GetPositionEquipmentDefault_001_Result result = tools.performInforOperation(context, inforws::getPositionEquipmentDefaultOp, getPositionEquipmentDefault_001);
-        Equipment equipment = tools.getInforFieldTools().transformInforObject(new Equipment(), result.getResultData().getPositionEquipment(), context);
-        equipment.setUserDefinedList(new HashMap<>());
-        return equipment;
+        return equipmentRepository.findById(organization).orElse(null);
     }
 
     public Equipment readPosition(InforContext context, String positionCode, String organization) throws InforException {
-        if (equipmentRepository != null && positionCode != null) {
-            Optional<Equipment> equipment = equipmentRepository.findByCodeAndSystemTypeCode(positionCode, "P");
-            if (equipment.isPresent()) {
-                return equipment.get();
-            }
-        }
-        PositionEquipment positionEquipment = readInforPosition(context, positionCode, organization);
-        Equipment position = tools.getInforFieldTools().transformInforObject(new Equipment(), positionEquipment, context);
-        position.setSystemTypeCode("P");
-        // HIERARCHY
-        if (positionEquipment.getPositionParentHierarchy().getLOCATIONID() != null) {
-            position.setHierarchyLocationCode(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getLOCATIONCODE());
-            position.setHierarchyLocationDesc(positionEquipment.getPositionParentHierarchy().getLOCATIONID().getDESCRIPTION());
-        }
-        position.setHierarchyAssetDependent(positionEquipment.getPositionParentHierarchy().getAssetDependency() != null);
-        position.setHierarchyPositionDependent(positionEquipment.getPositionParentHierarchy().getPositionDependency() != null);
-        position.setHierarchyPrimarySystemDependent(positionEquipment.getPositionParentHierarchy().getPrimarySystemDependency() != null);
-        tools.processRunnables(() -> {
-            if (tools.isDatabaseConnectionConfigured())
-                userDefinedListService.readUDLToEntity(context, position, new EntityId("OBJ", positionCode));
-        }, () -> position.setSystemStatusCode(tools.getFieldDescriptionsTools().readSystemCodeForUserCode(context, "OBST", position.getStatusCode())));
-        return position;
+        return equipmentRepository.findByCodeAndSystemTypeCode(positionCode, "P").orElse(null);
     }
 
     private PositionEquipment readInforPosition(InforContext context, String positionCode, String organization) throws InforException {

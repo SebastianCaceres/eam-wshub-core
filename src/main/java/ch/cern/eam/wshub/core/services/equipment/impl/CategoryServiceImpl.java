@@ -39,14 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category readCategory(InforContext context, String categoryCode) throws InforException {
-        if (categoryRepository != null) {
-            Optional<Category> categoryOpt = categoryRepository.findById(categoryCode);
-            if (categoryOpt.isPresent()) {
-                return categoryOpt.get();
-            }
-        }
-        Category category = tools.getInforFieldTools().transformInforObject(new Category(), readInforCategory(context, categoryCode), context);
-        return category;
+        return categoryRepository.findById(categoryCode).orElse(null);
     }
 
     private EquipmentCategory readInforCategory(InforContext context, String categoryCode) throws InforException {

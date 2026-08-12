@@ -67,15 +67,7 @@ public class PickTicketServiceImpl implements PickTicketService {
     }
 
     public PickTicket readPickTicket(InforContext context, String code) throws InforException {
-        if (pickTicketRepository != null && code != null) {
-            Optional<PickTicket> pickTicket = pickTicketRepository.findById(code);
-            if (pickTicket.isPresent()) {
-                return pickTicket.get();
-            }
-        }
-        PickList pickList = readPickList(context, code);
-        final PickTicket pickTicket = tools.getInforFieldTools().transformInforObject(new PickTicket(), pickList, context);
-        return pickTicket;
+        return pickTicketRepository.findById(code).orElse(null);
     }
 
     public String addPartToPickTicket(InforContext context, PickTicketPart pickTicketPartParam) throws InforException {

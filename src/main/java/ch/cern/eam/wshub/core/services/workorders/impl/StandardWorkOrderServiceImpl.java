@@ -46,13 +46,7 @@ public class StandardWorkOrderServiceImpl implements StandardWorkOrderService {
     }
 
     public StandardWorkOrder readStandardWorkOrder(InforContext context, String number) throws InforException {
-        if (standardWorkOrderRepository != null) {
-            StandardWorkOrder found = standardWorkOrderRepository.findById(number).orElse(null);
-            if (found != null) {
-                return found;
-            }
-        }
-        return tools.getInforFieldTools().transformInforObject(new StandardWorkOrder(), readStandardWorkOrderInfor(context, number), context);
+        return standardWorkOrderRepository.findById(number).orElse(null);
     }
 
     public net.datastream.schemas.mp_entities.standardworkorder_001.StandardWorkOrder readStandardWorkOrderInfor(InforContext context, String number) throws InforException {
