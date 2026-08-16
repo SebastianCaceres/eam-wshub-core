@@ -29,6 +29,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
     private WorkOrderRepository workOrderRepository;
 
+    private ch.cern.eam.wshub.core.repositories.EquipmentRepository equipmentRepository;
+
     public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools) {
     }
 
@@ -36,6 +38,13 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         this.applicationData = applicationData;
         this.tools = tools;
         this.workOrderRepository = workOrderRepository;
+    }
+
+    public WorkOrderServiceImpl(ApplicationData applicationData, Tools tools, WorkOrderRepository workOrderRepository, ch.cern.eam.wshub.core.repositories.EquipmentRepository equipmentRepository) {
+        this.applicationData = applicationData;
+        this.tools = tools;
+        this.workOrderRepository = workOrderRepository;
+        this.equipmentRepository = equipmentRepository;
     }
 
 
@@ -67,7 +76,10 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     }
 
     public WorkOrder readWorkOrderDefault(InforContext context, String number) throws InforException {
-        return workOrderRepository.findById(number).orElse(null);
+        WorkOrder wo = new WorkOrder();
+        wo.setStatusCode("R");
+        wo.setTypeCode("JOB");
+        return wo;
     }
 
     /*
@@ -81,6 +93,16 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		workorderParam are applied. EAM Light implements default value logic in its frontend.
 	*/
     public String createWorkOrder(InforContext context, WorkOrder workorderParam) throws InforException {
+        // Auto-generate Work Order Number if empty or null
+        if (workorderParam.getNumber() == null || workorderParam.getNumber().trim().isEmpty()) {
+            workorderParam.setNumber(String.valueOf(System.currentTimeMillis() / 1000));
+        }
+        if (workorderParam.getCreatedDate() == null) {
+            workorderParam.setCreatedDate(new java.util.Date());
+        }
+        if (workorderParam.getReportedDate() == null) {
+            workorderParam.setReportedDate(new java.util.Date());
+        }
         // COPY FROM existing work order
         if (workorderParam.getCopyFrom() != null) {
             String sourceNumber = extractEntityCode(workorderParam.getCopyFrom());
@@ -88,27 +110,43 @@ public class WorkOrderServiceImpl implements WorkOrderService {
             mergeFromSource(source, workorderParam);
         }
         // STANDARD WORK ORDER defaults
-        if (workorderParam.getStandardWO() != null && !workorderParam.getStandardWO().trim().isEmpty()) {
+        if (workorderParam.getStandardWO() != null && !workorderParam.getStandardWO().trim().isEmpty() && standardWorkOrderService != null) {
             StandardWorkOrder swo = standardWorkOrderService.readStandardWorkOrder(context, workorderParam.getStandardWO());
-            if (workorderParam.getDescription() == null)
-                workorderParam.setDescription(swo.getDesc());
-            if (workorderParam.getClassCode() == null)
-                workorderParam.setClassCode(swo.getWoClassCode());
-            if (workorderParam.getPriorityCode() == null)
-                workorderParam.setPriorityCode(swo.getPriorityCode());
-            if (workorderParam.getTypeCode() == null)
-                workorderParam.setTypeCode(swo.getWorkOrderTypeCode());
-            if (workorderParam.getProblemCode() == null)
-                workorderParam.setProblemCode(swo.getProblemCode());
-            if (workorderParam.getCustomFields() == null)
-                workorderParam.setCustomFields(swo.getCustomFields());
-            if (workorderParam.getUserDefinedFields() == null)
-                workorderParam.setUserDefinedFields(swo.getUserDefinedFields());
+            if (swo != null) {
+                if (workorderParam.getDescription() == null)
+                    workorderParam.setDescription(swo.getDesc());
+                if (workorderParam.getClassCode() == null)
+                    workorderParam.setClassCode(swo.getWoClassCode());
+                if (workorderParam.getPriorityCode() == null)
+                    workorderParam.setPriorityCode(swo.getPriorityCode());
+                if (workorderParam.getTypeCode() == null)
+                    workorderParam.setTypeCode(swo.getWorkOrderTypeCode());
+                if (workorderParam.getProblemCode() == null)
+                    workorderParam.setProblemCode(swo.getProblemCode());
+                if (workorderParam.getCustomFields() == null)
+                    workorderParam.setCustomFields(swo.getCustomFields());
+                if (workorderParam.getUserDefinedFields() == null)
+                    workorderParam.setUserDefinedFields(swo.getUserDefinedFields());
+            }
+        }
+        // EQUIPMENT INHERITANCE defaults (Department, Cost Code, Location)
+        if (workorderParam.getEquipmentCode() != null && !workorderParam.getEquipmentCode().trim().isEmpty() && equipmentRepository != null) {
+            equipmentRepository.findById(workorderParam.getEquipmentCode()).ifPresent(eq -> {
+                if (workorderParam.getDepartmentCode() == null || workorderParam.getDepartmentCode().trim().isEmpty()) {
+                    workorderParam.setDepartmentCode(eq.getDepartmentCode());
+                }
+                if (workorderParam.getCostCode() == null || workorderParam.getCostCode().trim().isEmpty()) {
+                    workorderParam.setCostCode(eq.getCostCode());
+                }
+                if (workorderParam.getLocationCode() == null || workorderParam.getLocationCode().trim().isEmpty()) {
+                    workorderParam.setLocationCode(eq.getHierarchyLocationCode());
+                }
+            });
         }
         WorkOrder saved = workOrderRepository.save(workorderParam);
         String workOrderNumber = saved.getNumber();
         // Attach initial comment if provided
-        if (workorderParam.getComment() != null && !workorderParam.getComment().trim().isEmpty()) {
+        if (workorderParam.getComment() != null && !workorderParam.getComment().trim().isEmpty() && comments != null) {
             Comment comment = new Comment();
             comment.setEntityCode("EVNT");
             comment.setEntityKeyCode(workOrderNumber);
@@ -121,9 +159,29 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
     public String updateWorkOrder(InforContext context, WorkOrder workorderParam) throws InforException {
         String woNumber = extractEntityCode(workorderParam.getNumber());
-        if (!workOrderRepository.existsById(woNumber)) {
-            throw tools.generateFault("Work order not found: " + woNumber);
+        WorkOrder existing = workOrderRepository.findById(woNumber)
+                .orElseThrow(() -> tools.generateFault("Work order not found: " + woNumber));
+
+        // State Machine Rule: Cannot update a closed Work Order
+        if ("CL".equalsIgnoreCase(existing.getStatusCode()) && !"CL".equalsIgnoreCase(workorderParam.getStatusCode())) {
+            throw tools.generateFault("Cannot re-open or update a Closed Work Order: " + woNumber);
         }
+
+        // PM Work Order Rule: Lock PM Work Orders (Status 'A')
+        if ("A".equalsIgnoreCase(existing.getStatusCode())) {
+            if (tools != null) {
+                throw tools.generateFault("This is a PM Work Order (Status A) and is locked for editing: " + woNumber);
+            } else {
+                throw new InforException("This is a PM Work Order (Status A) and is locked for editing: " + woNumber, null, null);
+            }
+        }
+
+        // Completion Rule: Set completedDate if status changes to Completed or Closed
+        if (("C".equalsIgnoreCase(workorderParam.getStatusCode()) || "CL".equalsIgnoreCase(workorderParam.getStatusCode())) 
+                && workorderParam.getCompletedDate() == null) {
+            workorderParam.setCompletedDate(new java.util.Date());
+        }
+
         WorkOrder saved = workOrderRepository.save(workorderParam);
         return saved.getNumber();
     }

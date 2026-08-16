@@ -36,7 +36,10 @@ public class AssetServiceImpl implements AssetService {
     }
 
     public Equipment readAssetDefault(InforContext context, String organization) throws InforException {
-        return equipmentRepository.findById(organization).orElse(null);
+        Equipment asset = new Equipment();
+        asset.setOrganization(organization);
+        asset.setTypeCode("A");
+        return asset;
     }
 
     public Equipment readAsset(InforContext context, String assetCode, String organization) throws InforException {
@@ -44,13 +47,31 @@ public class AssetServiceImpl implements AssetService {
     }
 
     public String updateAsset(InforContext context, Equipment assetParam) throws InforException {
+        assetParam.setSystemTypeCode("A");
+        if (assetParam.getCode() != null && !equipmentRepository.existsById(assetParam.getCode())) {
+            throw tools.generateFault("Asset not found: " + assetParam.getCode());
+        }
+        // Status 'D' (Hors service definitif) nullifies parent hierarchy
+        if ("D".equalsIgnoreCase(assetParam.getStatusCode()) || "D".equalsIgnoreCase(assetParam.getSystemStatusCode())) {
+            assetParam.setHierarchyAssetCode(null);
+            assetParam.setHierarchyPositionCode(null);
+            assetParam.setHierarchySystemCode(null);
+        }
         Equipment saved = equipmentRepository.save(assetParam);
         return saved.getCode();
-        //
-        // UPDATE EQUIPMENT
     }
 
     public String createAsset(InforContext context, Equipment assetParam) throws InforException {
+        assetParam.setSystemTypeCode("A");
+        if (assetParam.getCode() == null || assetParam.getCode().trim().isEmpty()) {
+            assetParam.setCode("AST-" + (System.currentTimeMillis() / 1000));
+        }
+        if (assetParam.getDescription() == null || assetParam.getDescription().trim().isEmpty()) {
+            throw tools.generateFault("Asset description is required");
+        }
+        if (assetParam.getComissionDate() == null) {
+            assetParam.setComissionDate(new java.util.Date());
+        }
         Equipment saved = equipmentRepository.save(assetParam);
         return saved.getCode();
     }

@@ -35,7 +35,11 @@ public class SystemServiceImpl implements SystemService {
     }
 
     public Equipment readSystemDefault(InforContext context, String organization) throws InforException {
-        return equipmentRepository.findById(organization).orElse(null);
+        Equipment system = new Equipment();
+        system.setOrganization(organization);
+        system.setSystemTypeCode("S");
+        system.setTypeCode("S");
+        return system;
     }
 
     public Equipment readSystem(InforContext context, String systemCode, String organization) throws InforException {

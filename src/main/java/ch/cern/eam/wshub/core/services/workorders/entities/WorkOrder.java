@@ -75,8 +75,7 @@ public class WorkOrder implements UserDefinedListHelpable {
 	
 	private String equipmentOrganization;
 	//
-	@Transient
-	
+	@Column(name = "EVT_PROJECT")
 	private String projectCode;
 	@Transient
 	
@@ -168,8 +167,7 @@ public class WorkOrder implements UserDefinedListHelpable {
 	@Transient
 	
 	private BigDecimal downtimeHours;
-	@Transient
-	
+	@Embedded
 	private UserDefinedFields userDefinedFields;
 
 	@Transient

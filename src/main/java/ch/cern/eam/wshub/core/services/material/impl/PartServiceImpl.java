@@ -59,7 +59,9 @@ public class PartServiceImpl implements PartService {
     //
     //
     public Part readPartDefault(InforContext context, String organization) throws InforException {
-        return partRepository.findById(organization).orElse(null);
+        Part part = new Part();
+        part.setOrganization(organization);
+        return part;
     }
 
     public Part readPart(InforContext context, String partCode) throws InforException {
@@ -68,17 +70,23 @@ public class PartServiceImpl implements PartService {
     }
 
     public String createPart(InforContext context, Part partParam) throws InforException {
+        if (partParam.getCode() == null || partParam.getCode().trim().isEmpty()) {
+            partParam.setCode("PRT-" + (System.currentTimeMillis() / 1000));
+        }
+        if (partParam.getDescription() == null || partParam.getDescription().trim().isEmpty()) {
+            throw tools.generateFault("Part description is required");
+        }
         Part saved = partRepository.save(partParam);
         return saved.getCode();
-        //
-        //
     }
 
     public String updatePart(InforContext context, Part partParam) throws InforException {
+        String code = extractEntityCode(partParam.getCode());
+        if (!partRepository.existsById(code)) {
+            throw tools.generateFault("Part not found: " + code);
+        }
         Part saved = partRepository.save(partParam);
         return saved.getCode();
-        //
-        // UPDATE PART
     }
 
     public String deletePart(InforContext context, String partCode) throws InforException {

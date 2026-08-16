@@ -27,8 +27,7 @@ public class Equipment implements UserDefinedListHelpable {
     
     private String code;
 
-    @Transient
-    
+    @Column(name = "OBJ_ORG")
     private String organization;
 
     @Column(name = "OBJ_OBTYPE")
@@ -219,31 +218,39 @@ public class Equipment implements UserDefinedListHelpable {
     @Transient
     private Boolean hierarchySystemCostRollUp;
     // Location
+    @Column(name = "OBJ_LOCATION")
+    private String locationCode;
+
     @Transient
     private String hierarchyLocationCode;
     @Transient
     private String hierarchyLocationDesc;
 
+    // Hierarchy Relationships
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STC_PARENT", referencedColumnName = "OBJ_CODE", insertable = false, updatable = false)
+    private List<EquipmentChildren> children;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STC_CHILD", referencedColumnName = "OBJ_CODE", insertable = false, updatable = false)
+    private List<EquipmentChildren> parents;
+
     // Part Association
-    @Transient
-    
+    @Column(name = "OBJ_PART")
     private String partCode;
     @Transient
     
     private String partDesc;
-    @Transient
-    
+    @Column(name = "OBJ_STORE")
     private String storeCode;
     @Transient
     
     private String storeDesc;
-    @Transient
-    
+    @Column(name = "OBJ_BIN")
     private String bin;
     @Transient
     private String binDesc;
-    @Transient
-    
+    @Column(name = "OBJ_LOT")
     private String lot;
 
     // Linear Reference
@@ -294,8 +301,7 @@ public class Equipment implements UserDefinedListHelpable {
     
     private String dormantReusePeriod;
 
-    @Transient
-    
+    @Embedded
     private UserDefinedFields userDefinedFields;
 
     @Transient
@@ -688,8 +694,16 @@ public class Equipment implements UserDefinedListHelpable {
         this.hierarchyPositionCostRollUp = hierarchyPositionCostRollUp;
     }
 
+    public String getLocationCode() {
+        return locationCode;
+    }
+
+    public void setLocationCode(String locationCode) {
+        this.locationCode = locationCode;
+    }
+
     public String getHierarchyLocationCode() {
-        return hierarchyLocationCode;
+        return hierarchyLocationCode != null ? hierarchyLocationCode : locationCode;
     }
 
     public void setHierarchyLocationCode(String hierarchyLocationCode) {

@@ -53,10 +53,17 @@ public class LaborBookingServiceImpl implements LaborBookingService {
     }
 
     public String createLaborBooking(InforContext context, LaborBooking laborBookingParam) throws InforException {
+        if (laborBookingParam.getWorkOrderNumber() == null || laborBookingParam.getWorkOrderNumber().trim().isEmpty()) {
+            throw tools.generateFault("Work order number is required for labor booking");
+        }
+        if (laborBookingParam.getHoursWorked() == null || laborBookingParam.getHoursWorked().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            throw tools.generateFault("Hours worked must be greater than zero");
+        }
+        if (laborBookingParam.getDateWorked() == null) {
+            laborBookingParam.setDateWorked(new java.util.Date());
+        }
         LaborBooking saved = laborBookingRepository.save(laborBookingParam);
         return saved.getCode() != null ? saved.getCode() : laborBookingParam.getActivityCode();
-        //
-        // CALL THE WS
     }
 
     public Activity[] readActivities(InforContext context, String workOrderNumber, Boolean includeChecklists) throws InforException {

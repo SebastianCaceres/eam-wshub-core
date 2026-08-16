@@ -49,7 +49,11 @@ public class PositionServiceImpl implements PositionService {
     }
 
     public Equipment readPositionDefault(InforContext context, String organization) throws InforException {
-        return equipmentRepository.findById(organization).orElse(null);
+        Equipment position = new Equipment();
+        position.setOrganization(organization);
+        position.setSystemTypeCode("P");
+        position.setTypeCode("P");
+        return position;
     }
 
     public Equipment readPosition(InforContext context, String positionCode, String organization) throws InforException {

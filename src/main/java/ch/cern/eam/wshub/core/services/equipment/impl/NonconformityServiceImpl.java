@@ -30,7 +30,8 @@ public class NonconformityServiceImpl implements NonconformityService {
 
     @Override
     public NonConformity readNonconformityDefault(InforContext context, String organization) throws InforException {
-        return nonConformityRepository.findById(organization).orElse(null);
+        NonConformity ncr = new NonConformity();
+        return ncr;
     }
 
     @Override

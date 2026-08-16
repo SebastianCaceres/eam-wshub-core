@@ -74,8 +74,7 @@ public class Part implements UserDefinedListHelpable {
 	private BigDecimal standardPrice;
 	@Column(name = "PAR_LASTPRICE")
 	private BigDecimal lastPrice;
-	@Transient
-	
+	@Column(name = "PAR_TRACK")
 	private Boolean trackByAsset;
 	@Transient
 	
@@ -83,11 +82,9 @@ public class Part implements UserDefinedListHelpable {
 	@Transient
 	
 	private Boolean trackCores;
-	@Transient
-	
+	@Column(name = "PAR_NOTUSED")
 	private Boolean outOfService;
-	@Transient
-	
+	@Column(name = "PAR_LOT")
 	private Boolean trackByLot;
 	@Transient
 	
@@ -103,8 +100,7 @@ public class Part implements UserDefinedListHelpable {
 	@Transient
 	
 	private CustomField[] customFields;
-	@Transient
-	
+	@Embedded
 	private UserDefinedFields userDefinedFields;
 
 	@Transient
